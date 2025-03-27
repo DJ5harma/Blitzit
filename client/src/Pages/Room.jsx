@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSocket } from "../Providers/SocketProvider";
 import { Terminal } from "../Components/Terminal";
+import { FileTree } from "../Components/FileTree";
 
 export const Room = () => {
-    const { roomId } = useParams();
+    const { roomId : containerId } = useParams();
     const { skt } = useSocket();
 
     const [terminalId, setTerminalId] = useState("");
@@ -14,7 +15,7 @@ export const Room = () => {
         skt.on("createTerminal -o1", ({ execId }) => {
             setTerminalId(execId);
         });
-        skt.emit("createTerminal", { containerId: roomId });
+        skt.emit("createTerminal", { containerId });
 
         return () => {
             skt.removeListener("createTerminal -o1");
@@ -32,7 +33,11 @@ export const Room = () => {
         >
             <div
                 style={{ height: "80vh", border: "solid red" }}
-            ></div>
+            >
+                <div style={{height: "80vh", width: "30vw"}}>
+                    <FileTree />
+                </div>
+            </div>
             <div style={{ height: "20vh" }}>
                 {terminalId && <Terminal terminalId={terminalId} />}
             </div>

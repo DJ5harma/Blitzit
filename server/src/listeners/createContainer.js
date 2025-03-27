@@ -20,7 +20,7 @@ export const createContainer = (skt) => {
 
             const container = await docker.createContainer({
                 Image,
-                // Tty: true,
+                Tty: true,
                 AttachStdin: true,
                 AttachStdout: true,
                 AttachStderr: true,
