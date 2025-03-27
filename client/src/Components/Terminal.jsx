@@ -24,8 +24,9 @@ export const Terminal = ({ terminalId }) => {
 
         // Handle incoming terminal output
         skt.on("connectTerminal -o1", ({ data }) => {
-            xterm.write(data.replace(/\n/g, "\r"));
+            xterm.write(data.replace(/\n/g, "\r\n"));
             xterm.writeln('')
+            console.log({data})
         });
 
         // Handle user input
@@ -61,7 +62,7 @@ export const Terminal = ({ terminalId }) => {
                 width: "100%",
                 height: "100%",
                 textAlign: "left", // Ensures left alignment
-                overflow: "hidden", // Prevents unexpected shifts
+                overflow: "auto", // Prevents unexpected shifts
             }}
         ></div>
     );
