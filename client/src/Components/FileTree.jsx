@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "../Providers/SocketProvider";
 import { FileTreeNode } from "./FileTreeNode";
+import { useRoom } from "../Pages/Room";
 
 // dirOutput
 // :
@@ -47,35 +48,22 @@ function getFileTree(dirOutput, fileOutput) {
 	return JSON.parse(JSON.stringify(tree, null, 2));
 }
 
-export const FileTree = ({ containerId, terminalTrigger }) => {
+export const FileTree = ({ containerId }) => {
 	const { skt } = useSocket();
+	const { callForTree } = useRoom();
 
-	const [_, setOutput] = useState({ fileOutput: null, dirOutput: null });
+	const [output, setOutput] = useState({ fileOutput: null, dirOutput: null });
 
 	const [terminalId, setTerminalId] = useState(null);
-    const [isTerminalCreated, setIsTerminalCreated] = useState(false);
+	const [isTerminalCreated, setIsTerminalCreated] = useState(false);
 
 	const [obj, setObj] = useState(null);
-
-	function callForTree() {
-		setTimeout(() => {
-			skt.emit("connectFileTerminal -i1", { input: "find /app -type d" });
-		}, 400);
-		setTimeout(() => {
-			skt.emit("connectFileTerminal -i1", { input: "find /app -type f" });
-		}, 800);
-	}
-
-	useEffect(() => {
-		if (!terminalId) return;
-		callForTree();
-	}, [terminalTrigger, terminalId]);
 
 	useEffect(() => {
 		if (terminalId) return;
 		skt.on("createFileTerminal -o1", ({ execId }) => {
 			setTerminalId(execId);
-            setIsTerminalCreated(true);
+			setIsTerminalCreated(true);
 			// console.log("fsexec: ", execId);
 		});
 		skt.emit("createFileTerminal", { containerId });
@@ -83,7 +71,7 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 		return () => {
 			skt.removeListener("createFileTerminal -o1");
 		};
-	}, [terminalId]);
+	}, [terminalId, containerId, skt]);
 
 	useEffect(() => {
 		if (!isTerminalCreated) return;
@@ -101,7 +89,7 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 				if (!p.dirOutput) return { ...p, dirOutput: data };
 				if (!p.fileOutput) {
 					const res = { ...p, fileOutput: data };
-					setObj((_) => getFileTree(res.dirOutput, res.fileOutput));
+					setObj(() => getFileTree(res.dirOutput, res.fileOutput));
 					return res;
 				}
 				return { dirOutput: data, fileOutput: null };
@@ -111,9 +99,9 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 		return () => {
 			skt.removeListener("connectFileTerminal -o1");
 		};
-	}, [isTerminalCreated, terminalId]);
+	}, [callForTree, isTerminalCreated, skt, terminalId]);
 
-	if (!obj) return null;
+	if (!obj || !output.dirOutput || !output.fileOutput) return null;
 
 	// console.log(obj);
 
@@ -126,7 +114,12 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 				height: "100%",
 			}}
 		>
-			<FileTreeNode obj={obj} marginLeft={0} path={""} />
+			<FileTreeNode
+				name={"app"}
+				value={obj["app"]}
+				marginLeft={0}
+				path={"/app"}
+			/>
 		</div>
 	);
 };

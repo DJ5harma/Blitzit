@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useSocket } from "../Providers/SocketProvider";
 import { Terminal as XTerm } from "xterm";
 import "xterm/css/xterm.css";
+import { useRoom } from "../Pages/Room";
 
-export const Terminal = ({ containerId, setTerminalTrigger }) => {
+export const Terminal = ({ containerId }) => {
 	const terminalRef = useRef(null);
 	const xtermRef = useRef(null);
 	const { skt } = useSocket();
+
+	const { callForTree } = useRoom();
 
 	const [terminalId, setTerminalId] = useState(null);
 	const [isTerminalCreated, setIsTerminalCreated] = useState(false);
@@ -15,7 +18,7 @@ export const Terminal = ({ containerId, setTerminalTrigger }) => {
 		if (terminalId) return;
 		skt.on("createTerminal -o1", ({ execId }) => {
 			setTerminalId(execId);
-            setIsTerminalCreated(true);
+			setIsTerminalCreated(true);
 			console.log("exec: ", execId);
 		});
 		skt.emit("createTerminal", { containerId });
@@ -23,7 +26,7 @@ export const Terminal = ({ containerId, setTerminalTrigger }) => {
 		return () => {
 			skt.removeListener("createTerminal -o1");
 		};
-	}, [terminalId]);
+	}, [containerId, skt, terminalId]);
 
 	useEffect(() => {
 		if (!isTerminalCreated) return;
@@ -41,7 +44,7 @@ export const Terminal = ({ containerId, setTerminalTrigger }) => {
 		skt.on("connectTerminal -o1", ({ data }) => {
 			xterm.write(data.replace(/\n/g, "\r\n"));
 			// xterm.writeln("");
-			console.log({ data });
+            callForTree();
 		});
 
 		setTimeout(() => {
@@ -56,7 +59,6 @@ export const Terminal = ({ containerId, setTerminalTrigger }) => {
 				skt.emit("connectTerminal -i1", { input: commandBuffer });
 				setTimeout(() => {
 					skt.emit("connectTerminal -i1", { input: "pwd\n" });
-					setTerminalTrigger((p) => !p);
 				}, 400);
 				commandBuffer = "";
 			} else if (input === "\u007f") {
@@ -75,7 +77,10 @@ export const Terminal = ({ containerId, setTerminalTrigger }) => {
 			skt.removeListener("connectTerminal -o1");
 			xterm.dispose();
 		};
-	}, [terminalId, isTerminalCreated]);
+	}, [terminalId, isTerminalCreated, skt, callForTree]);
+
+    if(!terminalId) return "Loading terminal..."
+
 	return (
 		<div
 			ref={terminalRef}

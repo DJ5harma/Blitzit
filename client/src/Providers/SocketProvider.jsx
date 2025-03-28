@@ -16,6 +16,7 @@ export const SocketProvider = ({ children }) => {
             setIsConnected(true);
         });
         return () => {
+            skt.removeAllListeners()
             skt.disconnect();
         };
     }, []);

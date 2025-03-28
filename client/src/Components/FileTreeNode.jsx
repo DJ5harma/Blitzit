@@ -1,44 +1,32 @@
-import { useEffect, useState } from "react";
 import { useSocket } from "../Providers/SocketProvider";
 import { FaFolder } from "react-icons/fa";
 import { FaFileAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { useRoom } from "../Pages/Room";
+import { useState } from "react";
 
-export const FileTreeNode = ({ obj, marginLeft, path }) => {
-	if (!obj) return null;
+export const FileTreeNode = ({ name, value, marginLeft, path }) => {
 	const { skt } = useSocket();
 
-	const [deletedFiles, setDeletedFiles] = useState(new Set());
-	const [deletedFolders, setDeletedFolders] = useState(new Set());
+	const [isDeleted, setIsDeleted] = useState(false);
 
+	const { callForTree } = useRoom();
 
-    useEffect(() => {
-        setTimeout(() => {
-            skt.emit("connectFileTerminal -i1", { input: "find /app -type d" });
-        }, 1000);
-        setTimeout(() => {
-            skt.emit("connectFileTerminal -i1", { input: "find /app -type f" });
-        }, 1000);
-    }, [deletedFiles, deletedFolders])
+	const isFolder = value !== null;
 
-	return Object.keys(obj).map((key, i) => {
-		const isFolder = obj[key] !== null;
-		const myPath = path + "/" + key;
-        
-		function deleteEntity() {
-            if (isFolder) {
-                skt.emit("connectFileTerminal -i1", { input: "rm -r " + myPath });
-				setDeletedFolders(new Set([...deletedFolders, myPath]));
-			} else {
-				skt.emit("connectFileTerminal -i1", { input: "rm " + myPath });
-				setDeletedFiles(new Set([...deletedFiles, myPath]));
-			}
+	function deleteEntity() {
+		if (isFolder) {
+			skt.emit("connectFileTerminal -i1", { input: "rm -r " + path });
+		} else {
+			skt.emit("connectFileTerminal -i1", { input: "rm " + path });
 		}
-		// console.log({ [key]: path + "/" + key });
-        if (isFolder && deletedFolders.has(myPath)) return "deleting...";
-        if (!isFolder && deletedFiles.has(myPath)) return "deleting...";
-		return (
-			<div key={i} style={{ paddingLeft: marginLeft }}>
+		setIsDeleted(true);
+		callForTree();
+	}
+
+	return (
+		<>
+			<div style={{ paddingLeft: marginLeft }}>
 				<div
 					style={{
 						display: "flex",
@@ -58,23 +46,25 @@ export const FileTreeNode = ({ obj, marginLeft, path }) => {
 					>
 						{isFolder ? <FaFolder /> : <FaFileAlt />}
 
-						{key}
+						{name}
 					</span>
-					<button
-						onClick={() => deleteEntity(myPath, isFolder)}
-						style={{ padding: "2px 5px" }}
-					>
+					<button onClick={() => deleteEntity()} style={{ padding: "2px 5px" }}>
 						<MdDelete />
 					</button>
 				</div>
-				<div>
-					<FileTreeNode
-						obj={obj[key]}
-						marginLeft={marginLeft + 12}
-						path={myPath}
-					/>
-				</div>
 			</div>
-		);
-	});
+			{!isDeleted && value &&
+				Object.keys(value).map((key, i) => {
+					return (
+						<FileTreeNode
+							key={i}
+							path={path + "/" + key}
+							marginLeft={marginLeft + 15}
+							name={key}
+							value={value[key]}
+						/>
+					);
+				})}
+		</>
+	);
 };
