@@ -5,15 +5,15 @@ import { docker } from "../main.js";
  * Description
  *
  * @function
- * @name createTerminal
+ * @name createFileTerminal
  * @kind variable
  * @param {Socket} skt
  * @returns {void}
  * @exports
  */
 
-export const createTerminal = (skt) => {
-    skt.on("createTerminal", async ({ containerId }) => {
+export const createFileTerminal = (skt) => {
+    skt.on("createFileTerminal", async ({ containerId }) => {
         try {
             const container = docker.getContainer(containerId);
             const exec = await container.exec({
@@ -24,7 +24,7 @@ export const createTerminal = (skt) => {
                 Cmd: ["/bin/sh"],
             });
 
-            skt.emit("createTerminal -o1", { execId: exec.id });
+            skt.emit("createFileTerminal -o1", { execId: exec.id });
         } catch ({ message }) {
             console.error({ message });
         }

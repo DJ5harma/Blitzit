@@ -1,26 +1,12 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useSocket } from "../Providers/SocketProvider";
 import { Terminal } from "../Components/Terminal";
 import { FileTree } from "../Components/FileTree";
+import { useState } from "react";
 
 export const Room = () => {
-    const { roomId : containerId } = useParams();
-    const { skt } = useSocket();
+    const { roomId: containerId } = useParams();
 
-    const [terminalId, setTerminalId] = useState("");
-
-    useEffect(() => {
-        if (terminalId) return;
-        skt.on("createTerminal -o1", ({ execId }) => {
-            setTerminalId(execId);
-        });
-        skt.emit("createTerminal", { containerId });
-
-        return () => {
-            skt.removeListener("createTerminal -o1");
-        };
-    }, [terminalId]);
+    const [terminalTrigger, setTerminalTrigger] = useState(false);
 
     return (
         <div
@@ -31,15 +17,13 @@ export const Room = () => {
                 height: "100vh",
             }}
         >
-            <div
-                style={{ height: "80vh", border: "solid red" }}
-            >
-                <div style={{height: "80vh", width: "30vw"}}>
-                    <FileTree />
+            <div style={{ height: "50vh" }}>
+                <div style={{ height: "50vh", width: "30vw" }}>
+                    <FileTree containerId={containerId} terminalTrigger={terminalTrigger} />
                 </div>
             </div>
-            <div style={{ height: "20vh" }}>
-                {terminalId && <Terminal terminalId={terminalId} />}
+            <div style={{ height: "50vh" }}>
+                <Terminal containerId={containerId} setTerminalTrigger={setTerminalTrigger} />
             </div>
         </div>
     );

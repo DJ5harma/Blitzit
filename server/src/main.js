@@ -3,6 +3,8 @@ import Docker from "dockerode";
 import { createContainer } from "./listeners/createContainer.js";
 import { createTerminal } from "./listeners/createTerminal.js";
 import { connectTerminal } from "./listeners/connectTerminal.js";
+import { connectFileTerminal } from "./listeners/connectFileTerminal.js";
+import { createFileTerminal } from "./listeners/createFileTerminal.js";
 
 const docker = new Docker();
 const io = new Server({ cors: { origin: "*" } });
@@ -15,6 +17,9 @@ io.on("connection", async (socket) => {
     createContainer(socket);
     createTerminal(socket);
     connectTerminal(socket);
+
+    createFileTerminal(socket);
+    connectFileTerminal(socket);
 
     socket.on("disconnect", () => {
         console.log("disconnected", --cnt);
