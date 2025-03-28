@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "../Providers/SocketProvider";
-import { FaFolder } from "react-icons/fa";
-import { FaFileAlt } from "react-icons/fa";
+import { FileTreeNode } from "./FileTreeNode";
 
 // dirOutput
 // :
@@ -51,7 +50,7 @@ function getFileTree(dirOutput, fileOutput) {
 export const FileTree = ({ containerId, terminalTrigger }) => {
 	const { skt } = useSocket();
 
-	const [output, setOutput] = useState({ fileOutput: null, dirOutput: null });
+	const [_, setOutput] = useState({ fileOutput: null, dirOutput: null });
 
 	const [terminalId, setTerminalId] = useState(null);
 
@@ -91,7 +90,7 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 
 		setTimeout(() => {
 			callForTree();
-		}, []);
+		}, 300);
 
 		skt.on("connectFileTerminal -o1", ({ data }) => {
 			data.replace(/\n/g, "\r\n");
@@ -114,30 +113,18 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 
 	if (!obj) return null;
 
-	console.log(obj);
+	// console.log(obj);
 
 	return (
-		<div style={{ border: "solid red", paddingLeft: 10 }}>
-			<Dir obj={obj} marginLeft={0} />
+		<div
+			style={{
+				border: "solid red",
+				paddingLeft: 10,
+				overflowY: "auto",
+				height: "100%",
+			}}
+		>
+			<FileTreeNode obj={obj} marginLeft={0} path={""} />
 		</div>
 	);
-};
-
-const Dir = ({ obj, marginLeft }) => {
-	if (!obj) return null;
-    
-	return Object.keys(obj).map((key, i) => {
-		return (
-			<div key={i} style={{ paddingLeft: marginLeft }}>
-				<p style={{ display: "flex", gap: 6, alignItems: "center" }}>
-					{obj[key] !== null ? <FaFolder /> : <FaFileAlt />}
-
-					{key}
-				</p>
-				<div>
-					<Dir obj={obj[key]} marginLeft={marginLeft + 12} />
-				</div>
-			</div>
-		);
-	});
 };
