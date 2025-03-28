@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "../Providers/SocketProvider";
+import { FaFolder } from "react-icons/fa";
+import { FaFileAlt } from "react-icons/fa";
 
 // dirOutput
 // :
@@ -9,124 +11,133 @@ import { useSocket } from "../Providers/SocketProvider";
 // "\u0001\u0000\u0000\u0000\u0000\u0000\u0000,/app/testFolder/testFile.txt\n/app/script.py\n"
 
 function getFileTree(dirOutput, fileOutput) {
-    // Process directory output
-    dirOutput = dirOutput
-        .substring(dirOutput.indexOf("/")) // Start from first /
-        .trim()
-        .split("\n")
-        .filter(Boolean);
+	// Process directory output
+	dirOutput = dirOutput
+		.substring(dirOutput.indexOf("/")) // Start from first /
+		.trim()
+		.split("\n")
+		.filter(Boolean);
 
-    fileOutput = fileOutput
-        .substring(fileOutput.indexOf("/")) // Start from first /
-        .trim()
-        .split("\n")
-        .filter(Boolean);
+	fileOutput = fileOutput
+		.substring(fileOutput.indexOf("/")) // Start from first /
+		.trim()
+		.split("\n")
+		.filter(Boolean);
 
-    const tree = {};
+	const tree = {};
 
-    function addToTree(fullPath, isFile) {
-        const parts = fullPath.split("/").filter(Boolean);
-        let current = tree;
+	function addToTree(fullPath, isFile) {
+		const parts = fullPath.split("/").filter(Boolean); // Handle paths in frontend
+		let current = tree;
 
-        parts.forEach((part, index) => {
-            if (!current[part]) {
-                current[part] =
-                    index === parts.length - 1 && isFile ? null : {};
-            }
-            current = current[part];
-        });
-    }
+		parts.forEach((part, index) => {
+			if (!current[part]) {
+				current[part] = index === parts.length - 1 && isFile ? null : {};
+			}
 
-    dirOutput.forEach((dir) => addToTree(dir, false));
-    fileOutput.forEach((file) => addToTree(file, true));
-    return JSON.parse(JSON.stringify(tree, null, 2));
+			if (index === parts.length - 1 && isFile) {
+				current[part] = null; // Ensure files are set to null
+			}
+
+			current = current[part];
+		});
+	}
+
+	dirOutput.forEach((dir) => addToTree(dir, false));
+	fileOutput.forEach((file) => addToTree(file, true));
+	return JSON.parse(JSON.stringify(tree, null, 2));
 }
 
 export const FileTree = ({ containerId, terminalTrigger }) => {
-    const { skt } = useSocket();
+	const { skt } = useSocket();
 
-    const [output, setOutput] = useState({ fileOutput: null, dirOutput: null });
+	const [output, setOutput] = useState({ fileOutput: null, dirOutput: null });
 
-    const [terminalId, setTerminalId] = useState(null);
+	const [terminalId, setTerminalId] = useState(null);
 
-    function callForTree() {
-        setTimeout(() => {
-            skt.emit("connectFileTerminal -i1", { input: "find /app -type d" });
-        }, 400);
-        setTimeout(() => {
-            skt.emit("connectFileTerminal -i1", { input: "find /app -type f" });
-        }, 800);
-    }
+	const [obj, setObj] = useState(null);
 
-    useEffect(() => {
-        if (!terminalId) return;
-        callForTree();
-    }, [terminalTrigger, terminalId]);
+	function callForTree() {
+		setTimeout(() => {
+			skt.emit("connectFileTerminal -i1", { input: "find /app -type d" });
+		}, 400);
+		setTimeout(() => {
+			skt.emit("connectFileTerminal -i1", { input: "find /app -type f" });
+		}, 800);
+	}
 
-    useEffect(() => {
-        if (terminalId) return;
-        skt.on("createFileTerminal -o1", ({ execId }) => {
-            setTerminalId(execId);
-            console.log("fsexec: ", execId);
-        });
-        skt.emit("createFileTerminal", { containerId });
+	useEffect(() => {
+		if (!terminalId) return;
+		callForTree();
+	}, [terminalTrigger, terminalId]);
 
-        return () => {
-            skt.removeListener("createFileTerminal -o1");
-        };
-    }, [terminalId]);
+	useEffect(() => {
+		if (terminalId) return;
+		skt.on("createFileTerminal -o1", ({ execId }) => {
+			setTerminalId(execId);
+			// console.log("fsexec: ", execId);
+		});
+		skt.emit("createFileTerminal", { containerId });
 
-    useEffect(() => {
-        if (!terminalId) return;
+		return () => {
+			skt.removeListener("createFileTerminal -o1");
+		};
+	}, [terminalId]);
 
-        skt.emit("connectFileTerminal", { execId: terminalId });
+	useEffect(() => {
+		if (!terminalId) return;
 
-        setTimeout(() => {
-            callForTree();
-        }, []);
+		skt.emit("connectFileTerminal", { execId: terminalId });
 
-        skt.on("connectFileTerminal -o1", ({ data }) => {
-            data.replace(/\n/g, "\r\n");
-            console.log({ tree: data });
-            setOutput((p) => {
-                if (!p.dirOutput) return { ...p, dirOutput: data };
-                if (!p.fileOutput) return { ...p, fileOutput: data };
-                return { dirOutput: data, fileOutput: null };
-            });
-        });
+		setTimeout(() => {
+			callForTree();
+		}, []);
 
-        return () => {
-            skt.removeListener("connectFileTerminal -o1");
-        };
-    }, [terminalId]);
+		skt.on("connectFileTerminal -o1", ({ data }) => {
+			data.replace(/\n/g, "\r\n");
+			// console.log({ tree: data });
+			setOutput((p) => {
+				if (!p.dirOutput) return { ...p, dirOutput: data };
+				if (!p.fileOutput) {
+					const res = { ...p, fileOutput: data };
+					setObj((_) => getFileTree(res.dirOutput, res.fileOutput));
+					return res;
+				}
+				return { dirOutput: data, fileOutput: null };
+			});
+		});
 
-    console.log(output);
+		return () => {
+			skt.removeListener("connectFileTerminal -o1");
+		};
+	}, [terminalId]);
 
-    if (!output.dirOutput || !output.fileOutput) return null;
+	if (!obj) return null;
 
-    return (
-        <div style={{ border: "solid red", paddingLeft: 10 }}>
-            <Dir
-                obj={getFileTree(output.dirOutput, output.fileOutput)}
-                marginLeft={0}
-            />
-        </div>
-    );
+	console.log(obj);
+
+	return (
+		<div style={{ border: "solid red", paddingLeft: 10 }}>
+			<Dir obj={obj} marginLeft={0} />
+		</div>
+	);
 };
 
 const Dir = ({ obj, marginLeft }) => {
-    // console.log({ obj, marginLeft });
+	if (!obj) return null;
+    
+	return Object.keys(obj).map((key, i) => {
+		return (
+			<div key={i} style={{ paddingLeft: marginLeft }}>
+				<p style={{ display: "flex", gap: 6, alignItems: "center" }}>
+					{obj[key] !== null ? <FaFolder /> : <FaFileAlt />}
 
-    if (!obj) return null;
-
-    return Object.keys(obj).map((key, i) => {
-        return (
-            <div key={i} style={{ paddingLeft: marginLeft }}>
-                <p>{key}</p>
-                <div>
-                    <Dir obj={obj[key]} marginLeft={marginLeft + 10} />
-                </div>
-            </div>
-        );
-    });
+					{key}
+				</p>
+				<div>
+					<Dir obj={obj[key]} marginLeft={marginLeft + 12} />
+				</div>
+			</div>
+		);
+	});
 };
