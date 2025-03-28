@@ -1,14 +1,40 @@
 import { useSocket } from "../Providers/SocketProvider";
-import { FaFileContract, FaFileUpload, FaFolder, FaFolderPlus, FaPlus } from "react-icons/fa";
+import {
+  FaFileContract,
+  FaFileUpload,
+  FaFolder,
+  FaFolderPlus,
+  FaICursor,
+  FaPlus,
+} from "react-icons/fa";
 import { FaFileAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useRoom } from "../Pages/Room";
 import { useState } from "react";
+import { useFileContext } from "../Providers/FilesProvider";
+
+const getLanguageFromFileName = (fileName) => {  
+  const ext = fileName.split(".").pop();
+  switch (ext) {
+    case "js":
+      return "javascript";
+    case "py":
+      return "python";
+    case "html":
+      return "html";
+    case "css":
+      return "css";
+    default:
+      return "plaintext";
+  }
+};
 
 export const FileTreeNode = ({ name, value, marginLeft, path }) => {
-  const { skt } = useSocket();
+  const { skt} = useSocket();
+  const {openFiles,addFile,deleteFile} = useFileContext()
 
   const [isDeleted, setIsDeleted] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const { callForTree } = useRoom();
 
@@ -24,26 +50,49 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
     callForTree();
   }
 
-  function addEntity(isFileAdd){
-	const entityName = prompt(`Enter ${isFileAdd ? "file" : "folder"} name:`);
-	if (!entityName) return;
+  const handleFileClick = () => {
+    
+    if (!openFiles[path]) {
+      addFile({
+        path,
+        name,
+        language: getLanguageFromFileName(name),
+        value: "// file content",
+      });
+    }
+  };
 
-	const fullPath = path + "/" + entityName;  
-  
-	let command;
-	if(isFileAdd){
-		command = "touch " + fullPath;
-	}
-	else{
-		command = "mkdir " + fullPath;
-	}
-	skt.emit("connectFileTerminal -i1", { input: command });
-	callForTree()
+  function addEntity(isFileAdd) {
+    const entityName = prompt(`Enter ${isFileAdd ? "file" : "folder"} name:`);
+    if (!entityName) return;
+
+    const fullPath = path + "/" + entityName;
+
+    let command;
+    if (isFileAdd) {
+      command = "touch " + fullPath;
+    } else {
+      command = "mkdir " + fullPath;
+    }
+    skt.emit("connectFileTerminal -i1", { input: command });
+    callForTree();
   }
 
   return (
     <>
-      <div style={{ paddingLeft: marginLeft }}>
+      <div
+        style={{
+          paddingLeft: marginLeft,
+          cursor: isHovered ? "pointer" : "default",
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={(e) => {
+          if (!isFolder) {
+            handleFileClick();
+          }
+        }}
+      >
         <div
           style={{
             display: "flex",
@@ -64,40 +113,42 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
             {isFolder ? <FaFolder /> : <FaFileAlt />}
             {name}
           </span>
-		  <div>
-			
-          {isFolder ? (
+          <div>
+            {isFolder ? (
+              <button
+                onClick={() => addEntity(true)}
+                style={{
+                  padding: "2px 5px",
+                  backgroundColor: "transparent",
+                  marginTop: "2px",
+                }}
+              >
+                <FaFileUpload />
+              </button>
+            ) : (
+              ""
+            )}
+            {isFolder ? (
+              <button
+                onClick={() => addEntity(false)}
+                style={{
+                  padding: "2px 5px",
+                  backgroundColor: "transparent",
+                  marginTop: "2px",
+                }}
+              >
+                <FaFolderPlus />
+              </button>
+            ) : (
+              ""
+            )}
             <button
-              onClick={() => addEntity(true)}
-              style={{
-				padding: "2px 5px",
-                backgroundColor: "transparent",
-                marginTop: "2px",
-              }}
+              onClick={() => deleteEntity()}
+              style={{ padding: "2px 5px" }}
             >
-              <FaFileUpload />
+              <MdDelete />
             </button>
-          ) : (
-            ""
-          )}
-		  {isFolder ? (
-            <button
-              onClick={() => addEntity(false)}
-              style={{
-				padding: "2px 5px",
-                backgroundColor: "transparent",
-                marginTop: "2px",
-              }}
-            >
-              <FaFolderPlus />
-            </button>
-          ) : (
-            ""
-          )}
-          <button onClick={() => deleteEntity()} style={{ padding: "2px 5px" }}>
-            <MdDelete />
-          </button>
-		  </div>
+          </div>
         </div>
       </div>
       {!isDeleted &&
