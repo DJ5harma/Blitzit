@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSocket } from "../Providers/SocketProvider";
 import { FaFolder } from "react-icons/fa";
 import { FaFileAlt } from "react-icons/fa";
@@ -11,10 +11,19 @@ export const FileTreeNode = ({ obj, marginLeft, path }) => {
 	const [deletedFiles, setDeletedFiles] = useState(new Set());
 	const [deletedFolders, setDeletedFolders] = useState(new Set());
 
+
+    useEffect(() => {
+        setTimeout(() => {
+            skt.emit("connectFileTerminal -i1", { input: "find /app -type d" });
+        }, 1000);
+        setTimeout(() => {
+            skt.emit("connectFileTerminal -i1", { input: "find /app -type f" });
+        }, 1000);
+    }, [deletedFiles, deletedFolders])
+
 	return Object.keys(obj).map((key, i) => {
 		const isFolder = obj[key] !== null;
 		const myPath = path + "/" + key;
-
         
 		function deleteEntity() {
             if (isFolder) {
@@ -24,12 +33,6 @@ export const FileTreeNode = ({ obj, marginLeft, path }) => {
 				skt.emit("connectFileTerminal -i1", { input: "rm " + myPath });
 				setDeletedFiles(new Set([...deletedFiles, myPath]));
 			}
-			setTimeout(() => {
-				skt.emit("connectFileTerminal -i1", { input: "find /app -type d" });
-			}, 1000);
-			setTimeout(() => {
-				skt.emit("connectFileTerminal -i1", { input: "find /app -type f" });
-			}, 1000);
 		}
 		// console.log({ [key]: path + "/" + key });
         if (isFolder && deletedFolders.has(myPath)) return "deleting...";

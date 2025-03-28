@@ -53,6 +53,7 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 	const [_, setOutput] = useState({ fileOutput: null, dirOutput: null });
 
 	const [terminalId, setTerminalId] = useState(null);
+    const [isTerminalCreated, setIsTerminalCreated] = useState(false);
 
 	const [obj, setObj] = useState(null);
 
@@ -74,6 +75,7 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 		if (terminalId) return;
 		skt.on("createFileTerminal -o1", ({ execId }) => {
 			setTerminalId(execId);
+            setIsTerminalCreated(true);
 			// console.log("fsexec: ", execId);
 		});
 		skt.emit("createFileTerminal", { containerId });
@@ -84,7 +86,7 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 	}, [terminalId]);
 
 	useEffect(() => {
-		if (!terminalId) return;
+		if (!isTerminalCreated) return;
 
 		skt.emit("connectFileTerminal", { execId: terminalId });
 
@@ -109,7 +111,7 @@ export const FileTree = ({ containerId, terminalTrigger }) => {
 		return () => {
 			skt.removeListener("connectFileTerminal -o1");
 		};
-	}, [terminalId]);
+	}, [isTerminalCreated, terminalId]);
 
 	if (!obj) return null;
 
