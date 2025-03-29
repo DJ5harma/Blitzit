@@ -1,19 +1,19 @@
 import { Socket } from "socket.io";
-import { docker } from "../main.js";
+import { docker } from "../../main.js";
 
 /**
  * Description
  *
  * @function
- * @name createFileTerminal
+ * @name createEditorTerminal
  * @kind variable
  * @param {Socket} skt
  * @returns {void}
  * @exports
  */
 
-export const createFileTerminal = (skt) => {
-    skt.on("createFileTerminal", async ({ containerId }) => {
+export const createEditorTerminal = (skt) => {
+    skt.on("createEditorTerminal", async ({ containerId }) => {
         try {
             const container = docker.getContainer(containerId);
             const exec = await container.exec({
@@ -24,7 +24,7 @@ export const createFileTerminal = (skt) => {
                 Cmd: ["/bin/sh"],
             });
 
-            skt.emit("createFileTerminal -o1", { execId: exec.id });
+            skt.emit("createEditorTerminal -o1", { execId: exec.id });
         } catch ({ message }) {
             console.error({ message });
         }

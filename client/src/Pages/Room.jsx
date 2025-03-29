@@ -13,9 +13,9 @@ export const Room = () => {
     const { skt } = useSocket();
 
     function callForTree() {
-        skt.emit('connectFileTerminal -i1', { input: 'find /app -type d' });
+        skt.emit('connectFileTreeTerminal -i1', { input: 'find /app -type d' });
         setTimeout(() => {
-            skt.emit('connectFileTerminal -i1', { input: 'find /app -type f' });
+            skt.emit('connectFileTreeTerminal -i1', { input: 'find /app -type f' });
         }, 400);
     }
 

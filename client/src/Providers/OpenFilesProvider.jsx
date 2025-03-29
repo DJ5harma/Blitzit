@@ -5,6 +5,8 @@ const context = createContext();
 export const OpenFilesProvider = ({ children }) => {
     const [openFiles, setOpenFiles] = useState({});
     const addFile = (file) => {
+        console.log({file});
+        
         setOpenFiles((prev) => ({
             ...prev,
             [file.path]: file,

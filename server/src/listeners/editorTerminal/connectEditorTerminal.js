@@ -1,28 +1,27 @@
 import { Socket } from "socket.io";
-import { docker } from "../main.js";
-
+import { docker } from "../../main.js";
 /**
  * Description
  *
  * @function
- * @name connectFileTerminal
+ * @name connectEditorTerminal
  * @kind variable
  * @param {Socket} skt
  * @returns {void}
  * @exports
  */
-export const connectFileTerminal = (skt) => {
-    skt.on("connectFileTerminal", async ({ execId }) => {
+export const connectEditorTerminal = (skt) => {
+    skt.on("connectEditorTerminal", async ({ execId }) => {
         try {
             const exec = docker.getExec(execId);
             const stream = await exec.start({ hijack: true, stdin: true });
 
-            skt.on("connectFileTerminal -i1", ({ input }) => {
+            skt.on("connectEditorTerminal -i1", ({ input }) => {
                 stream.write(input + "\n");
             });
             stream.on("data", (chunk) => {
                 const data = chunk.toString();
-                skt.emit("connectFileTerminal -o1", { data }); // Send output immediately
+                skt.emit("connectEditorTerminal -o1", { data }); // Send output immediately
             });
 
         } catch ({message}) {

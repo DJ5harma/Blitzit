@@ -27,9 +27,9 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
 
     function deleteEntity() {
         if (isFolder) {
-            skt.emit('connectFileTerminal -i1', { input: 'rm -r ' + path });
+            skt.emit('connectFileTreeTerminal -i1', { input: 'rm -r ' + path });
         } else {
-            skt.emit('connectFileTerminal -i1', { input: 'rm ' + path });
+            skt.emit('connectFileTreeTerminal -i1', { input: 'rm ' + path });
         }
         setIsDeleted(true);
         callForTree();
@@ -60,7 +60,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
         } else {
             command = 'mkdir ' + fullPath;
         }
-        skt.emit('connectFileTerminal -i1', { input: command });
+        skt.emit('connectFileTreeTerminal -i1', { input: command });
         callForTree();
     }
 
@@ -73,7 +73,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
                 }}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                onClick={(e) => {
+                onClick={() => {
                     if (!isFolder) {
                         handleFileClick();
                     }

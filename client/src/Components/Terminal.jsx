@@ -16,15 +16,15 @@ export const Terminal = ({ containerId }) => {
 
     useEffect(() => {
         if (terminalId) return;
-        skt.on('createTerminal -o1', ({ execId }) => {
+        skt.on('createMainTerminal -o1', ({ execId }) => {
             setTerminalId(execId);
             setIsTerminalCreated(true);
             console.log('exec: ', execId);
         });
-        skt.emit('createTerminal', { containerId });
+        skt.emit('createMainTerminal', { containerId });
 
         return () => {
-            skt.removeListener('createTerminal -o1');
+            skt.removeListener('createMainTerminal -o1');
         };
     }, [containerId, skt, terminalId]);
 
@@ -39,16 +39,16 @@ export const Terminal = ({ containerId }) => {
         xterm.open(terminalRef.current);
         xtermRef.current = xterm;
 
-        skt.emit('connectTerminal', { execId: terminalId });
+        skt.emit('connectMainTerminal', { execId: terminalId });
 
-        skt.on('connectTerminal -o1', ({ data }) => {
+        skt.on('connectMainTerminal -o1', ({ data }) => {
             xterm.write(data.replace(/\n/g, '\r\n'));
             // xterm.writeln("");
             callForTree();
         });
 
         setTimeout(() => {
-            skt.emit('connectTerminal -i1', { input: 'pwd\n' });
+            skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
         }, 400);
 
         let commandBuffer = '';
@@ -56,9 +56,9 @@ export const Terminal = ({ containerId }) => {
             if (input === '\r') {
                 // Enter key pressed
                 xterm.writeln(`\r`); // Move to new line after command execution
-                skt.emit('connectTerminal -i1', { input: commandBuffer });
+                skt.emit('connectMainTerminal -i1', { input: commandBuffer });
                 setTimeout(() => {
-                    skt.emit('connectTerminal -i1', { input: 'pwd\n' });
+                    skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
                 }, 400);
                 commandBuffer = '';
             } else if (input === '\u007f') {
@@ -74,7 +74,7 @@ export const Terminal = ({ containerId }) => {
         });
 
         return () => {
-            skt.removeListener('connectTerminal -o1');
+            skt.removeListener('connectMainTerminal -o1');
             xterm.dispose();
         };
     }, [terminalId, isTerminalCreated, skt, callForTree]);
