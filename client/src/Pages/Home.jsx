@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useSocket } from "../Providers/SocketProvider";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useSocket } from '../Providers/SocketProvider';
+import { useNavigate } from 'react-router-dom';
 
-const templates = [{ name: "python-template" }];
+const templates = [{ name: 'python-template' }];
 
 export const Home = () => {
     const { skt } = useSocket();
@@ -10,12 +10,12 @@ export const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        skt.on("createContainer -o1", ({ containerId }) => {
+        skt.on('createContainer -o1', ({ containerId }) => {
             navigate(`room/${containerId}`);
         });
         return () => {
-            skt.removeListener('createContainer -o1')
-        }
+            skt.removeListener('createContainer -o1');
+        };
     }, []);
 
     if (makingTemplate) return <>Making your template.......</>;
@@ -26,7 +26,7 @@ export const Home = () => {
                 return (
                     <button
                         onClick={() => {
-                            skt.emit("createContainer", { Image: name });
+                            skt.emit('createContainer', { Image: name });
                             setMakingTemplate(true);
                         }}
                         key={i}
