@@ -41,7 +41,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
                 path,
                 name,
                 language: getLanguageFromFileName(name),
-                value: '// file content',
+                value: 'Loading file content....',
             });
         }
     };

@@ -25,9 +25,9 @@ export const Room = () => {
 
     useEffect(() => {
         if (terminalsConnected) return;
-
-        skt.on(
-            'getRoomDetails -o1',
+        skt.emit(
+            'getRoomDetails',
+            { roomId },
             ({
                 mainTerminalId,
                 fileTreeTerminalId,
@@ -56,10 +56,6 @@ export const Room = () => {
                 setTerminalsConnected(true);
             }
         );
-        skt.emit('getRoomDetails', { roomId });
-        return () => {
-            skt.removeListener('getRoomDetails -o1');
-        };
     }, [roomId, skt, terminalsConnected]);
 
     if (!terminalsConnected) return <>getting all the terminal ids....</>;

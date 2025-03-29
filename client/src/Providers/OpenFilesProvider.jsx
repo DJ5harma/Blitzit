@@ -1,21 +1,39 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
+import { useSocket } from './SocketProvider';
 
 const context = createContext();
 
 export const OpenFilesProvider = ({ children }) => {
     const [openFiles, setOpenFiles] = useState({});
+    const { skt } = useSocket();
+    
     const addFile = (file) => {
-        console.log({file});
-        
+        console.log({ file });
+
         setOpenFiles((prev) => ({
             ...prev,
             [file.path]: file,
         }));
+        skt.emit(
+            'connectEditorTerminal -i1',
+            { input: 'cat ' + file.path },
+            ({ data }) => {
+                setOpenFiles((p) => {
+                    return {
+                        ...p,
+                        [file.path]: {
+                            ...p[file.path],
+                            value: data,
+                        },
+                    };
+                });
+            }
+        );
     };
 
-    useEffect(() => {
-        console.log(openFiles);
-    }, [openFiles]);
+    // useEffect(() => {
+    //     skt.on('')
+    // }, []);
 
     const deleteFile = (path) => {
         setOpenFiles((prev) => {

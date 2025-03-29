@@ -14,7 +14,6 @@ export const Editor = () => {
     const file = fileName ? openFiles[fileName] : null;
 
     useEffect(() => {
-
         skt.on('connectEditorTerminal -o1', ({ data }) => {
             console.log({ editorData: data });
         });
@@ -72,7 +71,10 @@ export const Editor = () => {
                         defaultLanguage={file.language}
                         defaultValue={file.value}
                         options={{
-                            automaticLayout: true,
+                            'semanticHighlighting.enabled': true,
+                            dragAndDrop: true,
+                            minimap: true,
+                            wordWrap: true,
                         }}
                         style={{ height: '100%', width: '100%' }}
                     />

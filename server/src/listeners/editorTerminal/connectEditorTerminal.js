@@ -19,9 +19,15 @@ export const connectEditorTerminal = (skt) => {
 
                 const stream = await getStream(containerId, editorTerminalId);
 
-                skt.on("connectEditorTerminal -i1", ({ input }) => {
+                skt.on("connectEditorTerminal -i1", ({ input }, callback) => {
                     console.log({ input });
                     stream.write(input + "\n");
+
+                    stream.once("data", (chunk) => {
+                        let data = chunk.toString();
+                        data = data.substr(data.indexOf(")") + 1);
+                        callback({ data });
+                    });
                 });
                 stream.on("data", (chunk) => {
                     const data = chunk.toString();

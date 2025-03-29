@@ -13,7 +13,7 @@ import { ROOM } from "../database/ROOM.js";
  */
 
 export const getRoomDetails = (skt) => {
-    skt.on("getRoomDetails", async ({ roomId }) => {
+    skt.on("getRoomDetails", async ({ roomId }, callback) => {
         try {
             console.log({ roomId });
             const room = await ROOM.findById(roomId);
@@ -26,7 +26,7 @@ export const getRoomDetails = (skt) => {
 
             console.log({ room });
 
-            skt.emit("getRoomDetails -o1", {
+            callback({
                 mainTerminalId,
                 fileTreeTerminalId,
                 editorTerminalId,

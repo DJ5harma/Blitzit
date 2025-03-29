@@ -9,6 +9,7 @@ export const getStream = async (containerId, terminalId) => {
         const exec = await docker.getContainer(containerId).exec(execConfig);
 
         stream = await exec.start(streamConfig);
+
         terminalId_to_stream[terminalId] = stream;
     }
 
