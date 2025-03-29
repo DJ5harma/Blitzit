@@ -1,14 +1,28 @@
 import MonacoEditor from '@monaco-editor/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
+import { useSocket } from '../Providers/SocketProvider';
 
 export const Editor = () => {
+    const { skt } = useSocket();
+
     const { openFiles } = useOpenFiles();
     const fileKeys = Object.keys(openFiles);
 
     const [fileName, setFileName] = useState('');
 
     const file = fileName ? openFiles[fileName] : null;
+
+    useEffect(() => {
+
+        skt.on('connectEditorTerminal -o1', ({ data }) => {
+            console.log({ editorData: data });
+        });
+
+        return () => {
+            skt.removeListener('connectEditorTerminal -o1');
+        };
+    }, [skt]);
 
     return (
         <div

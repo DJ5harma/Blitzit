@@ -1,7 +1,11 @@
 import { Socket } from "socket.io";
 import { docker } from "../main.js";
+import { ROOM } from "../database/ROOM.js";
 
 const images = ["python-template"];
+
+export const terminalId_to_stream = {};
+
 /**
  * Description
  *
@@ -33,13 +37,61 @@ export const createContainer = (skt) => {
             console.log("Container created");
             const containerId = container.id;
 
-            skt.emit("createContainer -o1", { containerId });
+            const mainTerminalExec = await container.exec(execConfig);
+            const fileTreeTerminalExec = await container.exec(execConfig);
+            const editorTerminalExec = await container.exec(execConfig);
+
+            const mainTerminalStream = await mainTerminalExec.start({
+                hijack: true,
+                stdin: true,
+            });
+            const fileTreeTerminalStream = await fileTreeTerminalExec.start({
+                hijack: true,
+                stdin: true,
+            });
+            const editorTerminalStream = await editorTerminalExec.start({
+                hijack: true,
+                stdin: true,
+            });
+
+            const fileTreeTerminalId = fileTreeTerminalExec.id,
+                editorTerminalId = editorTerminalExec.id,
+                mainTerminalId = mainTerminalExec.id;
+
+            terminalId_to_stream[mainTerminalId] = mainTerminalStream;
+            terminalId_to_stream[fileTreeTerminalId] = fileTreeTerminalStream;
+            terminalId_to_stream[editorTerminalId] = editorTerminalStream;
+
+            console.log(terminalId_to_stream);
+            
+
+            const newRoom = await ROOM.create({
+                containerId,
+                fileTreeTerminalId,
+                editorTerminalId,
+                mainTerminalId,
+            });
+            
+
+            skt.emit("createContainer -o1", {
+                roomId: newRoom._id,
+            });
 
             // skt.on("disconnect", async () => {
             //     await container.stop();
             //     await container.remove();
             //     console.log("Container destroyed on cliet disconnection");
             // });
-        } catch ({message}) {console.error({message})}
+        } catch ({ message }) {
+            console.error({ message });
+        }
     });
+};
+
+const execConfig = {
+    AttachStdout: true,
+    AttachStderr: true,
+    AttachStdin: true,
+    // Tty: true,
+    Cmd: ["/bin/sh"],
 };

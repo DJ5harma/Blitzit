@@ -1,62 +1,30 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSocket } from '../Providers/SocketProvider';
 import { Terminal as XTerm } from 'xterm';
 import 'xterm/css/xterm.css';
 import { useRoom } from '../Pages/Room';
 
-export const Terminal = ({ containerId }) => {
+export const Terminal = () => {
     const terminalRef = useRef(null);
     const xtermRef = useRef(null);
     const { skt } = useSocket();
 
     const { callForTree } = useRoom();
 
-    const [terminalId, setTerminalId] = useState(null);
-    const [isTerminalCreated, setIsTerminalCreated] = useState(false);
-
     useEffect(() => {
-        if (terminalId) return;
-        skt.on('createMainTerminal -o1', ({ execId }) => {
-            setTerminalId(execId);
-            setIsTerminalCreated(true);
-            console.log('exec: ', execId);
-        });
-        skt.emit('createMainTerminal', { containerId });
-
-        return () => {
-            skt.removeListener('createMainTerminal -o1');
-        };
-    }, [containerId, skt, terminalId]);
-
-    useEffect(() => {
-        if (!isTerminalCreated) return;
-        if (!terminalRef.current || xtermRef.current) return;
-
         const xterm = new XTerm({
             cursorBlink: true,
             theme: { background: 'black', foreground: 'white' },
         });
-        xterm.open(terminalRef.current);
-        xtermRef.current = xterm;
-
-        skt.emit('connectMainTerminal', { execId: terminalId });
-
-        skt.on('connectMainTerminal -o1', ({ data }) => {
-            xterm.write(data.replace(/\n/g, '\r\n'));
-            // xterm.writeln("");
-            callForTree();
-        });
-
-        setTimeout(() => {
-            skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
-        }, 400);
-
         let commandBuffer = '';
         xterm.onData((input) => {
+            console.log({input})
             if (input === '\r') {
                 // Enter key pressed
                 xterm.writeln(`\r`); // Move to new line after command execution
-                skt.emit('connectMainTerminal -i1', { input: commandBuffer });
+                skt.emit('connectMainTerminal -i1', {
+                    input: commandBuffer,
+                });
                 setTimeout(() => {
                     skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
                 }, 400);
@@ -72,14 +40,23 @@ export const Terminal = ({ containerId }) => {
                 xterm.write(input); // Display input in terminal
             }
         });
+        xterm.open(terminalRef.current);
+        xtermRef.current = xterm;
+
+        skt.on('connectMainTerminal -o1', ({ data }) => {
+            xterm.write(data.replace(/\n/g, '\r\n'));
+            // xterm.writeln("");
+            callForTree();
+        });
+        skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
 
         return () => {
             skt.removeListener('connectMainTerminal -o1');
             xterm.dispose();
         };
-    }, [terminalId, isTerminalCreated, skt, callForTree]);
+    }, []);
 
-    if (!terminalId) return 'Loading terminal...';
+    // if (!terminalId) return 'Loading terminal...';
 
     return (
         <div

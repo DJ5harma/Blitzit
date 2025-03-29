@@ -10,8 +10,8 @@ export const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        skt.on('createContainer -o1', ({ containerId }) => {
-            navigate(`room/${containerId}`);
+        skt.on('createContainer -o1', ({ roomId }) => {
+            navigate(`room/${roomId}`);
         });
         return () => {
             skt.removeListener('createContainer -o1');

@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { docker } from "../../main.js";
+import { terminalId_to_stream } from "../createContainer.js";
 
 /**
  * Description
@@ -12,12 +12,15 @@ import { docker } from "../../main.js";
  * @exports
  */
 export const connectMainTerminal = (skt) => {
-    skt.on("connectMainTerminal", async ({ execId }) => {
+    skt.on("connectMainTerminal", async ({ mainTerminalId }) => {
         try {
-            const exec = docker.getExec(execId);
-            const stream = await exec.start({ hijack: true, stdin: true });
+            console.log({ mainTerminalId });
+            const stream = terminalId_to_stream[mainTerminalId];
+            if (!stream) throw new Error("Stream map was vanished");
 
             skt.on("connectMainTerminal -i1", ({ input }) => {
+                console.log({ input });
+
                 stream.write(input + "\n");
             });
             stream.on("data", (chunk) => {

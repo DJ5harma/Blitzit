@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { docker } from "../../main.js";
+import { terminalId_to_stream } from "../createContainer.js";
 
 /**
  * Description
@@ -12,10 +12,13 @@ import { docker } from "../../main.js";
  * @exports
  */
 export const connectFileTreeTerminal = (skt) => {
-    skt.on("connectFileTreeTerminal", async ({ execId }) => {
+    skt.on("connectFileTreeTerminal", async ({ fileTreeTerminalId }) => {
         try {
-            const exec = docker.getExec(execId);
-            const stream = await exec.start({ hijack: true, stdin: true });
+            console.log({ fileTreeTerminalId });
+
+            const stream = terminalId_to_stream[fileTreeTerminalId];
+            if (!stream) throw new Error("Stream map was vanished");
+
 
             skt.on("connectFileTreeTerminal -i1", ({ input }) => {
                 stream.write(input + "\n");

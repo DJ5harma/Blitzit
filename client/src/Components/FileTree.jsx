@@ -4,40 +4,15 @@ import { FileTreeNode } from './FileTreeNode';
 import { useRoom } from '../Pages/Room';
 import { getFileTree } from '../Utils/getFileTree';
 
-export const FileTree = ({ containerId }) => {
+export const FileTree = () => {
     const { skt } = useSocket();
     const { callForTree } = useRoom();
 
     const [output, setOutput] = useState({ fileOutput: null, dirOutput: null });
 
-    const [terminalId, setTerminalId] = useState(null);
-    const [isTerminalCreated, setIsTerminalCreated] = useState(false);
-
     const [obj, setObj] = useState(null);
 
     useEffect(() => {
-        if (terminalId) return;
-        skt.on('createFileTreeTerminal -o1', ({ execId }) => {
-            setTerminalId(execId);
-            setIsTerminalCreated(true);
-            // console.log("fsexec: ", execId);
-        });
-        skt.emit('createFileTreeTerminal', { containerId });
-
-        return () => {
-            skt.removeListener('createFileTreeTerminal -o1');
-        };
-    }, [terminalId, containerId, skt]);
-
-    useEffect(() => {
-        if (!isTerminalCreated) return;
-
-        skt.emit('connectFileTreeTerminal', { execId: terminalId });
-
-        setTimeout(() => {
-            callForTree();
-        }, 300);
-
         skt.on('connectFileTreeTerminal -o1', ({ data }) => {
             data.replace(/\n/g, '\r\n');
             // console.log({ tree: data });
@@ -52,10 +27,14 @@ export const FileTree = ({ containerId }) => {
             });
         });
 
+        setTimeout(() => {
+            callForTree();
+        }, 300);
+
         return () => {
             skt.removeListener('connectFileTreeTerminal -o1');
         };
-    }, [callForTree, isTerminalCreated, skt, terminalId]);
+    }, [callForTree, skt]);
 
     if (!obj || !output.dirOutput || !output.fileOutput) return null;
 
