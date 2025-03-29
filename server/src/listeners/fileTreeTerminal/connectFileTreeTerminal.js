@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { terminalId_to_stream } from "../createContainer.js";
+import { getStream } from "../../utils/getStream.js";
 
 /**
  * Description
@@ -12,23 +12,24 @@ import { terminalId_to_stream } from "../createContainer.js";
  * @exports
  */
 export const connectFileTreeTerminal = (skt) => {
-    skt.on("connectFileTreeTerminal", async ({ fileTreeTerminalId }) => {
-        try {
-            console.log({ fileTreeTerminalId });
+    skt.on(
+        "connectFileTreeTerminal",
+        async ({ fileTreeTerminalId, containerId }) => {
+            try {
+                console.log({ fileTreeTerminalId });
 
-            const stream = terminalId_to_stream[fileTreeTerminalId];
-            if (!stream) throw new Error("Stream map was vanished");
+                const stream = await getStream(containerId, fileTreeTerminalId);
 
-
-            skt.on("connectFileTreeTerminal -i1", ({ input }) => {
-                stream.write(input + "\n");
-            });
-            stream.on("data", (chunk) => {
-                const data = chunk.toString();
-                skt.emit("connectFileTreeTerminal -o1", { data }); // Send output immediately
-            });
-        } catch ({ message }) {
-            console.error({ message });
+                skt.on("connectFileTreeTerminal -i1", ({ input }) => {
+                    stream.write(input + "\n");
+                });
+                stream.on("data", (chunk) => {
+                    const data = chunk.toString();
+                    skt.emit("connectFileTreeTerminal -o1", { data }); // Send output immediately
+                });
+            } catch ({ message }) {
+                console.error({ message });
+            }
         }
-    });
+    );
 };

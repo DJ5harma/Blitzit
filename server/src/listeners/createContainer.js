@@ -1,6 +1,8 @@
 import { Socket } from "socket.io";
 import { docker } from "../main.js";
 import { ROOM } from "../database/ROOM.js";
+import { execConfig } from "../utils/execConfig.js";
+import { streamConfig } from "../utils/streamConfig.js";
 
 const images = ["python-template"];
 
@@ -41,18 +43,15 @@ export const createContainer = (skt) => {
             const fileTreeTerminalExec = await container.exec(execConfig);
             const editorTerminalExec = await container.exec(execConfig);
 
-            const mainTerminalStream = await mainTerminalExec.start({
-                hijack: true,
-                stdin: true,
-            });
-            const fileTreeTerminalStream = await fileTreeTerminalExec.start({
-                hijack: true,
-                stdin: true,
-            });
-            const editorTerminalStream = await editorTerminalExec.start({
-                hijack: true,
-                stdin: true,
-            });
+            const mainTerminalStream = await mainTerminalExec.start(
+                streamConfig
+            );
+            const fileTreeTerminalStream = await fileTreeTerminalExec.start(
+                streamConfig
+            );
+            const editorTerminalStream = await editorTerminalExec.start(
+                streamConfig
+            );
 
             const fileTreeTerminalId = fileTreeTerminalExec.id,
                 editorTerminalId = editorTerminalExec.id,
@@ -63,7 +62,6 @@ export const createContainer = (skt) => {
             terminalId_to_stream[editorTerminalId] = editorTerminalStream;
 
             console.log(terminalId_to_stream);
-            
 
             const newRoom = await ROOM.create({
                 containerId,
@@ -71,7 +69,6 @@ export const createContainer = (skt) => {
                 editorTerminalId,
                 mainTerminalId,
             });
-            
 
             skt.emit("createContainer -o1", {
                 roomId: newRoom._id,
@@ -86,12 +83,4 @@ export const createContainer = (skt) => {
             console.error({ message });
         }
     });
-};
-
-const execConfig = {
-    AttachStdout: true,
-    AttachStderr: true,
-    AttachStdin: true,
-    // Tty: true,
-    Cmd: ["/bin/sh"],
 };

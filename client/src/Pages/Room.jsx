@@ -28,16 +28,31 @@ export const Room = () => {
 
         skt.on(
             'getRoomDetails -o1',
-            ({ mainTerminalId, fileTreeTerminalId, editorTerminalId }) => {
+            ({
+                mainTerminalId,
+                fileTreeTerminalId,
+                editorTerminalId,
+                containerId,
+            }) => {
                 console.log({
                     mainTerminalId,
                     fileTreeTerminalId,
                     editorTerminalId,
+                    containerId,
                 });
 
-                skt.emit('connectEditorTerminal', { editorTerminalId });
-                skt.emit('connectMainTerminal', { mainTerminalId });
-                skt.emit('connectFileTreeTerminal', { fileTreeTerminalId });
+                skt.emit('connectEditorTerminal', {
+                    editorTerminalId,
+                    containerId,
+                });
+                skt.emit('connectMainTerminal', {
+                    mainTerminalId,
+                    containerId,
+                });
+                skt.emit('connectFileTreeTerminal', {
+                    fileTreeTerminalId,
+                    containerId,
+                });
                 setTerminalsConnected(true);
             }
         );

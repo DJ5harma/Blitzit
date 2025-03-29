@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { terminalId_to_stream } from "../createContainer.js";
+import { getStream } from "../../utils/getStream.js";
 /**
  * Description
  *
@@ -11,23 +11,25 @@ import { terminalId_to_stream } from "../createContainer.js";
  * @exports
  */
 export const connectEditorTerminal = (skt) => {
-    skt.on("connectEditorTerminal", async ({ editorTerminalId }) => {
-        try {
-            console.log({ editorTerminalId });
-            const stream = terminalId_to_stream[editorTerminalId];
+    skt.on(
+        "connectEditorTerminal",
+        async ({ editorTerminalId, containerId }) => {
+            try {
+                console.log({ editorTerminalId });
 
-            if (!stream) throw new Error("Stream map was vanished");
+                const stream = await getStream(containerId, editorTerminalId);
 
-            skt.on("connectEditorTerminal -i1", ({ input }) => {
-                console.log({ input });
-                stream.write(input + "\n");
-            });
-            stream.on("data", (chunk) => {
-                const data = chunk.toString();
-                skt.emit("connectEditorTerminal -o1", { data }); // Send output immediately
-            });
-        } catch ({ message }) {
-            console.error({ message });
+                skt.on("connectEditorTerminal -i1", ({ input }) => {
+                    console.log({ input });
+                    stream.write(input + "\n");
+                });
+                stream.on("data", (chunk) => {
+                    const data = chunk.toString();
+                    skt.emit("connectEditorTerminal -o1", { data }); // Send output immediately
+                });
+            } catch ({ message }) {
+                console.error({ message });
+            }
         }
-    });
+    );
 };

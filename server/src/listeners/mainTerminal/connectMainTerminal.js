@@ -1,6 +1,5 @@
 import { Socket } from "socket.io";
-import { terminalId_to_stream } from "../createContainer.js";
-
+import { getStream } from "../../utils/getStream.js";
 /**
  * Description
  *
@@ -12,11 +11,11 @@ import { terminalId_to_stream } from "../createContainer.js";
  * @exports
  */
 export const connectMainTerminal = (skt) => {
-    skt.on("connectMainTerminal", async ({ mainTerminalId }) => {
+    skt.on("connectMainTerminal", async ({ mainTerminalId, containerId }) => {
         try {
             console.log({ mainTerminalId });
-            const stream = terminalId_to_stream[mainTerminalId];
-            if (!stream) throw new Error("Stream map was vanished");
+
+            const stream = await getStream(containerId, mainTerminalId);
 
             skt.on("connectMainTerminal -i1", ({ input }) => {
                 console.log({ input });

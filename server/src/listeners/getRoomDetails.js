@@ -17,15 +17,20 @@ export const getRoomDetails = (skt) => {
         try {
             console.log({ roomId });
             const room = await ROOM.findById(roomId);
-            const { mainTerminalId, fileTreeTerminalId, editorTerminalId } =
-                room;
+            const {
+                mainTerminalId,
+                fileTreeTerminalId,
+                editorTerminalId,
+                containerId,
+            } = room;
 
             console.log({ room });
-            
+
             skt.emit("getRoomDetails -o1", {
                 mainTerminalId,
                 fileTreeTerminalId,
                 editorTerminalId,
+                containerId,
             });
         } catch ({ message }) {
             console.error({ message });

@@ -18,7 +18,7 @@ export const Terminal = () => {
         });
         let commandBuffer = '';
         xterm.onData((input) => {
-            console.log({input})
+            console.log({ input });
             if (input === '\r') {
                 // Enter key pressed
                 xterm.writeln(`\r`); // Move to new line after command execution
@@ -48,7 +48,9 @@ export const Terminal = () => {
             // xterm.writeln("");
             callForTree();
         });
-        skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
+        setTimeout(() => {
+            skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
+        }, 400);
 
         return () => {
             skt.removeListener('connectMainTerminal -o1');
