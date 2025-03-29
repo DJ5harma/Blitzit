@@ -19,7 +19,7 @@ export const SocketProvider = ({ children }) => {
             skt.removeAllListeners();
             skt.disconnect();
         };
-    }, []);
+    }, [skt]);
 
     if (!isConnected) return <>Socket connecting</>;
 

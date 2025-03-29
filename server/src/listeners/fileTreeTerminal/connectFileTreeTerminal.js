@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { getStream } from "../../utils/getStream.js";
+import { redis, subscriber } from "../../redis/redis.js";
 
 /**
  * Description
@@ -12,24 +12,22 @@ import { getStream } from "../../utils/getStream.js";
  * @exports
  */
 export const connectFileTreeTerminal = (skt) => {
-    skt.on(
-        "connectFileTreeTerminal",
-        async ({ fileTreeTerminalId, containerId }) => {
-            try {
-                console.log({ fileTreeTerminalId });
+    skt.on("connectFileTreeTerminal", async ({ fileTreeTerminalId }) => {
+        try {
+            console.log({ fileTreeTerminalId });
 
-                const stream = await getStream(containerId, fileTreeTerminalId);
+            skt.on("connectFileTreeTerminal -i1", async ({ input }) => {
+                await redis.publish(fileTreeTerminalId + ":input", input);
+            });
 
-                skt.on("connectFileTreeTerminal -i1", ({ input }) => {
-                    stream.write(input + "\n");
-                });
-                stream.on("data", (chunk) => {
-                    const data = chunk.toString();
-                    skt.emit("connectFileTreeTerminal -o1", { data }); // Send output immediately
-                });
-            } catch ({ message }) {
-                console.error({ message });
-            }
+            await subscriber.subscribe(
+                fileTreeTerminalId + ":output",
+                (data) => {
+                    skt.emit("connectFileTreeTerminal -o1", { data });
+                }
+            );
+        } catch ({ message }) {
+            console.error({ message });
         }
-    );
+    });
 };

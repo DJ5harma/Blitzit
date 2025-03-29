@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { getStream } from "../../utils/getStream.js";
+import { redis, subscriber } from "../../redis/redis.js";
 /**
  * Description
  *
@@ -11,19 +11,15 @@ import { getStream } from "../../utils/getStream.js";
  * @exports
  */
 export const connectMainTerminal = (skt) => {
-    skt.on("connectMainTerminal", async ({ mainTerminalId, containerId }) => {
+    skt.on("connectMainTerminal", async ({ mainTerminalId }) => {
         try {
             console.log({ mainTerminalId });
 
-            const stream = await getStream(containerId, mainTerminalId);
-
-            skt.on("connectMainTerminal -i1", ({ input }) => {
-                console.log({ input });
-
-                stream.write(input + "\n");
+            skt.on("connectMainTerminal -i1", async ({ input }) => {
+                await redis.publish(mainTerminalId + ":input", input);
             });
-            stream.on("data", (chunk) => {
-                const data = chunk.toString();
+
+            await subscriber.subscribe(mainTerminalId + ":output", (data) => {
                 skt.emit("connectMainTerminal -o1", { data });
             });
         } catch ({ message }) {

@@ -8,6 +8,7 @@ import { connectEditorTerminal } from "./listeners/editorTerminal/connectEditorT
 
 import { dbConnect } from "./database/dbConnect.js";
 import { getRoomDetails } from "./listeners/getRoomDetails.js";
+import { redisConnect } from "./redis/redis.js";
 
 const docker = new Docker();
 const io = new Server({ cors: { origin: "*" } });
@@ -37,9 +38,12 @@ io.on("connection", async (socket) => {
         console.log("disconnected", --cnt);
     });
 });
-export { docker };
 
 dbConnect("mongodb://localhost:27017/Blitzit").then(() => {
-    io.listen(4000);
-    console.log("Socket at 4000");
+    redisConnect().then(() => {
+        io.listen(4000);
+        console.log("Socket at 4000");
+    });
 });
+
+export { docker };

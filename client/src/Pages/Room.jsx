@@ -43,15 +43,12 @@ export const Room = () => {
 
                 skt.emit('connectEditorTerminal', {
                     editorTerminalId,
-                    containerId,
                 });
                 skt.emit('connectMainTerminal', {
                     mainTerminalId,
-                    containerId,
                 });
                 skt.emit('connectFileTreeTerminal', {
                     fileTreeTerminalId,
-                    containerId,
                 });
                 setTerminalsConnected(true);
             }

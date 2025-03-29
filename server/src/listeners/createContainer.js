@@ -3,6 +3,8 @@ import { docker } from "../main.js";
 import { ROOM } from "../database/ROOM.js";
 import { execConfig } from "../utils/execConfig.js";
 import { streamConfig } from "../utils/streamConfig.js";
+import { setupEditorTerminalRedis } from "../utils/setupEditorTerminalRedis.js";
+import { setupTerminalRedis } from "../utils/setupTerminalRedis.js";
 
 const images = ["python-template"];
 
@@ -57,11 +59,15 @@ export const createContainer = (skt) => {
                 editorTerminalId = editorTerminalExec.id,
                 mainTerminalId = mainTerminalExec.id;
 
-            terminalId_to_stream[mainTerminalId] = mainTerminalStream;
-            terminalId_to_stream[fileTreeTerminalId] = fileTreeTerminalStream;
-            terminalId_to_stream[editorTerminalId] = editorTerminalStream;
-
-            console.log(terminalId_to_stream);
+            await setupTerminalRedis(mainTerminalStream, mainTerminalId);
+            await setupTerminalRedis(
+                fileTreeTerminalStream,
+                fileTreeTerminalId
+            );
+            await setupEditorTerminalRedis(
+                editorTerminalStream,
+                editorTerminalId
+            );
 
             const newRoom = await ROOM.create({
                 containerId,
@@ -73,12 +79,6 @@ export const createContainer = (skt) => {
             skt.emit("createContainer -o1", {
                 roomId: newRoom._id,
             });
-
-            // skt.on("disconnect", async () => {
-            //     await container.stop();
-            //     await container.remove();
-            //     console.log("Container destroyed on cliet disconnection");
-            // });
         } catch ({ message }) {
             console.error({ message });
         }

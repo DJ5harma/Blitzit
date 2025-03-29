@@ -13,6 +13,7 @@
   "dependencies": {
     "dockerode": "^4.0.4",
     "mongoose": "^8.13.1",
+    "redis": "^4.7.0",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
