@@ -16,7 +16,7 @@ import { useRoom } from '../Providers/RoomProvider';
 
 export const FileTreeNode = ({ name, value, marginLeft, path }) => {
     const { skt } = useSocket();
-    const { openFiles, addFile, deleteFile } = useOpenFiles();
+    const { openFiles, openFile, closeFile } = useOpenFiles();
 
     const [isDeleted, setIsDeleted] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -37,7 +37,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
 
     const handleFileClick = () => {
         if (!openFiles[path]) {
-            addFile({
+            openFile({
                 path,
                 name,
                 language: getLanguageFromFileName(name),
@@ -47,9 +47,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
     };
 
     function createEntity(isFile) {
-        const entityName = prompt(
-            `Enter ${isFile ? 'file' : 'folder'} name:`
-        );
+        const entityName = prompt(`Enter ${isFile ? 'file' : 'folder'} name:`);
         if (!entityName) return;
 
         const fullPath = path + '/' + entityName;
@@ -129,7 +127,10 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
                             ''
                         )}
                         <button
-                            onClick={() => deleteEntity()}
+                            onClick={() => {
+                                closeFile(path);
+                                deleteEntity();
+                            }}
                             style={{ padding: '2px 5px' }}
                         >
                             <MdDelete />

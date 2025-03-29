@@ -7,7 +7,7 @@ export const OpenFilesProvider = ({ children }) => {
     const [openFiles, setOpenFiles] = useState({});
     const { skt } = useSocket();
 
-    const addFile = (file) => {
+    const openFile = (file) => {
         console.log({ file });
 
         setOpenFiles((prev) => ({
@@ -17,6 +17,14 @@ export const OpenFilesProvider = ({ children }) => {
         skt.emit('connectEditorTerminal -i1', {
             input: 'cat ' + file.path,
             filePath: file.path,
+        });
+    };
+    
+    const closeFile = (path) => {
+        setOpenFiles((prev) => {
+            const updated = { ...prev };
+            delete updated[path];
+            return updated;
         });
     };
 
@@ -34,16 +42,9 @@ export const OpenFilesProvider = ({ children }) => {
         });
     }, [skt]);
 
-    const deleteFile = (path) => {
-        setOpenFiles((prev) => {
-            const updated = { ...prev };
-            delete updated[path];
-            return updated;
-        });
-    };
 
     return (
-        <context.Provider value={{ openFiles, addFile, deleteFile }}>
+        <context.Provider value={{ openFiles, openFile, closeFile }}>
             {children}
         </context.Provider>
     );
