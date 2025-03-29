@@ -58,6 +58,7 @@ export const FileTree = () => {
                 value={dataRef.current['app']}
                 marginLeft={0}
                 path={'/app'}
+                deletable={false}
             />
         </div>
     );

@@ -14,7 +14,7 @@ import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { getLanguageFromFileName } from '../Utils/getLanguageFromFileName';
 import { useRoom } from '../Providers/RoomProvider';
 
-export const FileTreeNode = ({ name, value, marginLeft, path }) => {
+export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const { skt } = useSocket();
     const { openFiles, openFile, closeFile } = useOpenFiles();
 
@@ -126,15 +126,17 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
                         ) : (
                             ''
                         )}
-                        <button
-                            onClick={() => {
-                                closeFile(path);
-                                deleteEntity();
-                            }}
-                            style={{ padding: '2px 5px' }}
-                        >
-                            <MdDelete />
-                        </button>
+                        {deletable && (
+                            <button
+                                onClick={() => {
+                                    closeFile(path);
+                                    deleteEntity();
+                                }}
+                                style={{ padding: '2px 5px' }}
+                            >
+                                <MdDelete />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -148,6 +150,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
                             marginLeft={marginLeft + 15}
                             name={key}
                             value={value[key]}
+                            deletable={true}
                         />
                     );
                 })}
