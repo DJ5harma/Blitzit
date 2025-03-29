@@ -13,7 +13,7 @@ import { redis, subscriber } from "../../redis/redis.js";
 export const connectMainTerminal = (skt) => {
     skt.on("connectMainTerminal", async ({ mainTerminalId }) => {
         try {
-            console.log({ mainTerminalId });
+            // console.log({ mainTerminalId });
 
             skt.on("connectMainTerminal -i1", async ({ input }) => {
                 await redis.publish(mainTerminalId + ":input", input);

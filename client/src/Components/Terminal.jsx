@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useSocket } from '../Providers/SocketProvider';
 import { Terminal as XTerm } from 'xterm';
 import 'xterm/css/xterm.css';
-import { useRoom } from '../Pages/Room';
+import { useRoom } from '../Providers/RoomProvider';
 
 export const Terminal = () => {
     const terminalRef = useRef(null);

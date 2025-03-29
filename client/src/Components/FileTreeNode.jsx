@@ -9,10 +9,10 @@ import {
 } from 'react-icons/fa';
 import { FaFileAlt } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
-import { useRoom } from '../Pages/Room';
 import { useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { getLanguageFromFileName } from '../Utils/getLanguageFromFileName';
+import { useRoom } from '../Providers/RoomProvider';
 
 export const FileTreeNode = ({ name, value, marginLeft, path }) => {
     const { skt } = useSocket();
@@ -41,21 +41,21 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
                 path,
                 name,
                 language: getLanguageFromFileName(name),
-                value: 'Loading file content....',
+                value: '',
             });
         }
     };
 
-    function addEntity(isFileAdd) {
+    function createEntity(isFile) {
         const entityName = prompt(
-            `Enter ${isFileAdd ? 'file' : 'folder'} name:`
+            `Enter ${isFile ? 'file' : 'folder'} name:`
         );
         if (!entityName) return;
 
         const fullPath = path + '/' + entityName;
 
         let command;
-        if (isFileAdd) {
+        if (isFile) {
             command = 'touch ' + fullPath;
         } else {
             command = 'mkdir ' + fullPath;
@@ -102,7 +102,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
                     <div>
                         {isFolder ? (
                             <button
-                                onClick={() => addEntity(true)}
+                                onClick={() => createEntity(true)}
                                 style={{
                                     padding: '2px 5px',
                                     backgroundColor: 'transparent',
@@ -116,7 +116,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path }) => {
                         )}
                         {isFolder ? (
                             <button
-                                onClick={() => addEntity(false)}
+                                onClick={() => createEntity(false)}
                                 style={{
                                     padding: '2px 5px',
                                     backgroundColor: 'transparent',

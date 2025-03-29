@@ -14,7 +14,7 @@ import { redis, subscriber } from "../../redis/redis.js";
 export const connectFileTreeTerminal = (skt) => {
     skt.on("connectFileTreeTerminal", async ({ fileTreeTerminalId }) => {
         try {
-            console.log({ fileTreeTerminalId });
+            // console.log({ fileTreeTerminalId });
 
             skt.on("connectFileTreeTerminal -i1", async ({ input }) => {
                 await redis.publish(fileTreeTerminalId + ":input", input);

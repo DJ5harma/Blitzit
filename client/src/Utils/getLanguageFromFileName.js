@@ -9,6 +9,16 @@ export const getLanguageFromFileName = (fileName) => {
             return 'html';
         case 'css':
             return 'css';
+        case 'c++':
+            return 'c++';
+        case 'cpp':
+            return 'c++';
+        case 'java':
+            return 'java';
+        case 'rs':
+            return 'rust';
+        case 'go':
+            return 'go';
         default:
             return 'plaintext';
     }

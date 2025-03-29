@@ -13,7 +13,7 @@ import { redis, subscriber } from "../../redis/redis.js";
 export const connectEditorTerminal = (skt) => {
     skt.on("connectEditorTerminal", async ({ editorTerminalId }) => {
         try {
-            console.log({ editorTerminalId });
+            // console.log({ editorTerminalId });
 
             skt.on(
                 "connectEditorTerminal -i1", // read file

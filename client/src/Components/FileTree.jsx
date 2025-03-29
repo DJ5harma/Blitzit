@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSocket } from '../Providers/SocketProvider';
 import { FileTreeNode } from './FileTreeNode';
-import { useRoom } from '../Pages/Room';
 import { getFileTree } from '../Utils/getFileTree';
+import { useRoom } from '../Providers/RoomProvider';
 
 export const FileTree = () => {
     const { skt } = useSocket();
@@ -10,7 +10,7 @@ export const FileTree = () => {
 
     const [output, setOutput] = useState({ fileOutput: null, dirOutput: null });
 
-    const [obj, setObj] = useState(null);
+    const dataRef = useRef(null);
 
     useEffect(() => {
         skt.on('connectFileTreeTerminal -o1', ({ data }) => {
@@ -20,7 +20,10 @@ export const FileTree = () => {
                 if (!p.dirOutput) return { ...p, dirOutput: data };
                 if (!p.fileOutput) {
                     const res = { ...p, fileOutput: data };
-                    setObj(() => getFileTree(res.dirOutput, res.fileOutput));
+                    dataRef.current = getFileTree(
+                        res.dirOutput,
+                        res.fileOutput
+                    );
                     return res;
                 }
                 return { dirOutput: data, fileOutput: null };
@@ -36,7 +39,8 @@ export const FileTree = () => {
         };
     }, [callForTree, skt]);
 
-    if (!obj || !output.dirOutput || !output.fileOutput) return null;
+    if (!dataRef.current || !output.dirOutput || !output.fileOutput)
+        return null;
 
     // console.log(obj);
 
@@ -51,7 +55,7 @@ export const FileTree = () => {
         >
             <FileTreeNode
                 name={'app'}
-                value={obj['app']}
+                value={dataRef.current['app']}
                 marginLeft={0}
                 path={'/app'}
             />
