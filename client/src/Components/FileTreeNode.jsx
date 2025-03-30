@@ -106,39 +106,35 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                         )}
                     </span>
                     <div>
-                        {isFolder ? (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    createEntity(true);
-                                }}
-                                style={{
-                                    padding: '2px 5px',
-                                    backgroundColor: 'transparent',
-                                    marginTop: '2px',
-                                }}
-                            >
-                                <FaFileUpload />
-                            </button>
-                        ) : (
-                            ''
-                        )}
-                        {isFolder ? (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    createEntity(false);
-                                }}
-                                style={{
-                                    padding: '2px 5px',
-                                    backgroundColor: 'transparent',
-                                    marginTop: '2px',
-                                }}
-                            >
-                                <FaFolderPlus />
-                            </button>
-                        ) : (
-                            ''
+                        {isFolder && (
+                            <>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        createEntity(true);
+                                    }}
+                                    style={{
+                                        padding: '2px 5px',
+                                        backgroundColor: 'transparent',
+                                        marginTop: '2px',
+                                    }}
+                                >
+                                    <FaFileUpload />
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        createEntity(false);
+                                    }}
+                                    style={{
+                                        padding: '2px 5px',
+                                        backgroundColor: 'transparent',
+                                        marginTop: '2px',
+                                    }}
+                                >
+                                    <FaFolderPlus />
+                                </button>
+                            </>
                         )}
                         {deletable && (
                             <button

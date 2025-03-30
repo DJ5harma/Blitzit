@@ -17,20 +17,25 @@ export const Room = () => {
                     }}
                 >
                     <div style={{ height: '70vh', display: 'flex' }}>
-                        <div style={{ height: '100%', width: '30vw' }}>
+                        <div style={{ height: '100%', width: '20vw' }}>
                             <FileTree />
                         </div>
                         <div
                             style={{
                                 height: '100%',
-                                width: '70vw',
+                                width: '80vw',
                                 border: 'solid green',
                             }}
                         >
                             <Editor />
                         </div>
                     </div>
-                    <div style={{ height: '30vh' }}>
+                    <div
+                        style={{
+                            height: '30vh',
+                            width: "100vw",
+                        }}
+                    >
                         <Terminal />
                     </div>
                 </div>

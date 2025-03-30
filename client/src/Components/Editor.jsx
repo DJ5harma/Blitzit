@@ -11,7 +11,6 @@ export const Editor = () => {
     const [fileName, setFileName] = useState('');
 
     const file = fileName ? openFiles[fileName] : null;
-    
 
     useEffect(() => {
         console.log({ file });
@@ -67,8 +66,8 @@ export const Editor = () => {
                                 padding: 2,
                                 display: 'flex',
                                 alignItems: 'center',
-                                cursor: "pointer",
-                                borderRadius: 5
+                                cursor: 'pointer',
+                                borderRadius: 5,
                             }}
                         />
                     </div>
@@ -87,6 +86,7 @@ export const Editor = () => {
                             dragAndDrop: true,
                             minimap: true,
                             wordWrap: true,
+                            fontSize: 20,
                         }}
                         style={{ height: '100%', width: '100%' }}
                     />

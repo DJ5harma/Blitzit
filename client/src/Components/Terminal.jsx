@@ -4,6 +4,11 @@ import { Terminal as XTerm } from 'xterm';
 import 'xterm/css/xterm.css';
 import { useRoom } from '../Providers/RoomProvider';
 
+const xterm = new XTerm({
+    cursorBlink: true,
+    theme: { background: 'black', foreground: 'white' },
+});
+
 export const Terminal = () => {
     const terminalRef = useRef(null);
     const xtermRef = useRef(null);
@@ -12,40 +17,38 @@ export const Terminal = () => {
     const { callForTree } = useRoom();
 
     useEffect(() => {
-        const xterm = new XTerm({
-            cursorBlink: true,
-            theme: { background: 'black', foreground: 'white' },
-        });
         let commandBuffer = '';
         xterm.onData((input) => {
-            // console.log({ input });
-            if (input === '\r') {
-                // Enter key pressed
-                xterm.writeln(`\r`); // Move to new line after command execution
-                skt.emit('connectMainTerminal -i1', {
-                    input: commandBuffer,
-                });
-                setTimeout(() => {
-                    skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
-                }, 400);
-                commandBuffer = '';
-            } else if (input === '\u007f') {
-                // Handle backspace
-                if (commandBuffer.length > 0) {
-                    commandBuffer = commandBuffer.slice(0, -1);
-                    xterm.write('\b \b'); // Remove last character visually
-                }
-            } else {
-                commandBuffer += input;
-                xterm.write(input); // Display input in terminal
+            switch (input) {
+                case '\r':
+                    xterm.writeln(`\r`); // Move to new line after command execution
+                    skt.emit('connectMainTerminal -i1', {
+                        input: commandBuffer,
+                    });
+                    setTimeout(() => {
+                        skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
+                    }, 400);
+                    commandBuffer = '';
+                    break;
+                case '\u007f':
+                    if (commandBuffer.length > 0) {
+                        commandBuffer = commandBuffer.slice(0, -1);
+                        xterm.write('\b \b'); // Remove last character visually
+                    }
+                    break;
+
+                default:
+                    commandBuffer += input;
+                    xterm.write(input); // Display input in terminal
+                    break;
             }
         });
         xterm.open(terminalRef.current);
         xtermRef.current = xterm;
 
         skt.on('connectMainTerminal -o1', ({ data }) => {
-            xterm.writeln("");
             xterm.write(data.replace(/\n/g, '\r\n'));
+            xterm.write('\n');
             callForTree();
         });
         setTimeout(() => {
@@ -57,8 +60,6 @@ export const Terminal = () => {
             xterm.dispose();
         };
     }, []);
-
-    // if (!terminalId) return 'Loading terminal...';
 
     return (
         <div
