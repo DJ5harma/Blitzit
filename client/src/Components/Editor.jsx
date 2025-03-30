@@ -1,20 +1,27 @@
 import MonacoEditor from '@monaco-editor/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { IoClose } from 'react-icons/io5';
-import { useEffect } from 'react';
+import { useSocket } from '../Providers/SocketProvider';
+import { IoMdSave } from 'react-icons/io';
 
 export const Editor = () => {
+    const { skt } = useSocket();
     const { openFiles, closeFile } = useOpenFiles();
     const fileKeys = Object.keys(openFiles);
-
     const [fileName, setFileName] = useState('');
 
     const file = fileName ? openFiles[fileName] : null;
 
-    useEffect(() => {
-        console.log({ file });
-    }, [file]);
+    const editorContentRef = useRef(file ? file.value : null);
+
+    const saveFile = () => {
+        if (!file || !editorContentRef.current) return;
+        skt.emit('connectEditorTerminal -i2', {
+            input: `echo "${editorContentRef.current}" > ` + file.path,
+        });
+        alert('File saved!');
+    };
 
     return (
         <div
@@ -76,20 +83,39 @@ export const Editor = () => {
 
             <div style={{ flex: 1 }}>
                 {file ? (
-                    <MonacoEditor
-                        theme="vs-dark"
-                        path={file.name}
-                        defaultLanguage={file.language}
-                        value={file.value}
-                        options={{
-                            'semanticHighlighting.enabled': true,
-                            dragAndDrop: true,
-                            minimap: true,
-                            wordWrap: true,
-                            fontSize: 20,
-                        }}
-                        style={{ height: '100%', width: '100%' }}
-                    />
+                    <>
+                        <MonacoEditor
+                            theme="vs-dark"
+                            path={file.name}
+                            defaultLanguage={file.language}
+                            value={file.value}
+                            options={{
+                                'semanticHighlighting.enabled': true,
+                                dragAndDrop: true,
+                                minimap: true,
+                                wordWrap: true,
+                                fontSize: 20,
+                            }}
+                            style={{ height: '100%', width: '100%' }}
+                            onChange={(content) => {
+                                editorContentRef.current = content;
+                                console.log({ change: content });
+                            }}
+                        />
+                        <button
+                            onClick={saveFile}
+                            title={'save ' + file.name}
+                            style={{
+                                position: 'fixed',
+                                top: '20vh',
+                                right: 10,
+                                zIndex: 20,
+                                border: 'solid 2px',
+                            }}
+                        >
+                            <IoMdSave size={25} />
+                        </button>
+                    </>
                 ) : (
                     <div
                         style={{
