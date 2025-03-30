@@ -5,6 +5,9 @@ export async function setupEditorTerminalRedis(stream, terminalId) {
         const filePath = await redis.LPOP(terminalId);
         const data = chunk.toString();
         const dataAndFilePathObj = JSON.stringify({ data, filePath });
+
+        console.log({ dataAndFilePathObj });
+
         await redis.publish(
             terminalId + ":output:readFile",
             dataAndFilePathObj
@@ -13,8 +16,10 @@ export async function setupEditorTerminalRedis(stream, terminalId) {
     await subscriber.subscribe(
         terminalId + ":input:readFile",
         (inputAndFilePathObj) => {
+            console.log({ inputAndFilePathObj });
+
             const { input, filePath } = JSON.parse(inputAndFilePathObj);
-            redis.RPUSH(terminalId, filePath);
+            redis.LPUSH(terminalId, filePath);
             stream.write(input + "\n");
         }
     );

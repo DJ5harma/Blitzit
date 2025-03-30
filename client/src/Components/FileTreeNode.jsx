@@ -54,7 +54,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
 
         let command;
         if (isFile) {
-            command = 'touch ' + fullPath;
+            command = `echo "Empty file" > ` + fullPath;
         } else {
             command = 'mkdir ' + fullPath;
         }

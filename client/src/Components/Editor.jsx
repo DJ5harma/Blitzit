@@ -11,6 +11,7 @@ export const Editor = () => {
     const [fileName, setFileName] = useState('');
 
     const file = fileName ? openFiles[fileName] : null;
+    
 
     useEffect(() => {
         console.log({ file });
