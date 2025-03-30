@@ -1,14 +1,11 @@
 import { useSocket } from '../Providers/SocketProvider';
 import {
-    FaFileContract,
     FaFileUpload,
     FaFolder,
     FaFolderPlus,
-    FaICursor,
-    FaPlus,
+    FaFileAlt,
 } from 'react-icons/fa';
-import { FaFileAlt } from 'react-icons/fa';
-import { MdDelete } from 'react-icons/md';
+import { MdDelete, MdKeyboardArrowRight } from 'react-icons/md';
 import { useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { getLanguageFromFileName } from '../Utils/getLanguageFromFileName';
@@ -19,7 +16,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const { openFiles, openFile, closeFile } = useOpenFiles();
 
     const [isDeleted, setIsDeleted] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true);
 
     const { callForTree } = useRoom();
 
@@ -67,10 +64,9 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
             <div
                 style={{
                     paddingLeft: marginLeft,
-                    cursor: isHovered ? 'pointer' : 'default',
+                    cursor: 'pointer',
+                    userSelect: 'none',
                 }}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
                 onClick={() => {
                     if (!isFolder) {
                         handleFileClick();
@@ -85,6 +81,10 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                         paddingRight: 10,
                         borderBottom: 'solid 0.5px',
                     }}
+                    onClick={() => {
+                        if (!isFolder) return;
+                        setIsExpanded((p) => !p);
+                    }}
                 >
                     <span
                         style={{
@@ -96,11 +96,22 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                     >
                         {isFolder ? <FaFolder /> : <FaFileAlt />}
                         {name}
+                        {isFolder && (
+                            <MdKeyboardArrowRight
+                                size={20}
+                                style={{
+                                    rotate: isExpanded ? '90deg' : '0deg',
+                                }}
+                            />
+                        )}
                     </span>
                     <div>
                         {isFolder ? (
                             <button
-                                onClick={() => createEntity(true)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    createEntity(true);
+                                }}
                                 style={{
                                     padding: '2px 5px',
                                     backgroundColor: 'transparent',
@@ -114,7 +125,10 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                         )}
                         {isFolder ? (
                             <button
-                                onClick={() => createEntity(false)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    createEntity(false);
+                                }}
                                 style={{
                                     padding: '2px 5px',
                                     backgroundColor: 'transparent',
@@ -128,7 +142,8 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                         )}
                         {deletable && (
                             <button
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.stopPropagation();
                                     closeFile(path);
                                     deleteEntity();
                                 }}
@@ -141,6 +156,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                 </div>
             </div>
             {!isDeleted &&
+                isExpanded &&
                 value &&
                 Object.keys(value).map((key, i) => {
                     return (

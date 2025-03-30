@@ -44,8 +44,8 @@ export const Terminal = () => {
         xtermRef.current = xterm;
 
         skt.on('connectMainTerminal -o1', ({ data }) => {
+            xterm.writeln("");
             xterm.write(data.replace(/\n/g, '\r\n'));
-            // xterm.writeln("");
             callForTree();
         });
         setTimeout(() => {
