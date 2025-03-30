@@ -18,7 +18,7 @@ export const Terminal = () => {
         });
         let commandBuffer = '';
         xterm.onData((input) => {
-            console.log({ input });
+            // console.log({ input });
             if (input === '\r') {
                 // Enter key pressed
                 xterm.writeln(`\r`); // Move to new line after command execution

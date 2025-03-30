@@ -8,26 +8,20 @@ export const FileTree = () => {
     const { skt } = useSocket();
     const { callForTree } = useRoom();
 
-    const [output, setOutput] = useState({ fileOutput: null, dirOutput: null });
-
-    const dataRef = useRef(null);
+    const outputRef = useRef({ fileOutput: null, dirOutput: null });
+    const [treeData, setTreeData] = useState(null);
 
     useEffect(() => {
         skt.on('connectFileTreeTerminal -o1', ({ data }) => {
             data.replace(/\n/g, '\r\n');
-            // console.log({ tree: data });
-            setOutput((p) => {
-                if (!p.dirOutput) return { ...p, dirOutput: data };
-                if (!p.fileOutput) {
-                    const res = { ...p, fileOutput: data };
-                    dataRef.current = getFileTree(
-                        res.dirOutput,
-                        res.fileOutput
-                    );
-                    return res;
-                }
-                return { dirOutput: data, fileOutput: null };
-            });
+
+            let temp = outputRef.current;
+            if (!temp.dirOutput) temp = { ...temp, dirOutput: data };
+            else if (!temp.fileOutput) {
+                temp = { ...temp, fileOutput: data };
+                setTreeData(getFileTree(temp.dirOutput, temp.fileOutput));
+            } else temp = { dirOutput: data, fileOutput: null };
+            outputRef.current = temp;
         });
 
         setTimeout(() => {
@@ -39,8 +33,7 @@ export const FileTree = () => {
         };
     }, [callForTree, skt]);
 
-    if (!dataRef.current || !output.dirOutput || !output.fileOutput)
-        return null;
+    if (!treeData) return null;
 
     // console.log(obj);
 
@@ -55,7 +48,7 @@ export const FileTree = () => {
         >
             <FileTreeNode
                 name={'app'}
-                value={dataRef.current['app']}
+                value={treeData['app']}
                 marginLeft={0}
                 path={'/app'}
                 deletable={false}
