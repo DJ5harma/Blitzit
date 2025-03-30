@@ -13,12 +13,17 @@ export const Editor = () => {
 
     const file = fileName ? openFiles[fileName] : null;
 
-    const editorContentRef = useRef(file ? file.value : null);
+    const editorContentRef = useRef(file ? file.value : '');
 
     const saveFile = () => {
         if (!file || !editorContentRef.current) return;
+
+        // bash escapes
+        editorContentRef.current.replaceAll(`"`, `\\"`);
+        editorContentRef.current.replaceAll('`', '\\`');
+
         skt.emit('connectEditorTerminal -i2', {
-            input: `echo "${editorContentRef.current}" > ` + file.path,
+            input: `echo '${editorContentRef.current}' > ` + file.path,
         });
         alert('File saved!');
     };
