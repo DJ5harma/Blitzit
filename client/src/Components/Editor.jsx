@@ -1,14 +1,20 @@
 import MonacoEditor from '@monaco-editor/react';
 import { useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
+import { IoClose } from 'react-icons/io5';
+import { useEffect } from 'react';
 
 export const Editor = () => {
-    const { openFiles } = useOpenFiles();
+    const { openFiles, closeFile } = useOpenFiles();
     const fileKeys = Object.keys(openFiles);
 
     const [fileName, setFileName] = useState('');
 
     const file = fileName ? openFiles[fileName] : null;
+
+    useEffect(() => {
+        console.log({ file });
+    }, [file]);
 
     return (
         <div
@@ -25,28 +31,46 @@ export const Editor = () => {
                 style={{
                     display: 'flex',
                     background: '#333',
-                    padding: '10px',
+                    padding: 6,
                     borderBottom: '1px solid #444',
                 }}
             >
                 {fileKeys.map((name) => (
-                    <button
+                    <div
                         key={name}
                         disabled={fileName === name}
                         onClick={() => setFileName(name)}
                         style={{
-                            padding: '8px 16px',
-                            marginRight: '8px',
-                            border: 'none',
-                            background: fileName === name ? '#555' : '#2d2d2d',
+                            padding: '8px 8px 8px 12px',
+                            marginRight: 8,
+                            border: 'solid 1px gray',
+                            background: fileName === name ? 'black' : '#2d2d2d',
                             color: '#fff',
                             cursor: fileName === name ? 'default' : 'pointer',
                             borderRadius: '4px',
                             transition: 'background 0.3s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
                         }}
                     >
                         {name}
-                    </button>
+                        <IoClose
+                            onClick={(e) => {
+                                closeFile(name);
+                                e.stopPropagation();
+                            }}
+                            color="black"
+                            style={{
+                                backgroundColor: 'rgb(220,220,220)',
+                                padding: 2,
+                                display: 'flex',
+                                alignItems: 'center',
+                                cursor: "pointer",
+                                borderRadius: 5
+                            }}
+                        />
+                    </div>
                 ))}
             </div>
 
@@ -56,7 +80,7 @@ export const Editor = () => {
                         theme="vs-dark"
                         path={file.name}
                         defaultLanguage={file.language}
-                        defaultValue={file.value}
+                        value={file.value}
                         options={{
                             'semanticHighlighting.enabled': true,
                             dragAndDrop: true,
