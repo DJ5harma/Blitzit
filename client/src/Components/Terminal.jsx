@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSocket } from '../Providers/SocketProvider';
-import { Terminal as XTerm } from 'xterm';
-import 'xterm/css/xterm.css';
+import { Terminal as XTerm } from '@xterm/xterm';
+import '@xterm/xterm/css/xterm.css';
 import { useRoom } from '../Providers/RoomProvider';
 
 const xterm = new XTerm({
