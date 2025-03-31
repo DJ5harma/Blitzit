@@ -29,41 +29,17 @@ export const Editor = () => {
     };
 
     return (
-        <div
-            style={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                background: '#1e1e1e',
-                color: '#fff',
-                fontFamily: 'sans-serif',
-            }}
-        >
-            <div
-                style={{
-                    display: 'flex',
-                    background: '#333',
-                    padding: 6,
-                    borderBottom: '1px solid #444',
-                }}
-            >
+        <div className="h-full flex flex-col bg-neutral-700 text-white font-sans">
+            <div className="flex bg-neutral-600 p-1.5">
                 {fileKeys.map((name) => (
                     <div
                         key={name}
                         disabled={fileName === name}
                         onClick={() => setFileName(name)}
+                        className="flex items-center gap-2 p-2 border border-gray-500 text-white rounded-lg"
                         style={{
-                            padding: '8px 8px 8px 12px',
-                            marginRight: 8,
-                            border: 'solid 1px gray',
                             background: fileName === name ? 'black' : '#2d2d2d',
-                            color: '#fff',
                             cursor: fileName === name ? 'default' : 'pointer',
-                            borderRadius: '4px',
-                            transition: 'background 0.3s ease',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
                         }}
                     >
                         {name}
@@ -73,14 +49,7 @@ export const Editor = () => {
                                 e.stopPropagation();
                             }}
                             color="black"
-                            style={{
-                                backgroundColor: 'rgb(220,220,220)',
-                                padding: 2,
-                                display: 'flex',
-                                alignItems: 'center',
-                                cursor: 'pointer',
-                                borderRadius: 5,
-                            }}
+                            className="flex items-center cursor-pointer rounded-sm p-0.5 bg-neutral-200"
                         />
                     </div>
                 ))}
@@ -101,7 +70,7 @@ export const Editor = () => {
                                 wordWrap: true,
                                 fontSize: 20,
                             }}
-                            style={{ height: '100%', width: '100%' }}
+                            className="w-full h-full"
                             onChange={(content) => {
                                 editorContentRef.current = content;
                                 console.log({ change: content });
@@ -110,29 +79,14 @@ export const Editor = () => {
                         <button
                             onClick={saveFile}
                             title={'save ' + file.name}
-                            style={{
-                                position: 'fixed',
-                                top: '20vh',
-                                right: 10,
-                                zIndex: 20,
-                                border: 'solid 2px',
-                            }}
+                            className="fixed top-1/5 right-2.5 z-20 border-2"
                         >
                             <IoMdSave size={25} />
                         </button>
                     </>
                 ) : (
-                    <div
-                        style={{
-                            height: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#aaa',
-                            fontSize: '1.2rem',
-                        }}
-                    >
-                        No file selected.
+                    <div className="h-full flex items-center justify-center text-neutral-300 text-xl">
+                        No file selected... choose one from the file tree.
                     </div>
                 )}
             </div>

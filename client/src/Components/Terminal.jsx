@@ -64,12 +64,7 @@ export const Terminal = () => {
     return (
         <div
             ref={terminalRef}
-            style={{
-                width: '100%',
-                height: '100%',
-                textAlign: 'left', // Ensures left alignment
-                overflow: 'auto', // Prevents unexpected shifts
-            }}
+            className="w-full h-full text-left overflow-auto"
         ></div>
     );
 };

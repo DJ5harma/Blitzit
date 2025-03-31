@@ -38,14 +38,7 @@ export const FileTree = () => {
     // console.log(obj);
 
     return (
-        <div
-            style={{
-                border: 'solid red',
-                paddingLeft: 10,
-                overflowY: 'auto',
-                height: '100%',
-            }}
-        >
+        <div className="border border-red-400 pl-2.5 overflow-y-auto h-full">
             <FileTreeNode
                 name={'app'}
                 value={treeData['app']}

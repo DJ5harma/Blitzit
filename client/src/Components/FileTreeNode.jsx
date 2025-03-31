@@ -49,12 +49,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
 
         const fullPath = path + '/' + entityName;
 
-        let command;
-        if (isFile) {
-            command = `echo "Empty file" > ` + fullPath;
-        } else {
-            command = 'mkdir ' + fullPath;
-        }
+        const command = (isFile ? `echo "Empty file" > ` : 'mkdir ') + fullPath;
         skt.emit('connectFileTreeTerminal -i1', { input: command });
         callForTree();
     }
@@ -62,38 +57,22 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     return (
         <>
             <div
+                className="cursor-pointer select-none"
                 style={{
                     paddingLeft: marginLeft,
-                    cursor: 'pointer',
-                    userSelect: 'none',
                 }}
                 onClick={() => {
-                    if (!isFolder) {
-                        handleFileClick();
-                    }
+                    if (!isFolder) handleFileClick();
                 }}
             >
                 <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        paddingRight: 10,
-                        borderBottom: 'solid 0.5px',
-                    }}
+                    className="flex justify-between items-center pr-2.5 border-b"
                     onClick={() => {
                         if (!isFolder) return;
                         setIsExpanded((p) => !p);
                     }}
                 >
-                    <span
-                        style={{
-                            display: 'flex',
-                            gap: 6,
-                            alignItems: 'center',
-                            padding: 5,
-                        }}
-                    >
+                    <span className="flex gap-1.5 items-center p-1.5">
                         {isFolder ? <FaFolder /> : <FaFileAlt />}
                         {name}
                         {isFolder && (
@@ -113,24 +92,16 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                                         e.stopPropagation();
                                         createEntity(true);
                                     }}
-                                    style={{
-                                        padding: '2px 5px',
-                                        backgroundColor: 'transparent',
-                                        marginTop: '2px',
-                                    }}
+                                    className="p-1 bg-transparent m-0.5"
                                 >
-                                    <FaFileUpload />
+                                    <FaFileUpload size={20} />
                                 </button>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         createEntity(false);
                                     }}
-                                    style={{
-                                        padding: '2px 5px',
-                                        backgroundColor: 'transparent',
-                                        marginTop: '2px',
-                                    }}
+                                    className="p-1 bg-transparent m-0.5"
                                 >
                                     <FaFolderPlus />
                                 </button>
@@ -143,7 +114,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                                     closeFile(path);
                                     deleteEntity();
                                 }}
-                                style={{ padding: '2px 5px' }}
+                                className="p-1"
                             >
                                 <MdDelete />
                             </button>
