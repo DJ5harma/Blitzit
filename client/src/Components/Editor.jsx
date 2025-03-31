@@ -25,7 +25,7 @@ export const Editor = () => {
         skt.emit('connectEditorTerminal -i2', {
             input: `echo '${editorContentRef.current}' > ` + file.path,
         });
-        alert('File saved!');
+        alert(`"${file.path}" saved!`);
     };
 
     return (
