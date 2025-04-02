@@ -1,23 +1,26 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useSocket } from './SocketProvider';
 
 const context = createContext();
 
 export const OpenFilesProvider = ({ children }) => {
     const [openFiles, setOpenFiles] = useState({});
-    const addFile = (file) => {
-        console.log({file});
-        
+    const { skt } = useSocket();
+
+    const openFile = (file) => {
+        console.log({ file });
+
         setOpenFiles((prev) => ({
             ...prev,
             [file.path]: file,
         }));
+        skt.emit('connectEditorTerminal -i1', {
+            input: 'cat ' + file.path,
+            filePath: file.path,
+        });
     };
-
-    useEffect(() => {
-        console.log(openFiles);
-    }, [openFiles]);
-
-    const deleteFile = (path) => {
+    
+    const closeFile = (path) => {
         setOpenFiles((prev) => {
             const updated = { ...prev };
             delete updated[path];
@@ -25,8 +28,23 @@ export const OpenFilesProvider = ({ children }) => {
         });
     };
 
+    useEffect(() => {
+        skt.on('connectEditorTerminal -o1', ({ data, filePath }) => {
+            setOpenFiles((p) => {
+                return {
+                    ...p,
+                    [filePath]: {
+                        ...p[filePath],
+                        value: data,
+                    },
+                };
+            });
+        });
+    }, [skt]);
+
+
     return (
-        <context.Provider value={{ openFiles, addFile, deleteFile }}>
+        <context.Provider value={{ openFiles, openFile, closeFile }}>
             {children}
         </context.Provider>
     );

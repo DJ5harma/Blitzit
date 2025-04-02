@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { docker } from "../../main.js";
+import { redis, subscriber } from "../../redis/redis.js";
 
 /**
  * Description
@@ -12,18 +12,20 @@ import { docker } from "../../main.js";
  * @exports
  */
 export const connectFileTreeTerminal = (skt) => {
-    skt.on("connectFileTreeTerminal", async ({ execId }) => {
+    skt.on("connectFileTreeTerminal", async ({ fileTreeTerminalId }) => {
         try {
-            const exec = docker.getExec(execId);
-            const stream = await exec.start({ hijack: true, stdin: true });
+            // console.log({ fileTreeTerminalId });
 
-            skt.on("connectFileTreeTerminal -i1", ({ input }) => {
-                stream.write(input + "\n");
+            skt.on("connectFileTreeTerminal -i1", async ({ input }) => {
+                await redis.publish(fileTreeTerminalId + ":input", input);
             });
-            stream.on("data", (chunk) => {
-                const data = chunk.toString();
-                skt.emit("connectFileTreeTerminal -o1", { data }); // Send output immediately
-            });
+
+            await subscriber.subscribe(
+                fileTreeTerminalId + ":output",
+                (data) => {
+                    skt.emit("connectFileTreeTerminal -o1", { data });
+                }
+            );
         } catch ({ message }) {
             console.error({ message });
         }

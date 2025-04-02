@@ -11,15 +11,15 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         if (isConnected) return;
-        skt.connect();
         skt.on('connect', () => {
             setIsConnected(true);
         });
+        skt.connect();
         return () => {
             skt.removeAllListeners();
             skt.disconnect();
         };
-    }, []);
+    }, [skt]);
 
     if (!isConnected) return <>Socket connecting</>;
 
