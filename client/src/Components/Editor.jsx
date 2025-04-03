@@ -30,8 +30,8 @@ export const Editor = () => {
     }, [file, saveFlag, skt]);
 
     return (
-        <div className="h-full flex flex-col bg-neutral-700 text-white font-sans">
-            <div className="flex bg-neutral-600 p-1.5">
+        <div className="h-full flex flex-col text-white">
+            <div className="flex bg-neutral-600 p-1">
                 {fileKeys.map((name) => (
                     <div
                         key={name}
@@ -56,7 +56,7 @@ export const Editor = () => {
                 ))}
             </div>
 
-            <div style={{ flex: 1 }}>
+            <div className='h-full'>
                 {file ? (
                     <MonacoEditor
                         theme="vs-dark"
@@ -70,7 +70,6 @@ export const Editor = () => {
                             wordWrap: true,
                             fontSize: 20,
                         }}
-                        className="w-full h-full"
                         onChange={(content) => {
                             editorContentRef.current = content;
                             console.log({ change: content });

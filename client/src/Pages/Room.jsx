@@ -10,93 +10,85 @@ export const Room = () => {
     return (
         <OpenFilesProvider>
             <RoomProvider>
-                <Component />
+                <Component1 />
             </RoomProvider>
         </OpenFilesProvider>
     );
 };
 
-function XYZ() {
-    const { position, separatorProps } = useResizable({
-        axis: 'y',
-        initial: 400,
-    });
-
-    return (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100vh',
-                width: '100%',
-            }}
-        >
-            <div
-                style={{
-                    height: position,
-                    width: '100%',
-                }}
-            >
-                <Editor />
-            </div>
-            <div
-                {...separatorProps}
-                style={{
-                    height: '5px',
-                    cursor: 'col-resize',
-                    backgroundColor: 'white',
-                }}
-            />
-            <div
-                style={{
-                    height: `calc(100vh - ${position}px)`,
-                    width: '100%',
-                }}
-            >
-                <Terminal />
-            </div>
-        </div>
-    );
-}
-
-export default function Component() {
+export default function Component1() {
     const { position, separatorProps } = useResizable({
         axis: 'x',
         initial: 250,
         min: 50,
     });
 
-    const sideBarWidth = '70px';
+    const sideBarWidth = 70;
 
     return (
-        <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
-            <div style={{ width: sideBarWidth, borderRight: 'solid white 1px' }}>
+        <div className="flex h-screen w-screen overflow-x-hidden">
+            <div
+                style={{ width: sideBarWidth, borderRight: 'solid white 1px' }}
+            >
                 <FileTreeNavbar />
             </div>
             <div
+                className="p-2.5"
                 style={{
                     width: position, // 10
-                    padding: '10px',
                 }}
             >
                 <FileTree />
             </div>
             <div
                 {...separatorProps}
+                className="w-0.5 cursor-e-resize"
                 style={{
-                    width: '5px',
-                    cursor: 'col-resize',
-                    backgroundColor: 'white',
+                    boxShadow: '0 0 10px 1px red',
                 }}
             />
             <div
                 id="YE WALA"
                 style={{
-                    width: `calc(100vw -${sideBarWidth} - ${position}px)`,
-                    flex: 1,
+                    width: `calc(100% - ${sideBarWidth + position}px)`,
                 }}
             >
-                <XYZ />
+                <Component2 />
+            </div>
+        </div>
+    );
+}
+
+function Component2() {
+    const { position, separatorProps } = useResizable({
+        axis: 'y',
+        initial: 400,
+    });
+
+    return (
+        <div className="flex flex-col h-screen w-full">
+            <div
+                style={{
+                    height: position,
+                    width: '100%',
+                    boxShadow: '0 0 10px 1px pink',
+                }}
+            >
+                <Editor />
+            </div>
+            <div
+                {...separatorProps}
+                className="min-h-1 cursor-n-resize z-20 select-none"
+            />
+            <div
+                style={{
+                    height: `calc(100% - ${position - 4}px)`,
+                    width: '100%',
+                    boxShadow: '0 0 10px 1px orange',
+                    zIndex: 20,
+                }}
+            >
+                <Terminal />
             </div>
         </div>
     );

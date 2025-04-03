@@ -7,7 +7,8 @@ import { useRoom } from '../Providers/RoomProvider';
 const xterm = new XTerm({
     cursorBlink: true,
     theme: { background: 'black', foreground: 'white' },
-    scrollOnUserInput: true
+    scrollOnUserInput: true,
+    rows: 50,
 });
 
 export const Terminal = () => {
@@ -25,10 +26,13 @@ export const Terminal = () => {
                     xterm.writeln(`\r`); // Move to new line after command execution
                     skt.emit('connectMainTerminal -i1', {
                         input: commandBuffer,
-                        isDirectlyCalled : false
+                        isDirectlyCalled: false,
                     });
                     setTimeout(() => {
-                        skt.emit('connectMainTerminal -i1', { input: 'pwd\n',isDirectlyCalled : false });
+                        skt.emit('connectMainTerminal -i1', {
+                            input: 'pwd\n',
+                            isDirectlyCalled: false,
+                        });
                     }, 400);
                     commandBuffer = '';
                     break;
@@ -54,7 +58,10 @@ export const Terminal = () => {
             callForTree();
         });
         setTimeout(() => {
-            skt.emit('connectMainTerminal -i1', { input: 'pwd\n',isDirectlyCalled : false });
+            skt.emit('connectMainTerminal -i1', {
+                input: 'pwd\n',
+                isDirectlyCalled: false,
+            });
         }, 400);
 
         return () => {
@@ -66,7 +73,7 @@ export const Terminal = () => {
     return (
         <div
             ref={terminalRef}
-            className="w-full h-full text-left border-2 border-yellow-500 overflow-y-auto scroll-auto"
+            className="w-full h-full text-left overflow-y-auto scroll-auto"
         ></div>
     );
 };

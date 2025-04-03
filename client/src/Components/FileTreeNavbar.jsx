@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRoom } from '../Providers/RoomProvider';
 import { useSocket } from '../Providers/SocketProvider';
-import { MdEdit, MdSave, MdShare } from 'react-icons/md';
+import { MdEdit, MdPlayArrow, MdSave, MdShare } from 'react-icons/md';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 
 export const FileTreeNavbar = () => {
@@ -31,8 +31,10 @@ export const FileTreeNavbar = () => {
             return;
         }
 
-        
-        skt.emit('connectMainTerminal -i1', { input: commandToRun + '\n' , isDirectlyCalled : true });
+        skt.emit('connectMainTerminal -i1', {
+            input: commandToRun + '\n',
+            isDirectlyCalled: true,
+        });
     };
 
     const editCommand = () => {
@@ -43,21 +45,25 @@ export const FileTreeNavbar = () => {
     };
 
     return (
-        <div className="h-screen w-full flex flex-col py-3 gap-6 items-center [&>*]:w-full [&>*]:cursor-pointer">
-            <MdShare onClick={copyToClipboard} size={24} />
+        <div className="h-screen w-full flex flex-col py-3 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
+            <div className="flex flex-col items-center justify-center gap-4 py-2 bg-neutral-700">
+                <MdPlayArrow
+                    title="Run project"
+                    onClick={runCommand}
+                    size={30}
+                />
+                <MdEdit
+                    title="Edit command to run"
+                    onClick={editCommand}
+                    size={30}
+                />
+            </div>
+            <MdShare onClick={copyToClipboard} size={30} />
 
             <MdSave
                 title="Save currently opened file"
                 onClick={() => setSaveFlag((prev) => !prev)}
-                size={24}
-            />
-
-            <MdShare title="Run project" onClick={runCommand} size={24} />
-
-            <MdEdit
-                title="Edit command to run"
-                onClick={editCommand}
-                size={24}
+                size={30}
             />
         </div>
     );
