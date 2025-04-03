@@ -1,26 +1,11 @@
-import { Terminal } from '../Components/Terminal';
-import { FileTree } from '../Components/FileTree';
-import { Editor } from '../Components/Editor';
-import { FileTreeNavbar } from '../Components/FileTreeNavbar';
-import { OpenFilesProvider } from '../Providers/OpenFilesProvider';
-import { RoomProvider } from '../Providers/RoomProvider';
 import { useResizable } from 'react-resizable-layout';
-
-export const Room = () => {
-    return (
-        <OpenFilesProvider>
-            <RoomProvider>
-                <Component />
-            </RoomProvider>
-        </OpenFilesProvider>
-    );
-};
 
 function XYZ() {
     const { position, separatorProps } = useResizable({
         axis: 'y',
-        initial: 400,
     });
+
+    const h1 = Math.max(position, 200);
 
     return (
         <div
@@ -33,27 +18,31 @@ function XYZ() {
         >
             <div
                 style={{
-                    height: position,
+                    height: h1,
+
                     width: '100%',
+                    backgroundColor: 'green',
                 }}
             >
-                <Editor />
+                Left2 Content
             </div>
             <div
                 {...separatorProps}
                 style={{
                     height: '5px',
                     cursor: 'col-resize',
-                    backgroundColor: 'white',
+                    backgroundColor: '#ccc',
                 }}
             />
             <div
                 style={{
-                    height: `calc(100vh - ${position}px)`,
+                    height: `calc(100vh - ${h1}px)`,
                     width: '100%',
+                    // flex: 1,
+                    backgroundColor: 'blue',
                 }}
             >
-                <Terminal />
+                Right2 Content
             </div>
         </div>
     );
@@ -62,38 +51,38 @@ function XYZ() {
 export default function Component() {
     const { position, separatorProps } = useResizable({
         axis: 'x',
-        initial: 250,
-        min: 50,
     });
 
-    const sideBarWidth = '70px';
+    const w1 = Math.max(position, 250);
 
     return (
         <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
-            <div style={{ width: sideBarWidth, borderRight: 'solid white 1px' }}>
-                <FileTreeNavbar />
-            </div>
             <div
                 style={{
-                    width: position, // 10
+                    width: w1, // 10
+                    backgroundColor: 'red',
                     padding: '10px',
                 }}
             >
-                <FileTree />
+                Left Content
             </div>
             <div
                 {...separatorProps}
                 style={{
                     width: '5px',
                     cursor: 'col-resize',
-                    backgroundColor: 'white',
+                    backgroundColor: '#ccc',
                 }}
             />
+
+            {/* // 90 niche */}
+
+            {/* // 100 - 10 + 30 */}
             <div
-                id="YE WALA"
                 style={{
-                    width: `calc(100vw -${sideBarWidth} - ${position}px)`,
+                    width: `100vw - ${w1}px`,
                     flex: 1,
+                    backgroundColor: 'blue',
                 }}
             >
                 <XYZ />
