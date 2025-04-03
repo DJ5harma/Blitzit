@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRoom } from '../Providers/RoomProvider';
-import { MdSave, MdShare } from 'react-icons/md';
+import { useSocket } from '../Providers/SocketProvider';
+import { MdEdit, MdSave, MdShare } from 'react-icons/md';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 
 export const FileTreeNavbar = () => {
     const { room, roomId } = useRoom();
     const { setSaveFlag } = useOpenFiles();
+    const { skt } = useSocket();
+
+    const [commandToRun, setCommandToRun] = useState('python script.py');
 
     const copyToClipboard = () => {
         if (!room) {
@@ -13,13 +17,27 @@ export const FileTreeNavbar = () => {
             return;
         }
         const url = `${window.location.origin}/room/${roomId}`;
-        console.log(url);
         navigator.clipboard
             .writeText(url)
             .then(() => {
-                alert(`Url id copied share it with other people`);
+                alert(`Url id copied, share it with other people`);
             })
             .catch((err) => console.error('Copy failed:', err));
+    };
+
+    const runCommand = () => {
+        if (!skt) {
+            console.error('Socket not available!');
+            return;
+        }
+        skt.emit('connectMainTerminal -i1', { input: commandToRun + '\n' });
+    };
+
+    const editCommand = () => {
+        const newCommand = window.prompt('Edit Command:', commandToRun);
+        if (newCommand !== null) {
+            setCommandToRun(newCommand);
+        }
     };
 
     return (
@@ -28,7 +46,15 @@ export const FileTreeNavbar = () => {
 
             <MdSave
                 title="Save currently opened file"
-                onClick={() => setSaveFlag((p) => !p)}
+                onClick={() => setSaveFlag((prev) => !prev)}
+                size={24}
+            />
+
+            <MdShare title="Run project" onClick={runCommand} size={24} />
+
+            <MdEdit
+                title="Edit command to run"
+                onClick={editCommand}
                 size={24}
             />
         </div>
