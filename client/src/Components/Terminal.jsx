@@ -25,9 +25,10 @@ export const Terminal = () => {
                     xterm.writeln(`\r`); // Move to new line after command execution
                     skt.emit('connectMainTerminal -i1', {
                         input: commandBuffer,
+                        isDirectlyCalled : false
                     });
                     setTimeout(() => {
-                        skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
+                        skt.emit('connectMainTerminal -i1', { input: 'pwd\n',isDirectlyCalled : false });
                     }, 400);
                     commandBuffer = '';
                     break;
@@ -53,7 +54,7 @@ export const Terminal = () => {
             callForTree();
         });
         setTimeout(() => {
-            skt.emit('connectMainTerminal -i1', { input: 'pwd\n' });
+            skt.emit('connectMainTerminal -i1', { input: 'pwd\n',isDirectlyCalled : false });
         }, 400);
 
         return () => {

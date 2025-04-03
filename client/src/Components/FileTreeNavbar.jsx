@@ -30,7 +30,9 @@ export const FileTreeNavbar = () => {
             console.error('Socket not available!');
             return;
         }
-        skt.emit('connectMainTerminal -i1', { input: commandToRun + '\n' });
+
+        
+        skt.emit('connectMainTerminal -i1', { input: commandToRun + '\n' , isDirectlyCalled : true });
     };
 
     const editCommand = () => {
