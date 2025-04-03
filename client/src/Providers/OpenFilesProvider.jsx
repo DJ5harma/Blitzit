@@ -7,6 +7,8 @@ export const OpenFilesProvider = ({ children }) => {
     const [openFiles, setOpenFiles] = useState({});
     const { skt } = useSocket();
 
+    const [saveFlag, setSaveFlag] = useState(false);
+
     const openFile = (file) => {
         console.log({ file });
 
@@ -29,7 +31,7 @@ export const OpenFilesProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        skt.on('connectEditorTerminal -o1', ({ data, filePath }) => {
+        skt.on('connectEditorTerminal -o1', ({ data, filePath}) => {
             setOpenFiles((p) => {
                 return {
                     ...p,
@@ -44,7 +46,7 @@ export const OpenFilesProvider = ({ children }) => {
 
 
     return (
-        <context.Provider value={{ openFiles, openFile, closeFile }}>
+        <context.Provider value={{ openFiles, openFile, closeFile, saveFlag, setSaveFlag  }}>
             {children}
         </context.Provider>
     );

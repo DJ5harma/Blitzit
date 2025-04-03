@@ -7,6 +7,7 @@ import { useRoom } from '../Providers/RoomProvider';
 const xterm = new XTerm({
     cursorBlink: true,
     theme: { background: 'black', foreground: 'white' },
+    scrollOnUserInput: true
 });
 
 export const Terminal = () => {
@@ -59,12 +60,12 @@ export const Terminal = () => {
             skt.removeListener('connectMainTerminal -o1');
             xterm.dispose();
         };
-    }, []);
+    }, [callForTree, skt]);
 
     return (
         <div
             ref={terminalRef}
-            className="w-full h-full text-left overflow-auto"
+            className="w-full h-full text-left border-2 border-yellow-500 overflow-y-auto scroll-auto"
         ></div>
     );
 };

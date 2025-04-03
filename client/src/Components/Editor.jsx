@@ -4,10 +4,11 @@ import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { IoClose } from 'react-icons/io5';
 import { useSocket } from '../Providers/SocketProvider';
 import { IoMdSave } from 'react-icons/io';
+import { useEffect } from 'react';
 
 export const Editor = () => {
     const { skt } = useSocket();
-    const { openFiles, closeFile } = useOpenFiles();
+    const { openFiles, closeFile, saveFlag } = useOpenFiles();
     const fileKeys = Object.keys(openFiles);
     const [fileName, setFileName] = useState('');
 
@@ -15,7 +16,7 @@ export const Editor = () => {
 
     const editorContentRef = useRef(file ? file.value : '');
 
-    const saveFile = () => {
+    useEffect(() => {
         if (!file || !editorContentRef.current) return;
 
         // bash escapes
@@ -26,7 +27,7 @@ export const Editor = () => {
             input: `echo '${editorContentRef.current}' > ` + file.path,
         });
         alert(`"${file.path}" saved!`);
-    };
+    }, [file, saveFlag, skt]);
 
     return (
         <div className="h-full flex flex-col bg-neutral-700 text-white font-sans">
@@ -57,33 +58,24 @@ export const Editor = () => {
 
             <div style={{ flex: 1 }}>
                 {file ? (
-                    <>
-                        <MonacoEditor
-                            theme="vs-dark"
-                            path={file.name}
-                            defaultLanguage={file.language}
-                            value={file.value}
-                            options={{
-                                'semanticHighlighting.enabled': true,
-                                dragAndDrop: true,
-                                minimap: true,
-                                wordWrap: true,
-                                fontSize: 20,
-                            }}
-                            className="w-full h-full"
-                            onChange={(content) => {
-                                editorContentRef.current = content;
-                                console.log({ change: content });
-                            }}
-                        />
-                        <button
-                            onClick={saveFile}
-                            title={'save ' + file.name}
-                            className="fixed top-1/5 right-2.5 z-20 border-2"
-                        >
-                            <IoMdSave size={25} />
-                        </button>
-                    </>
+                    <MonacoEditor
+                        theme="vs-dark"
+                        path={file.name}
+                        defaultLanguage={file.language}
+                        value={file.value}
+                        options={{
+                            'semanticHighlighting.enabled': true,
+                            dragAndDrop: true,
+                            minimap: true,
+                            wordWrap: true,
+                            fontSize: 20,
+                        }}
+                        className="w-full h-full"
+                        onChange={(content) => {
+                            editorContentRef.current = content;
+                            console.log({ change: content });
+                        }}
+                    />
                 ) : (
                     <div className="h-full flex items-center justify-center text-neutral-300 text-xl">
                         No file selected... choose one from the file tree.

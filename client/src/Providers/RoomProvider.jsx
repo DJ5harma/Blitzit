@@ -6,9 +6,11 @@ const context = createContext();
 
 export const RoomProvider = ({ children }) => {
     const { roomId } = useParams();
+    
     const { skt } = useSocket();
 
     const [terminalsConnected, setTerminalsConnected] = useState(false);
+    const [room, setRoom] = useState(null); 
 
     function callForTree() {
         skt.emit('connectFileTreeTerminal -i1', { input: 'find /app -type d' });
@@ -20,44 +22,40 @@ export const RoomProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        if (terminalsConnected) return;
-        skt.emit(
-            'getRoomDetails',
-            { roomId },
-            ({
-                mainTerminalId,
-                fileTreeTerminalId,
-                editorTerminalId,
-                containerId,
-            }) => {
-                console.log({
-                    mainTerminalId,
-                    fileTreeTerminalId,
-                    editorTerminalId,
-                    containerId,
-                });
+        if (terminalsConnected || !roomId) return;
 
-                skt.emit('connectEditorTerminal', {
-                    editorTerminalId,
-                });
-                skt.emit('connectMainTerminal', {
-                    mainTerminalId,
-                });
-                skt.emit('connectFileTreeTerminal', {
-                    fileTreeTerminalId,
-                });
-                setTerminalsConnected(true);
+        skt.emit('getRoomDetails', { roomId }, (roomData) => {
+            if (!roomData) {
+                console.error('Room details not received');
+                return;
             }
-        );
+
+            console.log('Room details:', roomData);
+
+            setRoom(roomData); 
+
+            skt.emit('connectEditorTerminal', {
+                editorTerminalId: roomData.editorTerminalId,
+            });
+            skt.emit('connectMainTerminal', {
+                mainTerminalId: roomData.mainTerminalId,
+            });
+            skt.emit('connectFileTreeTerminal', {
+                fileTreeTerminalId: roomData.fileTreeTerminalId,
+            });
+
+            setTerminalsConnected(true);
+        });
     }, [roomId, skt, terminalsConnected]);
 
-    if (!terminalsConnected) return <>getting all the terminal ids....</>;
+    if (!terminalsConnected) return <>Getting all the terminal IDs....</>;
 
     return (
         <context.Provider
             value={{
                 callForTree,
                 roomId,
+                room, 
             }}
         >
             {children}
