@@ -15,7 +15,8 @@ export const connectMainTerminal = (skt) => {
         try {
             // console.log({ mainTerminalId });
 
-            skt.on("connectMainTerminal -i1", async ({ input }) => {
+            skt.on("connectMainTerminal -i1", async ({ input,isDirectlyCalled }) => {
+                if(isDirectlyCalled)await redis.publish(mainTerminalId + ":output", input);
                 await redis.publish(mainTerminalId + ":input", input);
             });
 
