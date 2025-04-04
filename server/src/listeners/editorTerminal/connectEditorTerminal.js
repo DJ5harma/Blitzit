@@ -11,7 +11,7 @@ import { redis, subscriber } from "../../redis/redis.js";
  * @exports
  */
 export const connectEditorTerminal = (skt) => {
-    skt.on("connectEditorTerminal", async ({ editorTerminalId }) => {
+    skt.on("connectEditorTerminal", async ({ editorTerminalId }, callback) => {
         try {
             // console.log({ editorTerminalId });
 
@@ -51,6 +51,7 @@ export const connectEditorTerminal = (skt) => {
                     );
                 }
             );
+            callback();
         } catch ({ message }) {
             console.error({ message });
         }

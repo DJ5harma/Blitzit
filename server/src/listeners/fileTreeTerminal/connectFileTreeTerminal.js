@@ -12,22 +12,29 @@ import { redis, subscriber } from "../../redis/redis.js";
  * @exports
  */
 export const connectFileTreeTerminal = (skt) => {
-    skt.on("connectFileTreeTerminal", async ({ fileTreeTerminalId }) => {
-        try {
-            // console.log({ fileTreeTerminalId });
+    skt.on(
+        "connectFileTreeTerminal",
+        async ({ fileTreeTerminalId }, callback) => {
+            try {
+                // console.log({ fileTreeTerminalId });
 
-            skt.on("connectFileTreeTerminal -i1", async ({ input }) => {
-                await redis.publish(fileTreeTerminalId + ":input", input);
-            });
+                skt.on("connectFileTreeTerminal -i1", async ({ input }) => {
+                    await redis.publish(fileTreeTerminalId + ":input", input);
+                });
 
-            await subscriber.subscribe(
-                fileTreeTerminalId + ":output",
-                (data) => {
-                    skt.emit("connectFileTreeTerminal -o1", { data });
-                }
-            );
-        } catch ({ message }) {
-            console.error({ message });
+                await subscriber.subscribe(
+                    fileTreeTerminalId + ":output",
+                    (data) => {
+                        data = data.substring(data.indexOf("/"));
+                        console.log({ data });
+                        skt.emit("connectFileTreeTerminal -o1", { data });
+                    }
+                );
+
+                callback();
+            } catch ({ message }) {
+                console.error({ message });
+            }
         }
-    });
+    );
 };

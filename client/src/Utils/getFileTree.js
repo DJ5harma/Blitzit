@@ -1,45 +1,30 @@
-// dirOutput
-// :
-// "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\"/app\n/app/testFolder\n/app/folder2\n"
-// fileOutput
-// :
-// "\u0001\u0000\u0000\u0000\u0000\u0000\u0000,/app/testFolder/testFile.txt\n/app/script.py\n"
-
-export const getFileTree = (dirOutput, fileOutput) => {
-    // Process directory output
-    dirOutput = dirOutput
-        .substring(dirOutput.indexOf('/')) // Start from first /
-        .trim()
-        .split('\n')
-        .filter(Boolean);
-
-    fileOutput = fileOutput
-        .substring(fileOutput.indexOf('/')) // Start from first /
-        .trim()
-        .split('\n')
-        .filter(Boolean);
-
+export function getFileTree(rawOutput) {
+    const lines = rawOutput.trim().split('\n').filter(Boolean);
     const tree = {};
 
     function addToTree(fullPath, isFile) {
-        const parts = fullPath.split('/').filter(Boolean); // Handle paths in frontend
+        const parts = fullPath.split('/').filter(Boolean);
         let current = tree;
 
         parts.forEach((part, index) => {
+            const isLast = index === parts.length - 1;
             if (!current[part]) {
-                current[part] =
-                    index === parts.length - 1 && isFile ? null : {};
+                current[part] = isLast && isFile ? null : {};
             }
-
-            if (index === parts.length - 1 && isFile) {
-                current[part] = null; // Ensure files are set to null
-            }
-
             current = current[part];
         });
     }
 
-    dirOutput.forEach((dir) => addToTree(dir, false));
-    fileOutput.forEach((file) => addToTree(file, true));
+    lines.forEach((line) => {
+        const isDir = line.endsWith('/');
+        addToTree(line, !isDir);
+    });
+
     return JSON.parse(JSON.stringify(tree, null, 2));
-};
+}
+
+// usage
+// let rawOutput =
+//     '/app/\n/app/test/\n/app/test/testfile.txt\n/app/hello/\n/app/script.py\n';
+
+// console.log(getFileTree(rawOutput));

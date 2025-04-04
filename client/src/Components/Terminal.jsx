@@ -24,10 +24,14 @@ export const Terminal = () => {
             switch (input) {
                 case '\r':
                     xterm.writeln(`\r`); // Move to new line after command execution
-                    skt.emit('connectMainTerminal -i1', {
-                        input: commandBuffer,
-                        isDirectlyCalled: false,
-                    });
+                    if (commandBuffer === 'clear') {
+                        xterm.clear();
+                    } else {
+                        skt.emit('connectMainTerminal -i1', {
+                            input: commandBuffer,
+                            isDirectlyCalled: false,
+                        });
+                    }
                     setTimeout(() => {
                         skt.emit('connectMainTerminal -i1', {
                             input: 'pwd\n',
@@ -57,12 +61,11 @@ export const Terminal = () => {
             xterm.write('\n');
             callForTree();
         });
-        setTimeout(() => {
-            skt.emit('connectMainTerminal -i1', {
-                input: 'pwd\n',
-                isDirectlyCalled: false,
-            });
-        }, 400);
+
+        skt.emit('connectMainTerminal -i1', {
+            input: 'pwd\n',
+            isDirectlyCalled: false,
+        });
 
         return () => {
             skt.removeListener('connectMainTerminal -o1');

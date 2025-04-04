@@ -5,25 +5,35 @@ const context = createContext();
 
 export const SocketProvider = ({ children }) => {
     const [isConnected, setIsConnected] = useState(false);
-    const { current: skt } = useRef(
-        io('http://localhost:4000', { autoConnect: false })
-    );
+    const socketRef = useRef();
+
+    if (!socketRef.current) {
+        socketRef.current = io('http://localhost:4000', { autoConnect: false });
+    }
 
     useEffect(() => {
-        if (isConnected) return;
-        skt.on('connect', () => {
+        const skt = socketRef.current;
+
+        const onConnect = () => {
             setIsConnected(true);
-        });
+        };
+
+        skt.on('connect', onConnect);
         skt.connect();
+
         return () => {
-            skt.removeAllListeners();
+            skt.off('connect', onConnect);
             skt.disconnect();
         };
-    }, [skt]);
+    }, []);
 
     if (!isConnected) return <>Socket connecting</>;
 
-    return <context.Provider value={{ skt }}>{children}</context.Provider>;
+    return (
+        <context.Provider value={{ skt: socketRef.current }}>
+            {children}
+        </context.Provider>
+    );
 };
 
 export const useSocket = () => useContext(context);
