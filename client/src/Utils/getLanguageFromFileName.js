@@ -3,9 +3,13 @@ export const getLanguageFromFileName = (fileName) => {
     switch (ext) {
         case 'js':
             return 'javascript';
+        case 'ts':
+            return 'typescript';
         case 'py':
             return 'python';
         case 'html':
+            return 'html';
+        case 'htm':
             return 'html';
         case 'css':
             return 'css';

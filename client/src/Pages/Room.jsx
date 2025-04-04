@@ -106,13 +106,12 @@ function Component2() {
                 style={{ backgroundColor: 'rgb(0, 120, 212)' }}
             />
             <div
+                className="w-full z-20 pl-2 pt-2 bg-black"
                 style={{
                     height: `calc(100% - ${position - 4}px)`,
-                    width: '100%',
-                    zIndex: 20,
                 }}
             >
-                <Terminal />(
+                <Terminal />
                 <button
                     className="z-20 fixed bottom-4 right-4 p-2 flex gap-2 items-center"
                     style={{
@@ -127,7 +126,6 @@ function Component2() {
                     />
                     <BsTerminalFill size={40} />
                 </button>
-                )
             </div>
         </div>
     );
