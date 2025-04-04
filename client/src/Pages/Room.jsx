@@ -5,6 +5,7 @@ import { FileTreeNavbar } from '../Components/FileTreeNavbar';
 import { OpenFilesProvider } from '../Providers/OpenFilesProvider';
 import { RoomProvider } from '../Providers/RoomProvider';
 import { useResizable } from 'react-resizable-layout';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const Room = () => {
     return (
@@ -63,19 +64,39 @@ export default function Component1() {
 }
 
 function Component2() {
-    const { position, separatorProps } = useResizable({
+    const containerRef = useRef(null);
+    const { position, setPosition, separatorProps } = useResizable({
         axis: 'y',
         initial: 400,
     });
+    const [isTerminalOpen, setIsTerminalOpen] = useState(true);
+
+    const toggleTerminal = useCallback(() => {
+        if (containerRef.current) {
+            const containerHeight = containerRef.current.clientHeight;
+            if (isTerminalOpen) {
+                setPosition(containerHeight + 4);
+            } else {
+                setPosition(400);
+            }
+            setIsTerminalOpen(!isTerminalOpen);
+        }
+    }, [isTerminalOpen, setPosition]);
+
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            if (e.ctrlKey && e.key === '`') {
+                e.preventDefault();
+                toggleTerminal();
+            }
+        };
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [toggleTerminal]);
 
     return (
-        <div className="flex flex-col h-screen w-full">
-            <div
-                style={{
-                    height: position,
-                    width: '100%',
-                }}
-            >
+        <div ref={containerRef} className="flex flex-col h-screen w-full">
+            <div style={{ height: position, width: '100%' }}>
                 <Editor />
             </div>
             <div
