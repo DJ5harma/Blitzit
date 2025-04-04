@@ -25,7 +25,7 @@ export const FileTree = () => {
     if (!treeData) return null;
 
     return (
-        <div className="pl-2.5 overflow-y-auto h-full w-full">
+        <div className="pl-1 overflow-y-auto h-full w-full">
             <FileTreeNode
                 name={'app'}
                 value={treeData['app']}
