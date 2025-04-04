@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useSocket } from './SocketProvider';
+import { EMITTER } from '../Utils/EMITTER';
 
 const context = createContext();
 
@@ -16,12 +17,9 @@ export const OpenFilesProvider = ({ children }) => {
             ...prev,
             [file.path]: file,
         }));
-        skt.emit('connectEditorTerminal -i1', {
-            input: 'cat ' + file.path,
-            filePath: file.path,
-        });
+        EMITTER.readFile(file.path);
     };
-    
+
     const closeFile = (path) => {
         setOpenFiles((prev) => {
             const updated = { ...prev };
@@ -31,7 +29,7 @@ export const OpenFilesProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        skt.on('connectEditorTerminal -o1', ({ data, filePath}) => {
+        skt.on('connectEditorTerminal -o1', ({ data, filePath }) => {
             setOpenFiles((p) => {
                 return {
                     ...p,
@@ -44,9 +42,10 @@ export const OpenFilesProvider = ({ children }) => {
         });
     }, [skt]);
 
-
     return (
-        <context.Provider value={{ openFiles, openFile, closeFile, saveFlag, setSaveFlag  }}>
+        <context.Provider
+            value={{ openFiles, openFile, closeFile, saveFlag, setSaveFlag }}
+        >
             {children}
         </context.Provider>
     );

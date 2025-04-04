@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useSocket } from '../Providers/SocketProvider';
 import { Terminal as XTerm } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
-import { useRoom } from '../Providers/RoomProvider';
+import { EMITTER } from '../Utils/EMITTER';
 
 const xterm = new XTerm({
     cursorBlink: true,
@@ -16,8 +16,6 @@ export const Terminal = () => {
     const xtermRef = useRef(null);
     const { skt } = useSocket();
 
-    const { callForTree } = useRoom();
-
     useEffect(() => {
         let commandBuffer = '';
         xterm.onData((input) => {
@@ -27,16 +25,10 @@ export const Terminal = () => {
                     if (commandBuffer === 'clear') {
                         xterm.clear();
                     } else {
-                        skt.emit('connectMainTerminal -i1', {
-                            input: commandBuffer,
-                            isDirectlyCalled: false,
-                        });
+                        EMITTER.runMainTerminalCommand(commandBuffer);
                     }
                     setTimeout(() => {
-                        skt.emit('connectMainTerminal -i1', {
-                            input: 'pwd\n',
-                            isDirectlyCalled: false,
-                        });
+                        EMITTER.runMainTerminalCommand('pwd');
                     }, 400);
                     commandBuffer = '';
                     break;
@@ -59,19 +51,16 @@ export const Terminal = () => {
         skt.on('connectMainTerminal -o1', ({ data }) => {
             xterm.write(data.replace(/\n/g, '\r\n'));
             xterm.write('\n');
-            callForTree();
+            EMITTER.callForTree();
         });
 
-        skt.emit('connectMainTerminal -i1', {
-            input: 'pwd\n',
-            isDirectlyCalled: false,
-        });
+        EMITTER.runMainTerminalCommand('pwd');
 
         return () => {
             skt.removeListener('connectMainTerminal -o1');
             xterm.dispose();
         };
-    }, [callForTree, skt]);
+    }, [skt]);
 
     return (
         <div

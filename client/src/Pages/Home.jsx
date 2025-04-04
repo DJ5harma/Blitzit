@@ -15,12 +15,12 @@ export const Home = () => {
         return () => {
             skt.removeListener('createContainer -o1');
         };
-    }, []);
+    }, [navigate, skt]);
 
     if (makingTemplate) return <>Making your template.......</>;
     return (
         <div className="w-full h-full">
-            {CONSTANTS.templates.map(({ name }, i) => {
+            {CONSTANTS.TEMPLATES.map(({ name }, i) => {
                 return (
                     <button
                         onClick={() => {

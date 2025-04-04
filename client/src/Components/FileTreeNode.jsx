@@ -1,16 +1,11 @@
 import { useSocket } from '../Providers/SocketProvider';
-import {
-    FaFileUpload,
-    FaFolder,
-    FaFolderPlus,
-    FaFileAlt,
-} from 'react-icons/fa';
+import { FaFileUpload, FaFolder, FaFolderPlus } from 'react-icons/fa';
 import { MdDelete, MdKeyboardArrowRight } from 'react-icons/md';
 import { useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { getLanguageFromFileName } from '../Utils/getLanguageFromFileName';
-import { useRoom } from '../Providers/RoomProvider';
 import { IconFromFileName } from '../Utils/IconFromFileName';
+import { EMITTER } from '../Utils/EMITTER';
 
 export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const { skt } = useSocket();
@@ -19,19 +14,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const [isDeleted, setIsDeleted] = useState(false);
     const [isExpanded, setIsExpanded] = useState(true);
 
-    const { callForTree } = useRoom();
-
     const isFolder = value !== null;
-
-    function deleteEntity() {
-        if (isFolder) {
-            skt.emit('connectFileTreeTerminal -i1', { input: 'rm -r ' + path });
-        } else {
-            skt.emit('connectFileTreeTerminal -i1', { input: 'rm ' + path });
-        }
-        setIsDeleted(true);
-        callForTree();
-    }
 
     const handleFileClick = () => {
         if (!openFiles[path]) {
@@ -52,7 +35,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
 
         const command = (isFile ? `echo "Empty file" > ` : 'mkdir ') + fullPath;
         skt.emit('connectFileTreeTerminal -i1', { input: command });
-        callForTree();
+        EMITTER.callForTree();
     }
 
     return (
@@ -74,7 +57,11 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                     }}
                 >
                     <span className="flex gap-1.5 items-center p-1.5">
-                        {isFolder ? <FaFolder /> : <IconFromFileName name={name} />}
+                        {isFolder ? (
+                            <FaFolder />
+                        ) : (
+                            <IconFromFileName name={name} />
+                        )}
                         {name}
                         {isFolder && (
                             <MdKeyboardArrowRight
@@ -113,7 +100,8 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     closeFile(path);
-                                    deleteEntity();
+                                    EMITTER.deleteEntity(isFolder, path);
+                                    setIsDeleted(true);
                                 }}
                                 className="p-1"
                             >

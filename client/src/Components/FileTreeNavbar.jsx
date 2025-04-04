@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRoom } from '../Providers/RoomProvider';
-import { useSocket } from '../Providers/SocketProvider';
 import {
     MdEdit,
     MdFileCopy,
@@ -9,19 +8,15 @@ import {
     MdShare,
 } from 'react-icons/md';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
+import { EMITTER } from '../Utils/EMITTER';
 
 export const FileTreeNavbar = ({ setPosition }) => {
-    const { room, roomId } = useRoom();
+    const { roomId } = useRoom();
     const { setSaveFlag } = useOpenFiles();
-    const { skt } = useSocket();
 
     const [commandToRun, setCommandToRun] = useState('python /app/script.py');
 
     const copyToClipboard = () => {
-        if (!room) {
-            console.error('Room details not available!');
-            return;
-        }
         const url = `${window.location.origin}/room/${roomId}`;
         navigator.clipboard
             .writeText(url)
@@ -29,17 +24,6 @@ export const FileTreeNavbar = ({ setPosition }) => {
                 alert(`Url id copied, share it with other people`);
             })
             .catch((err) => console.error('Copy failed:', err));
-    };
-
-    const runCommand = () => {
-        if (!skt) {
-            console.error('Socket not available!');
-            return;
-        }
-        skt.emit('connectMainTerminal -i1', {
-            input: commandToRun + '\n',
-            isDirectlyCalled: true,
-        });
     };
 
     const editCommand = () => {
@@ -73,7 +57,7 @@ export const FileTreeNavbar = ({ setPosition }) => {
             <div className="flex flex-col items-center justify-center gap-4 py-2 bg-neutral-700">
                 <MdPlayArrow
                     title="Run project"
-                    onClick={runCommand}
+                    onClick={() => EMITTER.runProject(commandToRun)}
                     size={30}
                 />
                 <MdEdit

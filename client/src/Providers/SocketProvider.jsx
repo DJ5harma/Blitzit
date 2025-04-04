@@ -1,5 +1,7 @@
 import io from 'socket.io-client';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { EMITTER } from '../Utils/EMITTER';
+import { CONSTANTS } from '../Utils/CONSTANTS';
 
 const context = createContext();
 
@@ -8,13 +10,14 @@ export const SocketProvider = ({ children }) => {
     const socketRef = useRef();
 
     if (!socketRef.current) {
-        socketRef.current = io('http://localhost:4000', { autoConnect: false });
+        socketRef.current = io(CONSTANTS.BACKEND_URL, { autoConnect: false });
     }
 
     useEffect(() => {
         const skt = socketRef.current;
 
         const onConnect = () => {
+            EMITTER.init(skt);
             setIsConnected(true);
         };
 

@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 import { useSocket } from '../Providers/SocketProvider';
 import { FileTreeNode } from './FileTreeNode';
 import { getFileTree } from '../Utils/getFileTree';
-import { useRoom } from '../Providers/RoomProvider';
+import { EMITTER } from '../Utils/EMITTER';
 
 export const FileTree = () => {
     const { skt } = useSocket();
-    const { callForTree } = useRoom();
 
     const [treeData, setTreeData] = useState(null);
 
@@ -16,12 +15,12 @@ export const FileTree = () => {
             setTreeData(() => getFileTree(data));
         });
 
-        callForTree();
+        EMITTER.callForTree();
 
         return () => {
             skt.removeListener('connectFileTreeTerminal -o1');
         };
-    }, [callForTree, skt]);
+    }, [skt]);
 
     if (!treeData) return null;
 

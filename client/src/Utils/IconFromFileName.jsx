@@ -18,6 +18,8 @@ export const IconFromFileName = ({ name }) => {
             return <FaPython />;
         case 'cpp':
             return <PiFileCppFill />;
+        case 'c++':
+            return <PiFileCppFill />;
         case 'java':
             return <FaJava />;
         case 'go':

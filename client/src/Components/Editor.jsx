@@ -4,6 +4,7 @@ import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { IoClose } from 'react-icons/io5';
 import { useSocket } from '../Providers/SocketProvider';
 import { useEffect } from 'react';
+import { EMITTER } from '../Utils/EMITTER';
 
 export const Editor = () => {
     const { skt } = useSocket();
@@ -22,9 +23,11 @@ export const Editor = () => {
         editorContentRef.current.replaceAll(`"`, `\\"`);
         editorContentRef.current.replaceAll('`', '\\`');
 
-        skt.emit('connectEditorTerminal -i2', {
-            input: `echo '${editorContentRef.current}' > ` + file.path,
-        });
+        EMITTER.saveFile(editorContentRef.current, file.path);
+        // skt.emit('connectEditorTerminal -i2', {
+        //     input: `echo '${editorContentRef.current}' > ` + file.path,
+        // });
+
         alert(`"${file.path}" saved!`);
     }, [file, saveFlag, skt]);
 

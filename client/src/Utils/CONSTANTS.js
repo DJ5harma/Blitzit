@@ -1,3 +1,4 @@
 export const CONSTANTS = {
-    templates: [{ name: 'python-template' }],
+    TEMPLATES: [{ name: 'python-template' }],
+    BACKEND_URL: 'http://localhost:4000'
 };
