@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRoom } from '../Providers/RoomProvider';
 import { useSocket } from '../Providers/SocketProvider';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'react-icons/md';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 
-export const FileTreeNavbar = ({ setPosition, currentPosition }) => {
+export const FileTreeNavbar = ({ setPosition }) => {
     const { room, roomId } = useRoom();
     const { setSaveFlag } = useOpenFiles();
     const { skt } = useSocket();
@@ -49,13 +49,23 @@ export const FileTreeNavbar = ({ setPosition, currentPosition }) => {
         }
     };
 
-    const openOrCloseFileTree = () => {
-        if (currentPosition === 0) {
-            setPosition(250);
-        } else {
-            setPosition(0);
-        }
-    };
+    const openOrCloseFileTree = useCallback(() => {
+        setPosition((prevPosition) => (prevPosition === 0 ? 250 : 0));
+    }, [setPosition]);
+
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            if (event.ctrlKey && event.key.toLowerCase() === 'b') {
+                event.preventDefault();
+                openOrCloseFileTree();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [openOrCloseFileTree]);
 
     return (
         <div className="h-screen flex flex-col py-3 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
