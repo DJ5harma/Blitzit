@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useSocket } from './SocketProvider';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const context = createContext();
 
@@ -14,6 +15,8 @@ export const RoomProvider = ({ children }) => {
 
     useEffect(() => {
         if (terminalsConnected) return;
+
+        const tst = toast.loading('Connecting to all the terminals...');
 
         skt.emit('getRoomDetails', { roomId }, (roomData) => {
             if (!roomData) {
@@ -47,6 +50,8 @@ export const RoomProvider = ({ children }) => {
                                 },
                                 () => {
                                     setTerminalsConnected(true);
+                                    toast.dismiss(tst);
+                                    toast.success("Terminals connected!");
                                 }
                             );
                         }

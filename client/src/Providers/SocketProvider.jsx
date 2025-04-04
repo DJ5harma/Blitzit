@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { EMITTER } from '../Utils/EMITTER';
 import { CONSTANTS } from '../Utils/CONSTANTS';
+import { toast } from 'react-toastify';
 
 const context = createContext();
 
@@ -16,9 +17,12 @@ export const SocketProvider = ({ children }) => {
     useEffect(() => {
         const skt = socketRef.current;
 
+        const tst = toast.loading('Connecting to socket');
         const onConnect = () => {
             EMITTER.init(skt);
             setIsConnected(true);
+            toast.dismiss(tst);
+            toast.success('Socket connected!');
         };
 
         skt.on('connect', onConnect);

@@ -8,20 +8,26 @@ import { ToastContainer } from 'react-toastify';
 
 createRoot(document.getElementById('root')).render(
     // <StrictMode>
-    <SocketProvider>
-        <BrowserRouter>
-            <App />
-            <ToastContainer
-                position="bottom-right"
-                autoClose={2000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-            />
-        </BrowserRouter>
-    </SocketProvider>
+    <>
+        <ToastContainer
+            position="bottom-right"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            toastStyle={{
+                backgroundColor: 'rgb(10, 40, 120)',
+                color: 'white',
+            }}
+        />
+        <SocketProvider>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </SocketProvider>
+    </>
     // </StrictMode>
 );
