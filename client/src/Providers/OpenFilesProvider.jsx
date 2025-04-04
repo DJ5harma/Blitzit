@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useSocket } from './SocketProvider';
 import { EMITTER } from '../Utils/EMITTER';
+import { toast } from 'react-toastify';
 
 const context = createContext();
 
@@ -9,6 +10,23 @@ export const OpenFilesProvider = ({ children }) => {
     const { skt } = useSocket();
 
     const [saveFlag, setSaveFlag] = useState(false);
+
+    const [fileName, setFileName] = useState('');
+
+    const file = fileName ? openFiles[fileName] : null;
+
+    const editorContentRef = useRef(file ? file.value : '');
+
+    const saveFile = () => {
+        if (!file || !editorContentRef.current) return;
+
+        editorContentRef.current.replaceAll(`"`, `\\"`);
+        editorContentRef.current.replaceAll('`', '\\`');
+        
+        EMITTER.saveFileEmitter(editorContentRef.current,file.path)
+        
+        toast.success(`"${file.path}" saved!`);
+    };
 
     const openFile = (file) => {
         console.log({ file });
@@ -44,7 +62,7 @@ export const OpenFilesProvider = ({ children }) => {
 
     return (
         <context.Provider
-            value={{ openFiles, openFile, closeFile, saveFlag, setSaveFlag }}
+            value={{ openFiles, openFile, closeFile, saveFlag, setSaveFlag,fileName,setFileName,saveFile,editorContentRef,file }}
         >
             {children}
         </context.Provider>

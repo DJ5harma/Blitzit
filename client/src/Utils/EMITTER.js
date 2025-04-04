@@ -10,7 +10,7 @@ export const EMITTER = {
             input: `find /app -type d -printf "%p/\n" -o -type f -printf "%p\n"`,
         });
     },
-    saveFile(content, path) {
+    saveFileEmitter(content, path) {
         skt.emit('connectEditorTerminal -i2', {
             input: `echo '${content}' > ` + path,
         });

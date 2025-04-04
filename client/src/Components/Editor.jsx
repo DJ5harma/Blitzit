@@ -1,35 +1,17 @@
 import MonacoEditor from '@monaco-editor/react';
-import { useRef, useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { IoClose } from 'react-icons/io5';
-import { useSocket } from '../Providers/SocketProvider';
-import { useEffect } from 'react';
-import { EMITTER } from '../Utils/EMITTER';
 
 export const Editor = () => {
-    const { skt } = useSocket();
-    const { openFiles, closeFile, saveFlag } = useOpenFiles();
+    const {
+        openFiles,
+        closeFile,
+        fileName,
+        setFileName,
+        file,
+        editorContentRef,
+    } = useOpenFiles();
     const fileKeys = Object.keys(openFiles);
-    const [fileName, setFileName] = useState('');
-
-    const file = fileName ? openFiles[fileName] : null;
-
-    const editorContentRef = useRef(file ? file.value : '');
-
-    useEffect(() => {
-        if (!file || !editorContentRef.current) return;
-
-        // bash escapes
-        editorContentRef.current.replaceAll(`"`, `\\"`);
-        editorContentRef.current.replaceAll('`', '\\`');
-
-        EMITTER.saveFile(editorContentRef.current, file.path);
-        // skt.emit('connectEditorTerminal -i2', {
-        //     input: `echo '${editorContentRef.current}' > ` + file.path,
-        // });
-
-        alert(`"${file.path}" saved!`);
-    }, [file, saveFlag, skt]);
 
     return (
         <div className="h-full flex flex-col text-white">
