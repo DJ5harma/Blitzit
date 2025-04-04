@@ -16,8 +16,6 @@ export const RoomProvider = ({ children }) => {
     useEffect(() => {
         if (terminalsConnected) return;
 
-        const tst = toast.loading('Connecting to all the terminals...');
-
         skt.emit('getRoomDetails', { roomId }, (roomData) => {
             if (!roomData) {
                 console.error('Room details not received');
@@ -49,9 +47,9 @@ export const RoomProvider = ({ children }) => {
                                     fileTreeTerminalId,
                                 },
                                 () => {
+                                    console.log('File terminal connected');
                                     setTerminalsConnected(true);
-                                    toast.dismiss(tst);
-                                    toast.success("Terminals connected!");
+                                    toast.success('Terminals connected!');
                                 }
                             );
                         }

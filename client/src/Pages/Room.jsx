@@ -11,11 +11,11 @@ import { FaArrowUp } from 'react-icons/fa';
 
 export const Room = () => {
     return (
-        <OpenFilesProvider>
-            <RoomProvider>
+        <RoomProvider>
+            <OpenFilesProvider>
                 <Component1 />
-            </RoomProvider>
-        </OpenFilesProvider>
+            </OpenFilesProvider>
+        </RoomProvider>
     );
 };
 
