@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSocket } from '../Providers/SocketProvider';
 import { useNavigate } from 'react-router-dom';
-
-const templates = [{ name: 'python-template' }];
+import { CONSTANTS } from '../Utils/CONSTANTS';
 
 export const Home = () => {
     const { skt } = useSocket();
@@ -19,10 +18,9 @@ export const Home = () => {
     }, []);
 
     if (makingTemplate) return <>Making your template.......</>;
-
     return (
-        <>
-            {templates.map(({ name }, i) => {
+        <div className="w-full h-full">
+            {CONSTANTS.templates.map(({ name }, i) => {
                 return (
                     <button
                         onClick={() => {
@@ -35,6 +33,6 @@ export const Home = () => {
                     </button>
                 );
             })}
-        </>
+        </div>
     );
 };

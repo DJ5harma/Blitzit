@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { getLanguageFromFileName } from '../Utils/getLanguageFromFileName';
 import { useRoom } from '../Providers/RoomProvider';
+import { IconFromFileName } from '../Utils/IconFromFileName';
 
 export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const { skt } = useSocket();
@@ -73,7 +74,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                     }}
                 >
                     <span className="flex gap-1.5 items-center p-1.5">
-                        {isFolder ? <FaFolder /> : <FaFileAlt />}
+                        {isFolder ? <FaFolder /> : <IconFromFileName name={name} />}
                         {name}
                         {isFolder && (
                             <MdKeyboardArrowRight

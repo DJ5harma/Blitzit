@@ -28,7 +28,10 @@ export default function Component1() {
     return (
         <div className="flex h-screen w-screen overflow-x-hidden">
             <div
-                style={{ width: sideBarWidth, borderRight: 'solid white 1px' }}
+                style={{
+                    width: sideBarWidth,
+                    borderRight: 'solid 1px rgb(0, 120, 212)',
+                }}
             >
                 <FileTreeNavbar />
             </div>
@@ -43,9 +46,7 @@ export default function Component1() {
             <div
                 {...separatorProps}
                 className="w-0.5 cursor-e-resize"
-                style={{
-                    boxShadow: '0 0 10px 1px red',
-                }}
+                style={{ backgroundColor: 'rgb(0, 120, 212)' }}
             />
             <div
                 id="YE WALA"
@@ -71,20 +72,19 @@ function Component2() {
                 style={{
                     height: position,
                     width: '100%',
-                    boxShadow: '0 0 10px 1px pink',
                 }}
             >
                 <Editor />
             </div>
             <div
                 {...separatorProps}
-                className="min-h-1 cursor-n-resize z-20 select-none"
+                className="min-h-0.5 cursor-n-resize z-20 select-none"
+                style={{ backgroundColor: 'rgb(0, 120, 212)' }}
             />
             <div
                 style={{
                     height: `calc(100% - ${position - 4}px)`,
                     width: '100%',
-                    boxShadow: '0 0 10px 1px orange',
                     zIndex: 20,
                 }}
             >

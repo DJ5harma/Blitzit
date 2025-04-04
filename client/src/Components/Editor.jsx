@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { IoClose } from 'react-icons/io5';
 import { useSocket } from '../Providers/SocketProvider';
-import { IoMdSave } from 'react-icons/io';
 import { useEffect } from 'react';
 
 export const Editor = () => {
@@ -56,7 +55,7 @@ export const Editor = () => {
                 ))}
             </div>
 
-            <div className='h-full'>
+            <div className="h-full">
                 {file ? (
                     <MonacoEditor
                         theme="vs-dark"
