@@ -9,10 +9,11 @@ import {
 } from 'react-icons/md';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { EMITTER } from '../Utils/EMITTER';
+import { toast } from 'react-toastify';
 
 export const FileTreeNavbar = ({ setPosition }) => {
     const { roomId } = useRoom();
-    const { setSaveFlag } = useOpenFiles();
+    const { saveFile } = useOpenFiles();
 
     const [commandToRun, setCommandToRun] = useState('python /app/script.py');
 
@@ -21,7 +22,7 @@ export const FileTreeNavbar = ({ setPosition }) => {
         navigator.clipboard
             .writeText(url)
             .then(() => {
-                alert(`Url id copied, share it with other people`);
+                toast.success(`Url id copied, share it with other people`)
             })
             .catch((err) => console.error('Copy failed:', err));
     };
@@ -69,7 +70,7 @@ export const FileTreeNavbar = ({ setPosition }) => {
             <MdShare onClick={copyToClipboard} size={30} />
             <MdSave
                 title="Save currently opened file"
-                onClick={() => setSaveFlag((prev) => !prev)}
+                onClick={saveFile}
                 size={30}
             />
         </div>
