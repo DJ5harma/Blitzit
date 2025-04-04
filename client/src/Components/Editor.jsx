@@ -60,7 +60,7 @@ export const Editor = () => {
                         }}
                     />
                 ) : (
-                    <div className="h-full flex items-center justify-center text-neutral-300 text-xl">
+                    <div className="h-full flex items-center justify-center text-neutral-300 text-xl select-none">
                         No file selected... choose one from the file tree.
                     </div>
                 )}

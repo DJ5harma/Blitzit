@@ -16,7 +16,6 @@ export const Terminal = () => {
                 ''
             );
             setHistory((p) => [...p, data]);
-            EMITTER.callForTree();
         });
 
         EMITTER.runMainTerminalCommand('pwd');
@@ -30,7 +29,9 @@ export const Terminal = () => {
         <div className="w-full h-full text-left  flex flex-col justify-between gap-4 overflow-hidden">
             <div className="w-full flex overflow-auto">
                 <div className="flex flex-col overflow-auto gap-2 w-3/4">
-                    <span className="bg-blue-950 pl-3">Terminal</span>
+                    <span className="bg-blue-950 pl-3 select-none">
+                        Terminal
+                    </span>
                     {history.map((text) => {
                         return (
                             <span
@@ -51,7 +52,7 @@ export const Terminal = () => {
                     })}
                 </div>
                 <div className="flex flex-col overflow-auto gap-2 w-1/4 px-2">
-                    <span className="bg-white text-black pl-3">
+                    <span className="bg-white text-black pl-3 select-none">
                         Input History
                     </span>
                     {inputHistory.map((text) => {
@@ -63,7 +64,7 @@ export const Terminal = () => {
                     })}
                 </div>
             </div>
-            <div className="flex items-center gap-2 pb-2 [&>*]:p-2">
+            <div className="flex items-center gap-2 pb-2 [&>*]:p-2 select-none">
                 <input
                     type="text"
                     value={input}
@@ -76,7 +77,10 @@ export const Terminal = () => {
                         onClick={() => {
                             if (input === '') return;
                             if (input.toLowerCase() === 'clear') setHistory([]);
-                            else EMITTER.runMainTerminalCommand(input);
+                            else {
+                                EMITTER.runMainTerminalCommand(input);
+                                EMITTER.callForTree();
+                            }
                             setInput((p) => {
                                 setInputHistory((pv) => [...pv, p]);
                                 return '';
