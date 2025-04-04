@@ -6,6 +6,7 @@ export const Terminal = () => {
     const { skt } = useSocket();
 
     const [history, setHistory] = useState([]);
+    const [inputHistory, setInputHistory] = useState([]);
     const [input, setInput] = useState('');
 
     useEffect(() => {
@@ -26,53 +27,79 @@ export const Terminal = () => {
     }, [skt]);
 
     return (
-        <div className="w-full h-full text-left overflow-y-auto flex flex-col justify-between gap-4">
-            <div className="flex flex-col overflow-auto scroll-auto gap-2">
-                {history.map((text) => {
-                    return (
-                        <span
-                            style={
-                                text[0] == '/'
-                                    ? {
-                                          backgroundImage:
-                                              'linear-gradient(to right, aliceblue, black)',
-                                          color: 'black',
-                                          paddingLeft: 12,
-                                      }
-                                    : {}
-                            }
-                        >
-                            {text}
-                        </span>
-                    );
-                })}
+        <div className="w-full h-full text-left  flex flex-col justify-between gap-4 overflow-hidden">
+            <div className="w-full flex overflow-auto">
+                <div className="flex flex-col overflow-auto gap-2 w-3/4">
+                    <span className="bg-blue-950 pl-3">Terminal</span>
+                    {history.map((text) => {
+                        return (
+                            <span
+                                style={
+                                    text[0] == '/'
+                                        ? {
+                                              backgroundImage:
+                                                  'linear-gradient(to right, aliceblue, black)',
+                                              color: 'black',
+                                              paddingLeft: 12,
+                                          }
+                                        : {}
+                                }
+                            >
+                                {text}
+                            </span>
+                        );
+                    })}
+                </div>
+                <div className="flex flex-col overflow-auto scroll-auto gap-2 w-1/4 px-2">
+                    <span className="bg-white text-black pl-3">
+                        Input History
+                    </span>
+                    {inputHistory.map((text) => {
+                        return (
+                            <span className="border-b-2 border-neutral-500">
+                                {text}
+                            </span>
+                        );
+                    })}
+                </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pb-2 [&>*]:p-2">
                 <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Enter your command"
-                    className="border-1 border-white p-2 w-1/2 min-w-2xs rounded"
+                    className="border-1 border-white w-1/2 min-w-2xs rounded"
                 />
-                <button
-                    onClick={() => {
-                        if (input.toLowerCase() === 'clear') setHistory([]);
-                        else EMITTER.runMainTerminalCommand(input);
-                        setInput('');
-                    }}
-                    className="p-2"
-                >
-                    Run {`>`}
+                {input && (
+                    <button
+                        onClick={() => {
+                            if (input === '') return;
+                            if (input.toLowerCase() === 'clear') setHistory([]);
+                            else EMITTER.runMainTerminalCommand(input);
+                            setInput((p) => {
+                                setInputHistory((pv) => [...pv, p]);
+                                return '';
+                            });
+                        }}
+                    >
+                        Run
+                    </button>
+                )}
+                <button onClick={() => EMITTER.runMainTerminalCommand('pwd')}>
+                    Location
                 </button>
-                <button
-                    onClick={() => {
-                        EMITTER.runMainTerminalCommand('pwd');
-                    }}
-                    className="p-2"
-                >
-                    Get Location {`>/`}
-                </button>
+                {history.length > 0 && (
+                    <button
+                        onClick={() => {
+                            setHistory([]);
+                            setInputHistory([]);
+                        }}
+                        className="p-2"
+                    >
+                        Clear
+                    </button>
+                )}
             </div>
         </div>
     );
