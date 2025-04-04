@@ -9,7 +9,7 @@ export const FileTreeNavbar = () => {
     const { setSaveFlag } = useOpenFiles();
     const { skt } = useSocket();
 
-    const [commandToRun, setCommandToRun] = useState('python script.py');
+    const [commandToRun, setCommandToRun] = useState('python /app/script.py');
 
     const copyToClipboard = () => {
         if (!room) {
