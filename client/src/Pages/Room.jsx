@@ -17,10 +17,9 @@ export const Room = () => {
 };
 
 export default function Component1() {
-    const { position, separatorProps } = useResizable({
+    const { position, setPosition, separatorProps } = useResizable({
         axis: 'x',
         initial: 250,
-        min: 50,
     });
 
     const sideBarWidth = 70;
@@ -33,12 +32,15 @@ export default function Component1() {
                     borderRight: 'solid 1px rgb(0, 120, 212)',
                 }}
             >
-                <FileTreeNavbar />
+                <FileTreeNavbar
+                    setPosition={setPosition}
+                    currentPosition={position}
+                />
             </div>
             <div
-                className="p-2.5"
+                className="py-2.5"
                 style={{
-                    width: position, // 10
+                    width: position,
                 }}
             >
                 <FileTree />
