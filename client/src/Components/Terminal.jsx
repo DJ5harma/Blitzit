@@ -1,56 +1,20 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useSocket } from '../Providers/SocketProvider';
-import { Terminal as XTerm } from '@xterm/xterm';
-import '@xterm/xterm/css/xterm.css';
 import { EMITTER } from '../Utils/EMITTER';
 
-const xterm = new XTerm({
-    cursorBlink: true,
-    theme: { background: 'black', foreground: 'white' },
-    scrollOnUserInput: true,
-    rows: 50,
-});
-
 export const Terminal = () => {
-    const terminalRef = useRef(null);
-    const xtermRef = useRef(null);
     const { skt } = useSocket();
 
+    const [history, setHistory] = useState([]);
+    const [input, setInput] = useState('');
+
     useEffect(() => {
-        let commandBuffer = '';
-        xterm.onData((input) => {
-            switch (input) {
-                case '\r':
-                    xterm.writeln(`\r`); // Move to new line after command execution
-                    if (commandBuffer === 'clear') {
-                        xterm.clear();
-                    } else {
-                        EMITTER.runMainTerminalCommand(commandBuffer);
-                    }
-                    setTimeout(() => {
-                        EMITTER.runMainTerminalCommand('pwd');
-                    }, 400);
-                    commandBuffer = '';
-                    break;
-                case '\u007f':
-                    if (commandBuffer.length > 0) {
-                        commandBuffer = commandBuffer.slice(0, -1);
-                        xterm.write('\b \b'); // Remove last character visually
-                    }
-                    break;
-
-                default:
-                    commandBuffer += input;
-                    xterm.write(input); // Display input in terminal
-                    break;
-            }
-        });
-        xterm.open(terminalRef.current);
-        xtermRef.current = xterm;
-
         skt.on('connectMainTerminal -o1', ({ data }) => {
-            xterm.write(data.replace(/\n/g, '\r\n'));
-            xterm.write('\n');
+            data = data.replace(
+                new RegExp(`[\\x00-\\x09\\x0B-\\x1F\\x7F]`, 'g'),
+                ''
+            );
+            setHistory((p) => [...p, data]);
             EMITTER.callForTree();
         });
 
@@ -58,14 +22,58 @@ export const Terminal = () => {
 
         return () => {
             skt.removeListener('connectMainTerminal -o1');
-            xterm.dispose();
         };
     }, [skt]);
 
     return (
-        <div
-            ref={terminalRef}
-            className="w-full h-full text-left overflow-y-auto scroll-auto"
-        ></div>
+        <div className="w-full h-full text-left overflow-y-auto flex flex-col justify-between gap-4">
+            <div className="flex flex-col overflow-auto scroll-auto gap-2">
+                {history.map((text) => {
+                    return (
+                        <span
+                            style={
+                                text[0] == '/'
+                                    ? {
+                                          backgroundImage:
+                                              'linear-gradient(to right, aliceblue, black)',
+                                          color: 'black',
+                                          paddingLeft: 12,
+                                      }
+                                    : {}
+                            }
+                        >
+                            {text}
+                        </span>
+                    );
+                })}
+            </div>
+            <div className="flex items-center gap-2">
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Enter your command"
+                    className="border-1 border-white p-2 w-1/2 min-w-2xs rounded"
+                />
+                <button
+                    onClick={() => {
+                        if (input.toLowerCase() === 'clear') setHistory([]);
+                        else EMITTER.runMainTerminalCommand(input);
+                        setInput('');
+                    }}
+                    className="p-2"
+                >
+                    Run {`>`}
+                </button>
+                <button
+                    onClick={() => {
+                        EMITTER.runMainTerminalCommand('pwd');
+                    }}
+                    className="p-2"
+                >
+                    Get Location {`>/`}
+                </button>
+            </div>
+        </div>
     );
 };
