@@ -10,6 +10,7 @@ import {
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 import { EMITTER } from '../Utils/EMITTER';
 import { toast } from 'react-toastify';
+import { toggleF11 } from '../Utils/toggleF11';
 
 export const FileTreeNavbar = ({ setPosition }) => {
     const { roomId } = useRoom();
@@ -22,7 +23,7 @@ export const FileTreeNavbar = ({ setPosition }) => {
         navigator.clipboard
             .writeText(url)
             .then(() => {
-                toast.success(`Url id copied, share it with other people`)
+                toast.success(`Url id copied, share it with other people`);
             })
             .catch((err) => console.error('Copy failed:', err));
     };
@@ -54,7 +55,11 @@ export const FileTreeNavbar = ({ setPosition }) => {
 
     return (
         <div className="h-screen flex flex-col py-3 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
-            <MdFileCopy title='Toggle file tree' size={25} onClick={openOrCloseFileTree} />
+            <MdFileCopy
+                title="Toggle file tree"
+                size={25}
+                onClick={openOrCloseFileTree}
+            />
             <div className="flex flex-col items-center justify-center gap-4 py-2 bg-neutral-700">
                 <MdPlayArrow
                     title="Run project"
@@ -73,6 +78,14 @@ export const FileTreeNavbar = ({ setPosition }) => {
                 onClick={saveFile}
                 size={30}
             />
+            <button
+                title="Toggle Fullscreen"
+                onClick={toggleF11}
+                className="font-extrabold p-2"
+                style={{background: "transparent"}}
+            >
+                Zen
+            </button>
         </div>
     );
 };
