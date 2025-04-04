@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { useRoom } from '../Providers/RoomProvider';
 import { useSocket } from '../Providers/SocketProvider';
-import { MdEdit, MdPlayArrow, MdSave, MdShare } from 'react-icons/md';
+import {
+    MdEdit,
+    MdFileCopy,
+    MdPlayArrow,
+    MdSave,
+    MdShare,
+} from 'react-icons/md';
 import { useOpenFiles } from '../Providers/OpenFilesProvider';
 
-export const FileTreeNavbar = () => {
+export const FileTreeNavbar = ({ setPosition, currentPosition }) => {
     const { room, roomId } = useRoom();
     const { setSaveFlag } = useOpenFiles();
     const { skt } = useSocket();
@@ -30,7 +36,6 @@ export const FileTreeNavbar = () => {
             console.error('Socket not available!');
             return;
         }
-
         skt.emit('connectMainTerminal -i1', {
             input: commandToRun + '\n',
             isDirectlyCalled: true,
@@ -44,8 +49,17 @@ export const FileTreeNavbar = () => {
         }
     };
 
+    const openOrCloseFileTree = () => {
+        if (currentPosition === 0) {
+            setPosition(250);
+        } else {
+            setPosition(0);
+        }
+    };
+
     return (
-        <div className="h-screen w-full flex flex-col py-3 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
+        <div className="h-screen flex flex-col py-3 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
+            <MdFileCopy size={25} onClick={openOrCloseFileTree} />
             <div className="flex flex-col items-center justify-center gap-4 py-2 bg-neutral-700">
                 <MdPlayArrow
                     title="Run project"
@@ -59,7 +73,6 @@ export const FileTreeNavbar = () => {
                 />
             </div>
             <MdShare onClick={copyToClipboard} size={30} />
-
             <MdSave
                 title="Save currently opened file"
                 onClick={() => setSaveFlag((prev) => !prev)}
