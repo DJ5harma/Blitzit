@@ -53,7 +53,7 @@ export const FileTreeNavbar = ({ setPosition }) => {
 
     return (
         <div className="h-screen flex flex-col py-3 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
-            <MdFileCopy size={25} onClick={openOrCloseFileTree} />
+            <MdFileCopy title='Toggle file tree' size={25} onClick={openOrCloseFileTree} />
             <div className="flex flex-col items-center justify-center gap-4 py-2 bg-neutral-700">
                 <MdPlayArrow
                     title="Run project"

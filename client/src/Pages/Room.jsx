@@ -6,6 +6,8 @@ import { OpenFilesProvider } from '../Providers/OpenFilesProvider';
 import { RoomProvider } from '../Providers/RoomProvider';
 import { useResizable } from 'react-resizable-layout';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { BsTerminalFill } from 'react-icons/bs';
+import { FaArrowUp } from 'react-icons/fa';
 
 export const Room = () => {
     return (
@@ -39,7 +41,6 @@ export default function Component1() {
                 />
             </div>
             <div
-                className="py-2.5"
                 style={{
                     width: position,
                 }}
@@ -111,7 +112,22 @@ function Component2() {
                     zIndex: 20,
                 }}
             >
-                <Terminal />
+                <Terminal />(
+                <button
+                    className="z-20 fixed bottom-4 right-4 p-2 flex gap-2 items-center"
+                    style={{
+                        backgroundColor: 'rgb(10, 20, 120)',
+                        border: 'solid rgb(0, 120, 212) 3px',
+                    }}
+                    onClick={toggleTerminal}
+                    title={(isTerminalOpen ? 'Hide' : 'Show') + ' terminal'}
+                >
+                    <FaArrowUp
+                        style={{ rotate: isTerminalOpen ? '180deg' : '0deg' }}
+                    />
+                    <BsTerminalFill size={40} />
+                </button>
+                )
             </div>
         </div>
     );
