@@ -1,5 +1,5 @@
-export const getLanguageFromFileName = (fileName) => {
-    const ext = fileName.split('.').pop();
+export const getLanguageFromFilePath = (path) => {
+    const ext = path.substring(path.lastIndexOf('.') + 1);
     switch (ext) {
         case 'js':
             return 'javascript';

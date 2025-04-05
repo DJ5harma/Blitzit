@@ -1,14 +1,20 @@
+import { FileTree } from '../Components/FileTree/FileTree';
+import { FileTreeNavbar } from '../Components/FileTree/FileTreeNavbar';
+//
+import { Editor } from '../Components/Editor/Editor';
+import { EditorTabs } from '../Components/Editor/EditorTabs';
+//
 import { Terminal } from '../Components/Terminal';
-import { FileTree } from '../Components/FileTree';
-import { Editor } from '../Components/Editor';
-import { FileTreeNavbar } from '../Components/FileTreeNavbar';
+//
 import { OpenFilesProvider } from '../Providers/OpenFilesProvider';
 import { RoomProvider } from '../Providers/RoomProvider';
-import { useResizable } from 'react-resizable-layout';
+//
 import { useCallback, useEffect, useRef, useState } from 'react';
+//
+import { useResizable } from 'react-resizable-layout';
+//
 import { BsTerminalFill } from 'react-icons/bs';
 import { FaArrowUp } from 'react-icons/fa';
-import { EditorTabs } from '../Components/EditorTabs';
 
 export const Room = () => {
     return (

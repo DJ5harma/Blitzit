@@ -1,7 +1,8 @@
 import MonacoEditor from '@monaco-editor/react';
-import { useOpenFiles } from '../Providers/OpenFilesProvider';
-import { useRoom } from '../Providers/RoomProvider';
-import { getYText, useYjsBinding } from '../hooks/YjsBinding';
+import { useOpenFiles } from '../../Providers/OpenFilesProvider';
+import { useRoom } from '../../Providers/RoomProvider';
+import { getYText, useYjsBinding } from '../../hooks/YjsBinding';
+import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
 
 export const Editor = () => {
     const { focusedPath, pathToContent, setPathToContent } = useOpenFiles();
@@ -25,6 +26,7 @@ export const Editor = () => {
                         wordWrap: 'on',
                         fontSize: 20,
                     }}
+                    language={getLanguageFromFilePath(focusedPath)}
                     onChange={(content) => {
                         setPathToContent((prev) => ({
                             ...prev,

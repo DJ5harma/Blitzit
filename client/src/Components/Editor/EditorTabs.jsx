@@ -1,5 +1,5 @@
 import { IoClose } from 'react-icons/io5';
-import { useOpenFiles } from '../Providers/OpenFilesProvider';
+import { useOpenFiles } from '../../Providers/OpenFilesProvider';
 
 export const EditorTabs = () => {
     const { openPaths, closeFile, focusedPath, setFocusedPath } =

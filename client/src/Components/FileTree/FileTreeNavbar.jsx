@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRoom } from '../Providers/RoomProvider';
+import { useRoom } from '../../Providers/RoomProvider';
 import {
     MdEdit,
     MdFileCopy,
@@ -7,10 +7,10 @@ import {
     MdSave,
     MdShare,
 } from 'react-icons/md';
-import { useOpenFiles } from '../Providers/OpenFilesProvider';
-import { EMITTER } from '../Utils/EMITTER';
+import { useOpenFiles } from '../../Providers/OpenFilesProvider';
+import { EMITTER } from '../../Utils/EMITTER';
 import { toast } from 'react-toastify';
-import { toggleF11 } from '../Utils/toggleF11';
+import { toggleF11 } from '../../Utils/toggleF11';
 
 export const FileTreeNavbar = ({ setPosition }) => {
     const { roomId } = useRoom();
