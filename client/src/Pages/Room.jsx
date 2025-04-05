@@ -4,7 +4,7 @@ import { FileTreeNavbar } from '../Components/FileTree/FileTreeNavbar';
 import { Editor } from '../Components/Editor/Editor';
 import { EditorTabs } from '../Components/Editor/EditorTabs';
 //
-import { Terminal } from '../Components/Terminal';
+import { Terminal } from '../Components/Terminal/Terminal';
 //
 import { OpenFilesProvider } from '../Providers/OpenFilesProvider';
 import { RoomProvider } from '../Providers/RoomProvider';

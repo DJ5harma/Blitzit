@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useSocket } from '../Providers/SocketProvider';
-import { EMITTER } from '../Utils/EMITTER';
+import { useSocket } from '../../Providers/SocketProvider';
+import { EMITTER } from '../../Utils/EMITTER';
+import { TerminalInputHistory } from './TerminalInputHistory';
+import { TerminalHistory } from './TerminalHistory';
 
 export const Terminal = () => {
     const { skt } = useSocket();
@@ -28,42 +30,8 @@ export const Terminal = () => {
     return (
         <div className="w-full h-full text-left  flex flex-col justify-between gap-4 overflow-hidden">
             <div className="w-full flex overflow-auto">
-                <div className="flex flex-col overflow-auto gap-2 w-3/4">
-                    <span className="bg-blue-950 pl-3 select-none">
-                        Terminal
-                    </span>
-                    {history.map((text, i) => {
-                        return (
-                            <span
-                                key={i}
-                                style={
-                                    text[0] == '/'
-                                        ? {
-                                              backgroundImage:
-                                                  'linear-gradient(to right, aliceblue, black)',
-                                              color: 'black',
-                                              paddingLeft: 12,
-                                          }
-                                        : {}
-                                }
-                            >
-                                {text}
-                            </span>
-                        );
-                    })}
-                </div>
-                <div className="flex flex-col overflow-auto gap-2 w-1/4 px-2">
-                    <span className="bg-white text-black pl-3 select-none">
-                        Input History
-                    </span>
-                    {inputHistory.map((text, i) => {
-                        return (
-                            <span key={i} className="border-b-2 border-neutral-500">
-                                {text}
-                            </span>
-                        );
-                    })}
-                </div>
+                <TerminalHistory history={history} />
+                <TerminalInputHistory inputHistory={inputHistory} />
             </div>
             <div className="flex items-center gap-2 pb-2 [&>*]:p-2 select-none">
                 <input

@@ -4,7 +4,7 @@
 
 // original credit: https://github.com/yjs/y-webrtc/blob/master/bin/server.js
 
-// Ideally, we should be using an already deployed server anyways but it seems their (yjs's) STUNs are not working, so we're hosting it ourselves
+// Ideally, we should be using an already deployed server anyways but it seems that their (yjs's) STUNs are not working, so we're hosting it ourselves
 
 
 import { WebSocketServer } from "ws";

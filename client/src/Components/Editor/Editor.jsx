@@ -1,7 +1,7 @@
 import MonacoEditor from '@monaco-editor/react';
 import { useOpenFiles } from '../../Providers/OpenFilesProvider';
 import { useRoom } from '../../Providers/RoomProvider';
-import { getYText, useYjsBinding } from '../../hooks/YjsBinding';
+import { getYText, useYjsBinding } from './YjsBinding.js';
 import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
 
 export const Editor = () => {

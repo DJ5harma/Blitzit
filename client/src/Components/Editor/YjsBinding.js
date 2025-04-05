@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
-import { CONSTANTS } from '../Utils/CONSTANTS';
+import { CONSTANTS } from '../../Utils/CONSTANTS';
 
 const yDocMap = new Map();
 
