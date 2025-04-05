@@ -9,7 +9,7 @@ import { EMITTER } from '../Utils/EMITTER';
 
 export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const { skt } = useSocket();
-    const { openFiles, openFile, closeFile } = useOpenFiles();
+    const { openFile, closeFile } = useOpenFiles();
 
     const [isDeleted, setIsDeleted] = useState(false);
     const [isExpanded, setIsExpanded] = useState(true);
@@ -17,14 +17,15 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const isFolder = value !== null;
 
     const handleFileClick = () => {
-        if (!openFiles[path]) {
-            openFile({
-                path,
-                name,
-                language: getLanguageFromFileName(name),
-                value: '',
-            });
-        }
+        openFile(path)
+        // if (!openFiles[path]) {
+        //     openFile({
+        //         path,
+        //         name,
+        //         language: getLanguageFromFileName(name),
+        //         value: '',
+        //     });
+        // }
     };
 
     function createEntity(isFile) {

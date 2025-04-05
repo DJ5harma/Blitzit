@@ -32,9 +32,10 @@ export const Terminal = () => {
                     <span className="bg-blue-950 pl-3 select-none">
                         Terminal
                     </span>
-                    {history.map((text) => {
+                    {history.map((text, i) => {
                         return (
                             <span
+                                key={i}
                                 style={
                                     text[0] == '/'
                                         ? {
@@ -55,9 +56,9 @@ export const Terminal = () => {
                     <span className="bg-white text-black pl-3 select-none">
                         Input History
                     </span>
-                    {inputHistory.map((text) => {
+                    {inputHistory.map((text, i) => {
                         return (
-                            <span className="border-b-2 border-neutral-500">
+                            <span key={i} className="border-b-2 border-neutral-500">
                                 {text}
                             </span>
                         );

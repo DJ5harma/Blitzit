@@ -8,6 +8,7 @@ import { useResizable } from 'react-resizable-layout';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BsTerminalFill } from 'react-icons/bs';
 import { FaArrowUp } from 'react-icons/fa';
+import { EditorTabs } from '../Components/EditorTabs';
 
 export const Room = () => {
     return (
@@ -97,7 +98,11 @@ function Component2() {
 
     return (
         <div ref={containerRef} className="flex flex-col h-screen w-full">
-            <div style={{ height: position, width: '100%' }}>
+            <div
+                style={{ height: position, width: '100%' }}
+                className="flex flex-col text-white"
+            >
+                <EditorTabs />
                 <Editor />
             </div>
             <div

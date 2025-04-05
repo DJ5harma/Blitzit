@@ -9,6 +9,7 @@ import { connectEditorTerminal } from "./listeners/editorTerminal/connectEditorT
 import { dbConnect } from "./database/dbConnect.js";
 import { getRoomDetails } from "./listeners/getRoomDetails.js";
 import { redisConnect } from "./redis/redis.js";
+import { webRtcServer } from "./webrtc/webRtcServer.js";
 
 const docker = new Docker();
 const io = new Server({ cors: { origin: "*" } });
@@ -43,6 +44,7 @@ dbConnect("mongodb://localhost:27017/Blitzit").then(() => {
     redisConnect().then(() => {
         io.listen(4000);
         console.log("Socket at 4000");
+        webRtcServer();
     });
 });
 

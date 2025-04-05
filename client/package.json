@@ -12,6 +12,7 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/vite": "^4.0.17",
+    "monaco-editor": "^0.52.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
@@ -19,7 +20,10 @@
     "react-router-dom": "^7.4.0",
     "react-toastify": "^11.0.5",
     "socket.io-client": "^4.8.1",
-    "tailwindcss": "^4.0.17"
+    "tailwindcss": "^4.0.17",
+    "y-monaco": "^0.1.6",
+    "y-webrtc": "^10.3.0",
+    "yjs": "^13.6.24"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

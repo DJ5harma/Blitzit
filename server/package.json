@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "dockerode": "^4.0.4",
+    "lib0": "^0.2.102",
     "mongoose": "^8.13.1",
     "redis": "^4.7.0",
     "socket.io": "^4.8.1"

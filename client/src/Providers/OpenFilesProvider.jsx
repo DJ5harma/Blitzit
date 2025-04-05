@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useSocket } from './SocketProvider';
 import { EMITTER } from '../Utils/EMITTER';
 import { toast } from 'react-toastify';
@@ -6,63 +6,54 @@ import { toast } from 'react-toastify';
 const context = createContext();
 
 export const OpenFilesProvider = ({ children }) => {
-    const [openFiles, setOpenFiles] = useState({});
+    const [openPaths, setOpenPaths] = useState(new Set());
+    const [focusedPath, setFocusedPath] = useState(null);
+    const [pathToContent, setPathToContent] = useState({});
+
     const { skt } = useSocket();
 
-    const [saveFlag, setSaveFlag] = useState(false);
-
-    const [fileName, setFileName] = useState('');
-
-    const file = fileName ? openFiles[fileName] : null;
-
-    const editorContentRef = useRef(file ? file.value : '');
-
     const saveFile = () => {
-        if (!file || !editorContentRef.current) return;
+        if (!focusedPath || !pathToContent[focusedPath]) return;
 
-        editorContentRef.current.replaceAll(`"`, `\\"`);
-        editorContentRef.current.replaceAll('`', '\\`');
-        
-        EMITTER.saveFileEmitter(editorContentRef.current,file.path)
-        
-        toast.success(`"${file.path}" saved!`);
+        const content = pathToContent[focusedPath];
+        content.replaceAll(`"`, `\\"`);
+        content.replaceAll('`', '\\`');
+
+        EMITTER.saveFileEmitter(content, focusedPath);
+
+        toast.success(`"${focusedPath}" saved!`);
     };
 
-    const openFile = (file) => {
-        console.log({ file });
-
-        setOpenFiles((prev) => ({
-            ...prev,
-            [file.path]: file,
-        }));
-        EMITTER.readFile(file.path);
+    const openFile = (filePath) => {
+        setOpenPaths((p) => new Set([...p, filePath]));
+        EMITTER.readFile(filePath);
     };
 
     const closeFile = (path) => {
-        setOpenFiles((prev) => {
-            const updated = { ...prev };
-            delete updated[path];
-            return updated;
-        });
+        setOpenPaths((p) => new Set([...p].filter((pth) => pth !== path)));
+        if (focusedPath === path) setFocusedPath(null);
     };
 
     useEffect(() => {
         skt.on('connectEditorTerminal -o1', ({ data, filePath }) => {
-            setOpenFiles((p) => {
-                return {
-                    ...p,
-                    [filePath]: {
-                        ...p[filePath],
-                        value: data,
-                    },
-                };
-            });
+            console.log({data, filePath});
+            
+            setPathToContent((p) => ({ ...p, [filePath]: data }));
         });
     }, [skt]);
 
     return (
         <context.Provider
-            value={{ openFiles, openFile, closeFile, saveFlag, setSaveFlag,fileName,setFileName,saveFile,editorContentRef,file }}
+            value={{
+                openPaths,
+                pathToContent,
+                setPathToContent,
+                saveFile,
+                openFile,
+                closeFile,
+                focusedPath,
+                setFocusedPath,
+            }}
         >
             {children}
         </context.Provider>
