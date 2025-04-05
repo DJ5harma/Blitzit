@@ -1,155 +1,186 @@
 #!/usr/bin/env node
 
+// Taken from yjs webrtc server and modified to scale by redis integration with AI help cause it'd take much time to understand this ourselves and
+
+// original credit: https://github.com/yjs/y-webrtc/blob/master/bin/server.js
+
+// Ideally, we should be using an already deployed server anyways but it seems their (yjs's) STUNs are not working, so we're hosting it ourselves
+
+
 import { WebSocketServer } from "ws";
 import http from "http";
 import * as map from "lib0/map";
+import { subscriber, redis } from "../redis/redis.js";
 
 export const webRtcServer = () => {
-    const wsReadyStateConnecting = 0;
-    const wsReadyStateOpen = 1;
-    const wsReadyStateClosing = 2; // eslint-disable-line
-    const wsReadyStateClosed = 3; // eslint-disable-line
-
+    const port = process.env.PORT || 4444;
     const pingTimeout = 30000;
 
-    const port = process.env.PORT || 4444;
     const wss = new WebSocketServer({ noServer: true });
 
-    const server = http.createServer((request, response) => {
-        response.writeHead(200, { "Content-Type": "text/plain" });
-        response.end("okay");
+    const server = http.createServer((_, res) => {
+        res.writeHead(200, { "Content-Type": "text/plain" });
+        res.end("Signaling server okay");
     });
 
-    /**
-     * Map froms topic-name to set of subscribed clients.
-     * @type {Map<string, Set<any>>}
-     */
-    const topics = new Map();
+    const localTopicSubs = new Map(); // topic: Set<ws>
 
-    /**
-     * @param {any} conn
-     * @param {object} message
-     */
     const send = (conn, message) => {
-        if (
-            conn.readyState !== wsReadyStateConnecting &&
-            conn.readyState !== wsReadyStateOpen
-        ) {
-            conn.close();
-        }
-        try {
-            conn.send(JSON.stringify(message));
-        } catch (e) {
-            conn.close();
+        if (conn.readyState === conn.OPEN) {
+            try {
+                conn.send(JSON.stringify(message));
+            } catch {
+                conn.close();
+            }
         }
     };
 
-    /**
-     * Setup a new client
-     * @param {any} conn
-     */
-    const onconnection = (conn) => {
-        /**
-         * @type {Set<string>}
-         */
+    const activeRedisHandlers = new Set();
+
+    const onConnection = (conn) => {
         const subscribedTopics = new Set();
         let closed = false;
-        // Check if connection is still alive
         let pongReceived = true;
+
         const pingInterval = setInterval(() => {
             if (!pongReceived) {
-                conn.close();
+                conn.terminate();
                 clearInterval(pingInterval);
             } else {
                 pongReceived = false;
                 try {
                     conn.ping();
-                } catch (e) {
-                    conn.close();
+                } catch {
+                    conn.terminate();
                 }
             }
         }, pingTimeout);
-        conn.on("pong", () => {
-            pongReceived = true;
-        });
-        conn.on("close", () => {
-            subscribedTopics.forEach((topicName) => {
-                const subs = topics.get(topicName) || new Set();
-                subs.delete(conn);
-                if (subs.size === 0) {
-                    topics.delete(topicName);
-                }
-            });
-            subscribedTopics.clear();
-            closed = true;
-        });
-        conn.on(
-            "message",
-            /** @param {object} message */ (message) => {
-                if (typeof message === "string" || message instanceof Buffer) {
-                    message = JSON.parse(message);
-                }
-                if (message && message.type && !closed) {
-                    switch (message.type) {
-                        case "subscribe":
-                            /** @type {Array<string>} */ (
-                                message.topics || []
-                            ).forEach((topicName) => {
-                                if (typeof topicName === "string") {
-                                    // add conn to topic
-                                    const topic = map.setIfUndefined(
-                                        topics,
-                                        topicName,
-                                        () => new Set()
-                                    );
-                                    topic.add(conn);
-                                    // add topic to conn
-                                    subscribedTopics.add(topicName);
-                                }
-                            });
-                            break;
-                        case "unsubscribe":
-                            /** @type {Array<string>} */ (
-                                message.topics || []
-                            ).forEach((topicName) => {
-                                const subs = topics.get(topicName);
-                                if (subs) {
-                                    subs.delete(conn);
-                                }
-                            });
-                            break;
-                        case "publish":
-                            if (message.topic) {
-                                const receivers = topics.get(message.topic);
-                                if (receivers) {
-                                    message.clients = receivers.size;
-                                    receivers.forEach((receiver) =>
-                                        send(receiver, message)
-                                    );
-                                }
-                            }
-                            break;
-                        case "ping":
-                            send(conn, { type: "pong" });
+
+        conn.on("pong", () => (pongReceived = true));
+
+        conn.on("close", async () => {
+            for (const topic of subscribedTopics) {
+                const subs = localTopicSubs.get(topic);
+                if (subs) {
+                    subs.delete(conn);
+                    if (subs.size === 0) {
+                        localTopicSubs.delete(topic);
+                        // Leave redis subscription if no local clients
+                        if (activeRedisHandlers.has(topic)) {
+                            await subscriber.unsubscribe(topic);
+                            activeRedisHandlers.delete(topic);
+                        }
                     }
                 }
             }
-        );
-    };
-    wss.on("connection", onconnection);
+            subscribedTopics.clear();
+            closed = true;
+            clearInterval(pingInterval);
+        });
 
-    server.on("upgrade", (request, socket, head) => {
-        // You may check auth of request here..
-        /**
-         * @param {any} ws
-         */
-        const handleAuth = (ws) => {
-            wss.emit("connection", ws, request);
-        };
-        wss.handleUpgrade(request, socket, head, handleAuth);
+        conn.on("message", async (msg) => {
+            let message;
+            try {
+                message =
+                    typeof msg === "string"
+                        ? JSON.parse(msg)
+                        : JSON.parse(msg.toString());
+            } catch {
+                return;
+            }
+
+            if (!message?.type || closed) return;
+
+            switch (message.type) {
+                case "subscribe":
+                    for (const topic of message.topics || []) {
+                        if (typeof topic !== "string") continue;
+
+                        const subs = map.setIfUndefined(
+                            localTopicSubs,
+                            topic,
+                            () => new Set()
+                        );
+                        subs.add(conn);
+
+                        if (!subscribedTopics.has(topic)) {
+                            subscribedTopics.add(topic);
+
+                            if (!activeRedisHandlers.has(topic)) {
+                                await subscriber.subscribe(
+                                    topic,
+                                    (msgStr, channel) => {
+                                        const clients =
+                                            localTopicSubs.get(channel);
+                                        if (!clients) return;
+
+                                        let parsed;
+                                        try {
+                                            parsed = JSON.parse(msgStr);
+                                        } catch {
+                                            return;
+                                        }
+
+                                        parsed.clients = clients.size;
+                                        clients.forEach((ws) =>
+                                            send(ws, parsed)
+                                        );
+                                    }
+                                );
+
+                                activeRedisHandlers.add(topic);
+                            }
+                        }
+
+                        await redis.set(
+                            `topic:${topic}:last_subscribed`,
+                            Date.now()
+                        );
+                    }
+                    break;
+
+                case "unsubscribe":
+                    for (const topic of message.topics || []) {
+                        const subs = localTopicSubs.get(topic);
+                        subs?.delete(conn);
+
+                        if (subs?.size === 0) {
+                            localTopicSubs.delete(topic);
+                            await subscriber.unsubscribe(topic);
+                            activeRedisHandlers.delete(topic);
+                        }
+
+                        subscribedTopics.delete(topic);
+                    }
+                    break;
+
+                case "publish":
+                    if (message.topic) {
+                        const payload = JSON.stringify(message);
+                        await redis.publish(message.topic, payload);
+                        await redis.set(
+                            `topic:${message.topic}:last_published`,
+                            Date.now()
+                        );
+                    }
+                    break;
+
+                case "ping":
+                    send(conn, { type: "pong" });
+                    break;
+            }
+        });
+    };
+
+    wss.on("connection", onConnection);
+
+    server.on("upgrade", (req, socket, head) => {
+        wss.handleUpgrade(req, socket, head, (ws) => {
+            wss.emit("connection", ws, req);
+        });
     });
 
-    server.listen(port);
-
-    console.log("Signaling server running on localhost:", port);
+    server.listen(port, () => {
+        console.log("Redis signaling server running on port", port);
+    });
 };
