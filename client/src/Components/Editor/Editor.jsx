@@ -4,12 +4,12 @@ import { useRoom } from '../../Providers/RoomProvider';
 import { getYText, useYjsBinding } from './YjsBinding.js';
 import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
 
-export const Editor = () => {
-    const { focusedPath, pathToContent, setPathToContent } = useOpenFiles();
+export const Editor = ({ side }) => {
+    const { focusedPaths, pathToContent, setPathToContent } = useOpenFiles();
     const { roomId } = useRoom();
+    const focusedPath = focusedPaths[side];
 
-    // Sync to Yjs
-    const initialContent = pathToContent[focusedPath];
+    const initialContent = focusedPath ? pathToContent[focusedPath] : '';
     useYjsBinding(focusedPath, roomId, setPathToContent, initialContent);
 
     return (
