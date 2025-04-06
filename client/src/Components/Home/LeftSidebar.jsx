@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHome } from '../../Providers/HomeProvider';
+import { UseHome } from '../../Providers/HomeProvider';
 
 const arr = [
     { heading: 'New Project', activeTabName: 'new' },
@@ -8,12 +8,13 @@ const arr = [
 ];
 
 export const LeftSidebar = () => {
-    const { activeTab, setActiveTab } = useHome();
+    const { activeTab, setActiveTab } = UseHome();
     return (
         <div className="w-64 bg-gray-900 border-r border-gray-700 h-full p-4 flex flex-col gap-2">
-            {arr.map(({ heading, activeTabName }) => {
+            {arr.map(({ heading, activeTabName }, i) => {
                 return (
                     <button
+                        key={i}
                         onClick={() => setActiveTab(activeTabName)}
                         className={`p-3 text-left rounded-md transition-colors ${
                             activeTab === activeTabName

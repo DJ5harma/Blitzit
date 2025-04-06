@@ -1,13 +1,12 @@
 import MonacoEditor from '@monaco-editor/react';
-import { useOpenFiles } from '../../Providers/OpenFilesProvider';
-import { useRoom } from '../../Providers/RoomProvider';
+import { UseOpenFiles } from '../../Providers/OpenFilesProvider';
+import { UseRoom } from '../../Providers/RoomProvider';
 import { getYText, useYjsBinding } from './YjsBinding.js';
 import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
 
-export const Editor = ({ side }) => {
-    const { focusedPaths, pathToContent, setPathToContent } = useOpenFiles();
-    const { roomId } = useRoom();
-    const focusedPath = focusedPaths[side];
+export const Editor = () => {
+    const { focusedPath, pathToContent, setPathToContent } = UseOpenFiles();
+    const { roomId } = UseRoom();
 
     const initialContent = focusedPath ? pathToContent[focusedPath] : '';
     useYjsBinding(focusedPath, roomId, setPathToContent, initialContent);

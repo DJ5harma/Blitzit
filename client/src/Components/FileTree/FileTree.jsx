@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useSocket } from '../../Providers/SocketProvider';
+import { UseSocket } from '../../Providers/SocketProvider';
 import { FileTreeNode } from './FileTreeNode';
 import { getFileTree } from '../../Utils/getFileTree';
 import { EMITTER } from '../../Utils/EMITTER';
 
 export const FileTree = () => {
-    const { skt } = useSocket();
+    const { skt } = UseSocket();
 
     const [treeData, setTreeData] = useState(null);
 

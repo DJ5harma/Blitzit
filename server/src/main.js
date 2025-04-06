@@ -29,14 +29,13 @@ const listeners = [
 ];
 
 io.on("connection", async (socket) => {
-    console.log("connected", ++cnt);
+    console.log("connected", ++cnt, socket.id);
+    socket.on("disconnect", () => {
+        console.log("disconnected", --cnt, socket.id);
+    });
 
     listeners.forEach((listener) => {
         listener(socket);
-    });
-
-    socket.on("disconnect", () => {
-        console.log("disconnected", --cnt);
     });
 });
 

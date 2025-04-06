@@ -13,9 +13,7 @@ export const Room = () => {
 
     useEffect(() => {
         const handleKeyPress = (e) => {
-            e.preventDefault();
             if (!e.ctrlKey) return;
-
             if (e.key === '`')
                 setHidden((p) => ({ ...p, terminal: !p.terminal }));
             else if (e.key.toLowerCase() === 'b')

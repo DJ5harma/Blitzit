@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useSocket } from './SocketProvider';
+import { UseSocket } from './SocketProvider';
 import { EMITTER } from '../Utils/EMITTER';
 import { toast } from 'react-toastify';
 
@@ -16,7 +16,7 @@ export const OpenFilesProvider = ({ children }) => {
     });
     const [pathToContent, setPathToContent] = useState({});
 
-    const { skt } = useSocket();
+    const { skt } = UseSocket();
 
     const saveFile = (side = 'left') => {
         const filePath = focusedPaths[side];
@@ -91,4 +91,4 @@ export const OpenFilesProvider = ({ children }) => {
     );
 };
 
-export const useOpenFiles = () => useContext(context);
+export const UseOpenFiles = () => useContext(context);

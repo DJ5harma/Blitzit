@@ -1,16 +1,16 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useSocket } from './SocketProvider';
+import { UseSocket } from './SocketProvider';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useHome } from './HomeProvider';
+import { UseHome } from './HomeProvider';
 
 const context = createContext();
 
 export const RoomProvider = ({ children }) => {
     const { roomId } = useParams();
-    const { addProject } = useHome();
+    const { addProject } = UseHome();
 
-    const { skt } = useSocket();
+    const { skt } = UseSocket();
 
     const [terminalsConnected, setTerminalsConnected] = useState(false);
     const [project, setProject] = useState({
@@ -78,4 +78,4 @@ export const RoomProvider = ({ children }) => {
     );
 };
 
-export const useRoom = () => useContext(context);
+export const UseRoom = () => useContext(context);
