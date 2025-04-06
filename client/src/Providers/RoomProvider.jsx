@@ -2,13 +2,13 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useSocket } from './SocketProvider';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useHomeContext } from './HomeProvider';
+import { useHome } from './HomeProvider';
 
 const context = createContext();
 
 export const RoomProvider = ({ children }) => {
     const { roomId } = useParams();
-    const { addProject } = useHomeContext();
+    const { addProject } = useHome();
 
     const { skt } = useSocket();
 
@@ -62,7 +62,7 @@ export const RoomProvider = ({ children }) => {
                 );
             }
         );
-    }, [roomId, skt, terminalsConnected]);
+    }, [addProject, roomId, skt, terminalsConnected]);
 
     if (!terminalsConnected) return <>Connecting all the terminals....</>;
 

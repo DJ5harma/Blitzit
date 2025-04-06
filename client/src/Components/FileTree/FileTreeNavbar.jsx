@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useRoom } from '../../Providers/RoomProvider';
 import {
     MdEdit,
@@ -7,12 +7,13 @@ import {
     MdSave,
     MdShare,
 } from 'react-icons/md';
+import { BsTerminal } from 'react-icons/bs';
 import { useOpenFiles } from '../../Providers/OpenFilesProvider';
 import { EMITTER } from '../../Utils/EMITTER';
 import { toast } from 'react-toastify';
 import { toggleF11 } from '../../Utils/toggleF11';
 
-export const FileTreeNavbar = ({ setPosition }) => {
+export const FileTreeNavbar = ({ setHidden }) => {
     const { roomId } = useRoom();
     const { saveFile } = useOpenFiles();
 
@@ -35,30 +36,14 @@ export const FileTreeNavbar = ({ setPosition }) => {
         }
     };
 
-    const openOrCloseFileTree = useCallback(() => {
-        setPosition((prevPosition) => (prevPosition === 0 ? 250 : 0));
-    }, [setPosition]);
-
-    useEffect(() => {
-        const handleKeyPress = (event) => {
-            if (event.ctrlKey && event.key.toLowerCase() === 'b') {
-                event.preventDefault();
-                openOrCloseFileTree();
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyPress);
-        return () => {
-            window.removeEventListener('keydown', handleKeyPress);
-        };
-    }, [openOrCloseFileTree]);
-
     return (
-        <div className="h-screen flex flex-col py-3 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
+        <div className="h-screen w-full bg-black flex flex-col pt-5 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
             <MdFileCopy
                 title="Toggle file tree"
                 size={25}
-                onClick={openOrCloseFileTree}
+                onClick={() => {
+                    setHidden((p) => ({ ...p, fileTree: !p.fileTree }));
+                }}
             />
             <div className="flex flex-col items-center justify-center gap-4 py-2 bg-neutral-700">
                 <MdPlayArrow
@@ -81,11 +66,17 @@ export const FileTreeNavbar = ({ setPosition }) => {
             <button
                 title="Toggle Fullscreen"
                 onClick={toggleF11}
-                className="font-extrabold p-2"
-                style={{background: "transparent"}}
+                className="font-extrabold p-2 select-none"
             >
                 Zen
             </button>
+            <BsTerminal
+                title="Toggle terminal"
+                onClick={() => {
+                    setHidden((p) => ({ ...p, terminal: !p.terminal }));
+                }}
+                size={40}
+            />
         </div>
     );
 };

@@ -1,146 +1,61 @@
 import { FileTree } from '../Components/FileTree/FileTree';
 import { FileTreeNavbar } from '../Components/FileTree/FileTreeNavbar';
-//
 import { Editor } from '../Components/Editor/Editor';
 import { EditorTabs } from '../Components/Editor/EditorTabs';
-//
 import { Terminal } from '../Components/Terminal/Terminal';
-//
 import { OpenFilesProvider } from '../Providers/OpenFilesProvider';
-import { RoomProvider, useRoom } from '../Providers/RoomProvider';
-//
-import { useCallback, useEffect, useRef, useState } from 'react';
-//
-import { useResizable } from 'react-resizable-layout';
-//
-import { BsTerminalFill } from 'react-icons/bs';
-import { FaArrowUp } from 'react-icons/fa';
+import { RoomProvider } from '../Providers/RoomProvider';
+import { useEffect, useState } from 'react';
+import { ResizableWrapper } from '../Wrappers/ResizableWrapper';
 
 export const Room = () => {
+    const [hidden, setHidden] = useState({ fileTree: false, terminal: false });
+
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            e.preventDefault();
+            if (!e.ctrlKey) return;
+
+            if (e.key === '`')
+                setHidden((p) => ({ ...p, terminal: !p.terminal }));
+            else if (e.key.toLowerCase() === 'b')
+                setHidden((p) => ({ ...p, fileTree: !p.fileTree }));
+        };
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, []);
+
     return (
         <RoomProvider>
             <OpenFilesProvider>
-                <Component1 />
+                <div className="w-screen h-screen flex overflow-hidden">
+                    <div style={{ width: 70 }}>
+                        <FileTreeNavbar setHidden={setHidden} />
+                    </div>
+                    <div
+                        style={{ width: 'calc(100% - 70px)' }}
+                        className="h-full"
+                    >
+                        <ResizableWrapper
+                            child1={!hidden.fileTree && <FileTree />}
+                            initial={200}
+                            child2={
+                                <div className="flex flex-col w-full h-full">
+                                    <EditorTabs />
+                                    <ResizableWrapper
+                                        child1={<Editor />}
+                                        axis="y"
+                                        child2={
+                                            !hidden.terminal && <Terminal />
+                                        }
+                                        initial={400}
+                                    />
+                                </div>
+                            }
+                        />
+                    </div>
+                </div>
             </OpenFilesProvider>
         </RoomProvider>
     );
 };
-
-export default function Component1() {
-    const { project } = useRoom();
-    const { position, setPosition, separatorProps } = useResizable({
-        axis: 'x',
-        initial: 250,
-    });
-
-    const sideBarWidth = 70;
-
-    return (
-        <div className="flex h-screen w-screen overflow-x-hidden">
-            <div
-                style={{
-                    width: sideBarWidth,
-                    borderRight: 'solid 1px rgb(0, 120, 212)',
-                }}
-            >
-                <FileTreeNavbar
-                    setPosition={setPosition}
-                    currentPosition={position}
-                />
-            </div>
-            <div
-                style={{
-                    width: position,
-                }}
-                className='flex flex-col'
-            >
-                <span className='p-2 bg-black w-full text-center font-mono font-bold'>{project.title.toUpperCase()}</span>
-                <FileTree />
-            </div>
-            <div
-                {...separatorProps}
-                className="w-0.5 cursor-e-resize"
-                style={{ backgroundColor: 'rgb(0, 120, 212)' }}
-            />
-            <div
-                id="YE WALA"
-                style={{
-                    width: `calc(100% - ${sideBarWidth + position}px)`,
-                }}
-            >
-                <Component2 />
-            </div>
-        </div>
-    );
-}
-
-function Component2() {
-    const containerRef = useRef(null);
-    const { position, setPosition, separatorProps } = useResizable({
-        axis: 'y',
-        initial: 400,
-    });
-    const [isTerminalOpen, setIsTerminalOpen] = useState(true);
-
-    const toggleTerminal = useCallback(() => {
-        if (containerRef.current) {
-            const containerHeight = containerRef.current.clientHeight;
-            if (isTerminalOpen) {
-                setPosition(containerHeight + 4);
-            } else {
-                setPosition(400);
-            }
-            setIsTerminalOpen(!isTerminalOpen);
-        }
-    }, [isTerminalOpen, setPosition]);
-
-    useEffect(() => {
-        const handleKeyPress = (e) => {
-            if (e.ctrlKey && e.key === '`') {
-                e.preventDefault();
-                toggleTerminal();
-            }
-        };
-        window.addEventListener('keydown', handleKeyPress);
-        return () => window.removeEventListener('keydown', handleKeyPress);
-    }, [toggleTerminal]);
-
-    return (
-        <div ref={containerRef} className="flex flex-col h-screen w-full">
-            <div
-                style={{ height: position, width: '100%' }}
-                className="flex flex-col text-white"
-            >
-                <EditorTabs />
-                <Editor />
-            </div>
-            <div
-                {...separatorProps}
-                className="min-h-0.5 cursor-n-resize z-20 select-none"
-                style={{ backgroundColor: 'rgb(0, 120, 212)' }}
-            />
-            <div
-                className="w-full z-20 pl-2 pt-2 bg-black"
-                style={{
-                    height: `calc(100% - ${position - 4}px)`,
-                }}
-            >
-                <Terminal />
-                <button
-                    className="z-20 fixed bottom-4 right-4 p-2 flex gap-2 items-center"
-                    style={{
-                        backgroundColor: 'rgb(10, 20, 120)',
-                        border: 'solid rgb(0, 120, 212) 3px',
-                    }}
-                    onClick={toggleTerminal}
-                    title={(isTerminalOpen ? 'Hide' : 'Show') + ' terminal'}
-                >
-                    <FaArrowUp
-                        style={{ rotate: isTerminalOpen ? '180deg' : '0deg' }}
-                    />
-                    <BsTerminalFill size={40} />
-                </button>
-            </div>
-        </div>
-    );
-}

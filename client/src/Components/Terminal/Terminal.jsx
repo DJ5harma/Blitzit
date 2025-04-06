@@ -28,8 +28,8 @@ export const Terminal = () => {
     }, [skt]);
 
     return (
-        <div className="w-full h-full text-left  flex flex-col justify-between gap-4 overflow-hidden">
-            <div className="w-full flex overflow-auto">
+        <div className="w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2">
+            <div className="w-full flex">
                 <TerminalHistory history={history} />
                 <TerminalInputHistory inputHistory={inputHistory} />
             </div>

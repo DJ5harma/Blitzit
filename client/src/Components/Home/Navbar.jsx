@@ -1,8 +1,8 @@
 import React from 'react';
-import { useHomeContext } from '../../Providers/HomeProvider';
+import { useHome } from '../../Providers/HomeProvider';
 
 const Navbar = () => {
-    const { setActiveTab } = useHomeContext();
+    const { setActiveTab } = useHome();
 
     return (
         <nav className="bg-blue-900 text-white h-16 flex items-center justify-between px-8 border-b border-gray-700">

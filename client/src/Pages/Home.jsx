@@ -1,6 +1,6 @@
 import Navbar from '../Components/Home/Navbar';
-import LeftSidebar from '../Components/Home/LeftSidebar';
-import RightSidebar from '../Components/Home/RightSidebar';
+import { LeftSidebar } from '../Components/Home/LeftSidebar';
+import { RightSection } from '../Components/Home/RightSection';
 
 export const Home = () => {
     return (
@@ -10,7 +10,7 @@ export const Home = () => {
             <div className="flex flex-1 overflow-hidden h-full w-full">
                 <LeftSidebar />
                 <div className="flex-1 flex">
-                    <RightSidebar />
+                    <RightSection />
                 </div>
             </div>
         </div>
