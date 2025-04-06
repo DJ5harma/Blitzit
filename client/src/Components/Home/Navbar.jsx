@@ -7,7 +7,7 @@ const Navbar = () => {
     return (
         <nav className="bg-blue-900 text-white h-16 flex items-center justify-between px-8 border-b border-gray-700">
             <div className="flex items-center space-x-4">
-                <span className="text-xl font-bold">Code Editor</span>
+                <span className="text-xl font-bold" >Blitzit</span>
             </div>
 
             <div className="flex items-center space-x-4">

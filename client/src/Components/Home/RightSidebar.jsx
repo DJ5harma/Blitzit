@@ -3,9 +3,10 @@ import { useHomeContext } from '../../Providers/HomeProvider';
 import { useSocket } from '../../Providers/SocketProvider';
 import { useNavigate } from 'react-router-dom';
 import { CONSTANTS } from '../../Utils/CONSTANTS';
+import { formatDate } from '../../Utils/formatDate';
 
 const RightSidebar = () => {
-    const { activeTab } = useHomeContext();
+    const { activeTab, projects } = useHomeContext();
     const { skt } = useSocket();
     const [makingTemplate, setMakingTemplate] = useState(false);
     const navigate = useNavigate();
@@ -30,14 +31,40 @@ const RightSidebar = () => {
         <div className="flex-1 flex flex-col h-full">
             <div className="flex-1 bg-gray-900 p-8 overflow-y-auto">
                 {activeTab === 'projects' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        Your Projects
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <h2 className="text-2xl font-bold mb-6">
+                            Your Projects 
+                        </h2>
+                        {projects.map(({ title, roomId, createdAt }, i) => (
+                            <div
+                                key={i}
+                                className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer 
+                   aspect-square flex flex-col items-center justify-center text-center
+                   w-full max-w-[200px] mx-auto"
+                                onClick={() => {
+                                    navigate(`room/${roomId}`);
+                                }}
+                            >
+                                <h3 className="text-lg font-semibold mb-2">
+                                    {title}
+                                </h3>
+                                <p className="text-gray-400 text-sm px-2">
+                                    {roomId}
+                                </p>
+                                <p className="text-gray-400 text-sm px-2">
+                                    {formatDate(createdAt)}
+                                </p>
+                            </div>
+                        ))}
                     </div>
                 )}
 
                 {activeTab === 'new' && (
                     <div className="p-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <h2 className="text-2xl font-bold mb-6">
+                            Templates to choose from 
+                        </h2>
                             {CONSTANTS.TEMPLATES.map(
                                 ({ name, description }, i) => (
                                     <div
@@ -46,8 +73,12 @@ const RightSidebar = () => {
                            aspect-square flex flex-col items-center justify-center text-center
                            w-full max-w-[200px] mx-auto"
                                         onClick={() => {
+                                            const title = prompt(
+                                                "Enter project's title..."
+                                            );
                                             skt.emit('createContainer', {
                                                 Image: name,
+                                                title,
                                             });
                                             setMakingTemplate(true);
                                         }}

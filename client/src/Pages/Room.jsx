@@ -7,7 +7,7 @@ import { EditorTabs } from '../Components/Editor/EditorTabs';
 import { Terminal } from '../Components/Terminal/Terminal';
 //
 import { OpenFilesProvider } from '../Providers/OpenFilesProvider';
-import { RoomProvider } from '../Providers/RoomProvider';
+import { RoomProvider, useRoom } from '../Providers/RoomProvider';
 //
 import { useCallback, useEffect, useRef, useState } from 'react';
 //
@@ -27,6 +27,7 @@ export const Room = () => {
 };
 
 export default function Component1() {
+    const { project } = useRoom();
     const { position, setPosition, separatorProps } = useResizable({
         axis: 'x',
         initial: 250,
@@ -51,7 +52,9 @@ export default function Component1() {
                 style={{
                     width: position,
                 }}
+                className='flex flex-col'
             >
+                <span className='p-2 bg-black w-full text-center font-mono font-bold'>{project.title.toUpperCase()}</span>
                 <FileTree />
             </div>
             <div

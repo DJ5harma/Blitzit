@@ -40,9 +40,12 @@ export const OpenFilesProvider = ({ children }) => {
 
             setPathToContent((p) => {
                 if (p[filePath]) return p;
-                return ({ ...p, [filePath]: data });
+                return { ...p, [filePath]: data };
             });
         });
+        return () => {
+            skt.removeListener('connectEditorTerminal -o1');
+        };
     }, [skt]);
 
     return (

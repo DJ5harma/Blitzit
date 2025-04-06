@@ -1,9 +1,8 @@
 import Navbar from '../Components/Home/Navbar';
 import LeftSidebar from '../Components/Home/LeftSidebar';
-import { HomeProvider } from '../Providers/HomeProvider';
 import RightSidebar from '../Components/Home/RightSidebar';
 
-const HomeContent = () => {
+export const Home = () => {
     return (
         <div className="w-screen h-screen flex flex-col">
             <Navbar />
@@ -13,16 +12,7 @@ const HomeContent = () => {
                 <div className="flex-1 flex">
                     <RightSidebar />
                 </div>
-
             </div>
         </div>
-    );
-};
-
-export const Home = () => {
-    return (
-        <HomeProvider>
-            <HomeContent />
-        </HomeProvider>
     );
 };

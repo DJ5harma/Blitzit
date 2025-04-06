@@ -22,6 +22,8 @@ export const getRoomDetails = (skt) => {
                 fileTreeTerminalId,
                 editorTerminalId,
                 containerId,
+                title,
+                createdAt,
             } = room;
 
             console.log({ room });
@@ -31,6 +33,8 @@ export const getRoomDetails = (skt) => {
                 fileTreeTerminalId,
                 editorTerminalId,
                 containerId,
+                title,
+                createdAt,
             });
         } catch ({ message }) {
             console.error({ message });

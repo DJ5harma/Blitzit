@@ -22,7 +22,7 @@ export const terminalId_to_stream = {};
  */
 
 export const createContainer = (skt) => {
-    skt.on("createContainer", async ({ Image }) => {
+    skt.on("createContainer", async ({ Image, title }) => {
         try {
             if (!images.includes(Image)) return;
 
@@ -74,6 +74,7 @@ export const createContainer = (skt) => {
                 fileTreeTerminalId,
                 editorTerminalId,
                 mainTerminalId,
+                title: title || `Untitled-${Date.now()}`,
             });
 
             skt.emit("createContainer -o1", {

@@ -22,6 +22,10 @@ export const ROOM =
                     type: String,
                     required: true,
                 },
+                title: {
+                    type: String,
+                    required: true,
+                },
             },
             { timestamps: true }
         )
