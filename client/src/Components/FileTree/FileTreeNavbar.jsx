@@ -14,7 +14,7 @@ import { toggleF11 } from '../../Utils/toggleF11';
 
 export const FileTreeNavbar = ({ setPosition }) => {
     const { roomId } = useRoom();
-    const { saveFile } = useOpenFiles();
+    const { saveFile, focusedPaths } = useOpenFiles();
 
     const [commandToRun, setCommandToRun] = useState('python /app/script.py');
 
@@ -75,7 +75,10 @@ export const FileTreeNavbar = ({ setPosition }) => {
             <MdShare onClick={copyToClipboard} size={30} />
             <MdSave
                 title="Save currently opened file"
-                onClick={saveFile}
+                onClick={() => {
+                    if (focusedPaths.left) saveFile('left');
+                    if (focusedPaths.right) saveFile('right');
+                }}
                 size={30}
             />
             <button

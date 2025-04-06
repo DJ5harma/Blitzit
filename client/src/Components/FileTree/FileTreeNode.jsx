@@ -11,6 +11,15 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const [isExpanded, setIsExpanded] = useState(true);
 
     const isFolder = value !== null;
+    const handleFileOpeningDirection = (e) => {
+        if (!isFolder) {
+            if (e.shiftKey) {
+                openFile(path,'right');
+            } else {
+                openFile(path, 'left'); 
+            }
+        }
+    };
 
     return (
         <>
@@ -19,7 +28,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                 style={{
                     paddingLeft: marginLeft,
                 }}
-                onClick={() => !isFolder && openFile(path)}
+                onClick={handleFileOpeningDirection}
             >
                 <div
                     className="flex justify-between items-center pr-2.5 border-b"

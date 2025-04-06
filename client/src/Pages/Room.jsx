@@ -111,8 +111,22 @@ function Component2() {
                 style={{ height: position, width: '100%' }}
                 className="flex flex-col text-white"
             >
-                <EditorTabs />
-                <Editor />
+                <div className="flex">
+                    <div className=" flex-1 border-r-2 border-r-amber-200">
+                        <EditorTabs side="left" />
+                    </div>
+                    <div className=" flex-1">
+                        <EditorTabs side="right" />
+                    </div>
+                </div>
+                <div className="flex flex-1 overflow-hidden">
+                    <div className=" flex-1 border-r-2 border-r-amber-200">
+                        <Editor side="left" />
+                    </div>
+                    <div className=" flex-1">
+                        <Editor side="right" />
+                    </div>
+                </div>
             </div>
             <div
                 {...separatorProps}
