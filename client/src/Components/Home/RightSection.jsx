@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useHomeContext } from '../../Providers/HomeProvider';
+import { useHome } from '../../Providers/HomeProvider';
 import { useSocket } from '../../Providers/SocketProvider';
 import { useNavigate } from 'react-router-dom';
 import { CONSTANTS } from '../../Utils/CONSTANTS';
 import { formatDate } from '../../Utils/formatDate';
 
-const RightSidebar = () => {
-    const { activeTab, projects } = useHomeContext();
+export const RightSection = () => {
+    const { activeTab, projects } = useHome();
     const { skt } = useSocket();
     const [makingTemplate, setMakingTemplate] = useState(false);
     const navigate = useNavigate();
@@ -33,7 +33,7 @@ const RightSidebar = () => {
                 {activeTab === 'projects' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <h2 className="text-2xl font-bold mb-6">
-                            Your Projects 
+                            Your Projects
                         </h2>
                         {projects.map(({ title, roomId, createdAt }, i) => (
                             <div
@@ -62,9 +62,9 @@ const RightSidebar = () => {
                 {activeTab === 'new' && (
                     <div className="p-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                        <h2 className="text-2xl font-bold mb-6">
-                            Templates to choose from 
-                        </h2>
+                            <h2 className="text-2xl font-bold mb-6">
+                                Templates to choose from
+                            </h2>
                             {CONSTANTS.TEMPLATES.map(
                                 ({ name, description }, i) => (
                                     <div
@@ -107,5 +107,3 @@ const RightSidebar = () => {
         </div>
     );
 };
-
-export default RightSidebar;

@@ -37,4 +37,4 @@ export const HomeProvider = ({ children }) => {
     );
 };
 
-export const useHomeContext = () => useContext(context);
+export const useHome = () => useContext(context);
