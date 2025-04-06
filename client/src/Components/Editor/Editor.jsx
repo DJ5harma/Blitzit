@@ -8,7 +8,8 @@ export const Editor = () => {
     const { focusedPath, pathToContent, setPathToContent } = UseOpenFiles();
     const { roomId } = UseRoom();
 
-    const initialContent = focusedPath ? pathToContent[focusedPath] : '';
+    // Sync to Yjs
+    const initialContent = pathToContent[focusedPath];
     useYjsBinding(focusedPath, roomId, setPathToContent, initialContent);
 
     return (

@@ -1,27 +1,23 @@
 import { IoClose } from 'react-icons/io5';
 import { UseOpenFiles } from '../../Providers/OpenFilesProvider';
 
-export const EditorTabs = ({ side }) => {
-    const { openPaths, closeFile, focusedPaths, setFocusedPaths } = useOpenFiles();
-
-    const handleClick = (path) => {
-        setFocusedPaths((prev) => ({ ...prev, [side]: path }));
-    };
-    
 export const EditorTabs = () => {
     const { openPaths, closeFile, focusedPath, setFocusedPath } =
         UseOpenFiles();
 
     return (
         <div className="flex bg-neutral-600 p-1">
-            {[...openPaths[side]].map((path) => (
+            {[...openPaths].map((path) => (
                 <div
                     key={path}
-                    onClick={() => handleClick(path)}
+                    // disabled={fileName === path}
+                    onClick={() => setFocusedPath(path)}
                     className="flex items-center gap-2 p-2 border border-gray-500 text-white rounded-lg"
                     style={{
-                        background: focusedPaths[side] === path ? 'black' : '#2d2d2d',
-                        cursor: focusedPaths[side] === path ? 'default' : 'pointer',
+                        background:
+                            focusedPath === path ? 'black' : '#2d2d2d',
+                        cursor:
+                            focusedPath === path ? 'default' : 'pointer',
                     }}
                 >
                     {path}

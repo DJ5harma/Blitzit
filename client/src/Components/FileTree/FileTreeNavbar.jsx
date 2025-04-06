@@ -60,10 +60,7 @@ export const FileTreeNavbar = ({ setHidden }) => {
             <MdShare onClick={copyToClipboard} size={30} />
             <MdSave
                 title="Save currently opened file"
-                onClick={() => {
-                    if (focusedPaths.left) saveFile('left');
-                    if (focusedPaths.right) saveFile('right');
-                }}
+                onClick={saveFile}
                 size={30}
             />
             <button

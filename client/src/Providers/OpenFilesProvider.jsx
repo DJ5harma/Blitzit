@@ -6,65 +6,41 @@ import { toast } from 'react-toastify';
 const context = createContext();
 
 export const OpenFilesProvider = ({ children }) => {
-    const [openPaths, setOpenPaths] = useState({
-        left: new Set(),
-        right: new Set()
-    });
-    const [focusedPaths, setFocusedPaths] = useState({
-        left: null,
-        right: null,
-    });
-    const [pathToContent, setPathToContent] = useState({});
+    const [openPaths, setOpenPaths] = useState(new Set());
+    const [focusedPath, setFocusedPath] = useState(null);
+    const [pathToContent, setPathToContent] = useState({}); // path -> content
 
     const { skt } = UseSocket();
 
-    const saveFile = (side = 'left') => {
-        const filePath = focusedPaths[side];
-        if (!filePath || !pathToContent[filePath]) return;
+    const saveFile = () => {
+        if (!focusedPath || !pathToContent[focusedPath]) return;
 
-        let content = pathToContent[filePath];
-        content = content.replaceAll(`"`, `\\"`).replaceAll('`', '\\`');
+        const content = pathToContent[focusedPath];
+        content.replaceAll(`"`, `\\"`);
+        content.replaceAll('`', '\\`');
 
-        EMITTER.saveFileEmitter(content, filePath);
-        toast.success(`"${filePath}" saved!`);
+        EMITTER.saveFileEmitter(content, focusedPath);
+
+        toast.success(`"${focusedPath}" saved!`);
     };
 
-    const openFile = (filePath, side = 'left') => {
-        setOpenPaths(prev => ({
-            ...prev,
-            [side]: new Set([...prev[side], filePath])
-        }));
+    const openFile = (filePath) => {
+        setOpenPaths((p) => new Set([...p, filePath]));
         if (!pathToContent[filePath]) EMITTER.readFile(filePath);
     };
 
-    const closeFile = (filePath) => {        
-        setOpenPaths(prev => ({
-            ...prev,
-            ['left']: new Set([...prev['left']].filter(pth => pth !== filePath))
-        }));
-        setFocusedPaths(prev => ({
-            ...prev,
-            ['left']: prev['left'] === filePath ? null : prev['left']
-        }));
-        setOpenPaths(prev => ({
-            ...prev,
-            ['right']: new Set([...prev['right']].filter(pth => pth !== filePath))
-        }));
-        setFocusedPaths(prev => ({
-            ...prev,
-            ['right']: prev['right'] === filePath ? null : prev['right']
-        }));
-    };
-
-    const getAllOpenPaths = () => {
-        return new Set([...openPaths.left, ...openPaths.right]);
+    const closeFile = (path) => {
+        setOpenPaths((p) => new Set([...p].filter((pth) => pth !== path)));
+        if (focusedPath === path) setFocusedPath(null);
     };
 
     useEffect(() => {
         skt.on('connectEditorTerminal -o1', ({ data, filePath }) => {
+            console.log({ data, filePath });
+
             setPathToContent((p) => {
                 if (p[filePath]) return p;
-                return ({ ...p, [filePath]: data });
+                return { ...p, [filePath]: data };
             });
         });
         return () => {
@@ -76,14 +52,13 @@ export const OpenFilesProvider = ({ children }) => {
         <context.Provider
             value={{
                 openPaths,
-                getAllOpenPaths,
                 pathToContent,
                 setPathToContent,
                 saveFile,
                 openFile,
                 closeFile,
-                focusedPaths,
-                setFocusedPaths,
+                focusedPath,
+                setFocusedPath,
             }}
         >
             {children}
