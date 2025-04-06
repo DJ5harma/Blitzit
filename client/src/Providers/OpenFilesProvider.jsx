@@ -38,7 +38,10 @@ export const OpenFilesProvider = ({ children }) => {
         skt.on('connectEditorTerminal -o1', ({ data, filePath }) => {
             console.log({ data, filePath });
 
-            setPathToContent((p) => ({ ...p, [filePath]: data }));
+            setPathToContent((p) => {
+                if (p[filePath]) return p;
+                return ({ ...p, [filePath]: data });
+            });
         });
     }, [skt]);
 
