@@ -1,12 +1,12 @@
 import { FaFileUpload, FaFolder, FaFolderPlus } from 'react-icons/fa';
 import { MdDelete, MdKeyboardArrowRight } from 'react-icons/md';
 import { useState } from 'react';
-import { useOpenFiles } from '../../Providers/OpenFilesProvider';
+import { UseOpenFiles } from '../../Providers/OpenFilesProvider';
 import { IconFromFileName } from '../../Utils/IconFromFileName';
 import { EMITTER } from '../../Utils/EMITTER';
 
 export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
-    const { openFile, closeFile } = useOpenFiles();
+    const { openFile, closeFile } = UseOpenFiles();
 
     const [isExpanded, setIsExpanded] = useState(true);
 

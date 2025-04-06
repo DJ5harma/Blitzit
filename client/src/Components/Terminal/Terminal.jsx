@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useSocket } from '../../Providers/SocketProvider';
+import { UseSocket } from '../../Providers/SocketProvider';
 import { EMITTER } from '../../Utils/EMITTER';
 import { TerminalInputHistory } from './TerminalInputHistory';
 import { TerminalHistory } from './TerminalHistory';
 
 export const Terminal = () => {
-    const { skt } = useSocket();
+    const { skt } = UseSocket();
 
     const [history, setHistory] = useState([]);
     const [inputHistory, setInputHistory] = useState([]);

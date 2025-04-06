@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useHome } from '../../Providers/HomeProvider';
-import { useSocket } from '../../Providers/SocketProvider';
 import { useNavigate } from 'react-router-dom';
+import { UseHome } from '../../Providers/HomeProvider';
+import { UseSocket } from '../../Providers/SocketProvider';
 import { CONSTANTS } from '../../Utils/CONSTANTS';
 import { formatDate } from '../../Utils/formatDate';
 
 export const RightSection = () => {
-    const { activeTab, projects } = useHome();
-    const { skt } = useSocket();
+    const { activeTab, projects } = UseHome();
+    const { skt } = UseSocket();
     const [makingTemplate, setMakingTemplate] = useState(false);
     const navigate = useNavigate();
 

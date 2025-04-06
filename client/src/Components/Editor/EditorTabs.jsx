@@ -1,9 +1,9 @@
 import { IoClose } from 'react-icons/io5';
-import { useOpenFiles } from '../../Providers/OpenFilesProvider';
+import { UseOpenFiles } from '../../Providers/OpenFilesProvider';
 
 export const EditorTabs = () => {
     const { openPaths, closeFile, focusedPath, setFocusedPath } =
-        useOpenFiles();
+        UseOpenFiles();
 
     return (
         <div className="flex bg-neutral-600 p-1">

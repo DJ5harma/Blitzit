@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRoom } from '../../Providers/RoomProvider';
+import { UseRoom } from '../../Providers/RoomProvider';
 import {
     MdEdit,
     MdFileCopy,
@@ -8,14 +8,14 @@ import {
     MdShare,
 } from 'react-icons/md';
 import { BsTerminal } from 'react-icons/bs';
-import { useOpenFiles } from '../../Providers/OpenFilesProvider';
+import { UseOpenFiles } from '../../Providers/OpenFilesProvider';
 import { EMITTER } from '../../Utils/EMITTER';
 import { toast } from 'react-toastify';
 import { toggleF11 } from '../../Utils/toggleF11';
 
 export const FileTreeNavbar = ({ setHidden }) => {
-    const { roomId } = useRoom();
-    const { saveFile } = useOpenFiles();
+    const { roomId } = UseRoom();
+    const { saveFile } = UseOpenFiles();
 
     const [commandToRun, setCommandToRun] = useState('python /app/script.py');
 
