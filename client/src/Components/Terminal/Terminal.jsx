@@ -29,7 +29,7 @@ export const Terminal = () => {
 
     return (
         <div className="w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2">
-            <div className="w-full flex">
+            <div className="w-full flex overflow-auto">
                 <TerminalHistory history={history} />
                 <TerminalInputHistory inputHistory={inputHistory} />
             </div>

@@ -6,7 +6,7 @@ export const ResizableWrapper = ({ child1, child2, axis, initial }) => {
         initial: initial || 250,
     });
 
-    if(!child1 || !child2) return <div className='w-full h-full'>{child1 ? child1 : child2}</div>
+    if(!child1 || !child2) return <div className='w-full h-full'>{child1 || child2}</div>
 
     if (axis === 'y')
         return (
@@ -20,7 +20,7 @@ export const ResizableWrapper = ({ child1, child2, axis, initial }) => {
                 </div>
                 <div
                     {...separatorProps}
-                    className="min-h-0.5 cursor-n-resize"
+                    className="min-h-1 cursor-n-resize"
                     style={{ backgroundColor: 'rgb(0, 120, 212)' }}
                 />
                 <div
@@ -43,7 +43,7 @@ export const ResizableWrapper = ({ child1, child2, axis, initial }) => {
             </div>
             <div
                 {...separatorProps}
-                className="min-w-0.5 cursor-e-resize"
+                className="min-w-1 cursor-e-resize"
                 style={{ backgroundColor: 'rgb(0, 120, 212)' }}
             />
             <div

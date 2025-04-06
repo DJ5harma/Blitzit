@@ -25,11 +25,14 @@ export const FileTree = () => {
     if (!treeData) return null;
 
     return (
-        <div className="pl-1 overflow-y-auto h-full w-full">
+        <div
+            className="overflow-y-auto h-full w-full"
+            style={{ backgroundColor: 'rgb(24, 24, 24)' }}
+        >
             <FileTreeNode
                 name={'app'}
                 value={treeData['app']}
-                marginLeft={0}
+                marginLeft={8}
                 path={'/app'}
                 deletable={false}
             />

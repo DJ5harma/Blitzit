@@ -14,10 +14,13 @@ export const Room = () => {
     useEffect(() => {
         const handleKeyPress = (e) => {
             if (!e.ctrlKey) return;
-            if (e.key === '`')
+            if (e.key === '`') {
+                e.preventDefault();
                 setHidden((p) => ({ ...p, terminal: !p.terminal }));
-            else if (e.key.toLowerCase() === 'b')
+            } else if (e.key.toLowerCase() === 'b') {
+                e.preventDefault();
                 setHidden((p) => ({ ...p, fileTree: !p.fileTree }));
+            }
         };
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
@@ -36,7 +39,7 @@ export const Room = () => {
                     >
                         <ResizableWrapper
                             child1={!hidden.fileTree && <FileTree />}
-                            initial={200}
+                            initial={300}
                             child2={
                                 <div className="flex flex-col w-full h-full">
                                     <EditorTabs />
@@ -46,7 +49,7 @@ export const Room = () => {
                                         child2={
                                             !hidden.terminal && <Terminal />
                                         }
-                                        initial={400}
+                                        initial={600}
                                     />
                                 </div>
                             }

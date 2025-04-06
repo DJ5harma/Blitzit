@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 const context = createContext();
 
 export const OpenFilesProvider = ({ children }) => {
-    const [openPaths, setOpenPaths] = useState(new Set());
+    const [openPaths, setOpenPaths] = useState([]);
     const [focusedPath, setFocusedPath] = useState(null);
     const [pathToContent, setPathToContent] = useState({}); // path -> content
 
@@ -25,13 +25,29 @@ export const OpenFilesProvider = ({ children }) => {
     };
 
     const openFile = (filePath) => {
-        setOpenPaths((p) => new Set([...p, filePath]));
+        setFocusedPath(filePath);
+        if (openPaths.includes(filePath)) return;
+
+        setOpenPaths((p) => [...p, filePath]);
         if (!pathToContent[filePath]) EMITTER.readFile(filePath);
     };
 
     const closeFile = (path) => {
-        setOpenPaths((p) => new Set([...p].filter((pth) => pth !== path)));
-        if (focusedPath === path) setFocusedPath(null);
+        setOpenPaths((p) => {
+            const newPaths = p.filter((pth) => pth !== path);
+            if (path === focusedPath) {
+                const indexOfRemoved = p.indexOf(path);
+                if (indexOfRemoved === newPaths.length)
+                    setFocusedPath(newPaths[newPaths.length - 1]);
+                else
+                    setFocusedPath(
+                        newPaths.length
+                            ? newPaths[indexOfRemoved % newPaths.length]
+                            : null
+                    );
+            }
+            return newPaths;
+        });
     };
 
     useEffect(() => {
