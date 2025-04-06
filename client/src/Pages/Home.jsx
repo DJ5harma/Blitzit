@@ -1,38 +1,29 @@
-import { useEffect, useState } from 'react';
-import { useSocket } from '../Providers/SocketProvider';
-import { useNavigate } from 'react-router-dom';
 import { CONSTANTS } from '../Utils/CONSTANTS';
+import Navbar from '../Components/Home/Navbar';
+import LeftSidebar from '../Components/Home/LeftSidebar';
+import { HomeProvider } from '../Providers/HomeProvider';
+import RightSidebar from '../Components/Home/RightSidebar';
+
+const HomeContent = () => {
+    return (
+        <div className="w-screen h-screen flex flex-col">
+            <Navbar />
+
+            <div className="flex flex-1 overflow-hidden h-full w-full">
+                <LeftSidebar />
+                <div className="flex-1 flex">
+                    <RightSidebar />
+                </div>
+
+            </div>
+        </div>
+    );
+};
 
 export const Home = () => {
-    const { skt } = useSocket();
-    const [makingTemplate, setMakingTemplate] = useState(false);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        skt.on('createContainer -o1', ({ roomId }) => {
-            navigate(`room/${roomId}`);
-        });
-        return () => {
-            skt.removeListener('createContainer -o1');
-        };
-    }, [navigate, skt]);
-
-    if (makingTemplate) return <>Making your template.......</>;
     return (
-        <div className="w-full h-full">
-            {CONSTANTS.TEMPLATES.map(({ name }, i) => {
-                return (
-                    <button
-                        onClick={() => {
-                            skt.emit('createContainer', { Image: name });
-                            setMakingTemplate(true);
-                        }}
-                        key={i}
-                    >
-                        {name}
-                    </button>
-                );
-            })}
-        </div>
+        <HomeProvider>
+            <HomeContent />
+        </HomeProvider>
     );
 };
