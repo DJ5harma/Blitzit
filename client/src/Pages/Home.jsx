@@ -1,4 +1,3 @@
-import { CONSTANTS } from '../Utils/CONSTANTS';
 import Navbar from '../Components/Home/Navbar';
 import LeftSidebar from '../Components/Home/LeftSidebar';
 import { HomeProvider } from '../Providers/HomeProvider';
