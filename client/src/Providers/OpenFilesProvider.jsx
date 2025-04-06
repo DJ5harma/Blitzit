@@ -8,7 +8,7 @@ const context = createContext();
 export const OpenFilesProvider = ({ children }) => {
     const [openPaths, setOpenPaths] = useState(new Set());
     const [focusedPath, setFocusedPath] = useState(null);
-    const [pathToContent, setPathToContent] = useState({});
+    const [pathToContent, setPathToContent] = useState({}); // path -> content
 
     const { skt } = useSocket();
 
@@ -26,7 +26,7 @@ export const OpenFilesProvider = ({ children }) => {
 
     const openFile = (filePath) => {
         setOpenPaths((p) => new Set([...p, filePath]));
-        EMITTER.readFile(filePath);
+        if (!pathToContent[filePath]) EMITTER.readFile(filePath);
     };
 
     const closeFile = (path) => {
@@ -36,8 +36,8 @@ export const OpenFilesProvider = ({ children }) => {
 
     useEffect(() => {
         skt.on('connectEditorTerminal -o1', ({ data, filePath }) => {
-            console.log({data, filePath});
-            
+            console.log({ data, filePath });
+
             setPathToContent((p) => ({ ...p, [filePath]: data }));
         });
     }, [skt]);
