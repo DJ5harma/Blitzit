@@ -1,4 +1,8 @@
-export const TerminalHistory = ({ history }) => {
+import { UseTerminal } from '../../Providers/TerminalProvider';
+
+export const TerminalHistory = () => {
+    const { history } = UseTerminal();
+
     return (
         <div className="flex flex-col overflow-auto gap-2 w-3/4">
             <span className="bg-blue-950 pl-3 select-none">Terminal</span>

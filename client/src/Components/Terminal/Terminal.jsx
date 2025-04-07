@@ -5,16 +5,15 @@ import { TerminalHistory } from './TerminalHistory';
 import { UseTerminal } from '../../Providers/TerminalProvider';
 
 export const Terminal = () => {
-    const { inputHistory, setInputHistory, history, setHistory } =
-        UseTerminal();
+    const { setInputHistory, setHistory } = UseTerminal();
 
     const [input, setInput] = useState('');
 
     return (
         <div className="w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2">
             <div className="w-full flex overflow-auto">
-                <TerminalHistory history={history} />
-                <TerminalInputHistory inputHistory={inputHistory} />
+                <TerminalHistory />
+                <TerminalInputHistory />
             </div>
             <div className="flex items-center gap-2 pb-2 [&>*]:p-2 select-none">
                 <input
