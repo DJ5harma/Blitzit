@@ -1,21 +1,29 @@
-import { FaFileUpload, FaFolder, FaFolderPlus } from 'react-icons/fa';
+import { FaEdit, FaFileUpload, FaFolder, FaFolderPlus } from 'react-icons/fa';
 import { MdDelete, MdKeyboardArrowRight } from 'react-icons/md';
 import { useState } from 'react';
 import { UseFiles } from '../../Providers/FilesProvider';
 import { IconFromFileName } from '../../Utils/IconFromFileName';
 import { EMITTER } from '../../Utils/EMITTER';
 import { UseDrag } from '../../Providers/DragProvider';
+import { FaPencil } from 'react-icons/fa6';
 
 export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const { openFile, closeFile, focusedPath } = UseFiles();
 
     const [isExpanded, setIsExpanded] = useState(true);
+    const [isHovered, setIsHovered] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedName, setEditedName] = useState(name);
 
     const isFolder = value !== null;
 
     const directChildren = isFolder ? Object.keys(value) : [];
 
     const { initializeDrag } = UseDrag();
+    const saveNameChange = () => {
+        EMITTER.renameEntity(path, editedName);
+        setIsEditing(false);
+    };
 
     return (
         <>
@@ -37,6 +45,8 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                     if (isFolder) return;
                     initializeDrag(path);
                 }}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
             >
                 <span className="flex gap-1.5 items-center p-1">
                     {isFolder ? (
@@ -44,7 +54,23 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                     ) : (
                         <IconFromFileName name={name} />
                     )}
-                    {name}
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            value={editedName}
+                            onChange={(e) => setEditedName(e.target.value)}
+                            onBlur={saveNameChange}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    saveNameChange();
+                                }
+                            }}
+                            className="bg-transparent border-b border-neutral-500 focus:outline-none text-white"
+                            autoFocus
+                        />
+                    ) : (
+                        name
+                    )}
                     {directChildren.length > 0 && (
                         <MdKeyboardArrowRight
                             size={20}
@@ -54,7 +80,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                         />
                     )}
                 </span>
-                <div className="flex gap-1">
+                <div className={`${isHovered ? 'flex' : 'hidden'} gap-1`}>
                     {isFolder && (
                         <>
                             <FaFileUpload
@@ -75,6 +101,14 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                             />
                         </>
                     )}
+                    <FaPencil
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsEditing(true);
+                        }}
+                        className="button p-0.5"
+                        size={23}
+                    />
                     {deletable && (
                         <MdDelete
                             onClick={(e) => {
