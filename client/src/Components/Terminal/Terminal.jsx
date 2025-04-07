@@ -10,12 +10,15 @@ export const Terminal = () => {
     const [input, setInput] = useState('');
 
     return (
-        <div className="button w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2">
-            <div className="w-full flex overflow-auto">
+        <div
+            className="button w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2"
+            style={{ fontSize: 16 }}
+        >
+            <div className="w-full flex overflow-auto h-full">
                 <TerminalHistory />
                 <TerminalInputHistory />
             </div>
-            <div className="flex items-center gap-2 pb-2 [&>*]:p-2 select-none">
+            <div className="flex items-center gap-2 [&>*]:p-2 select-none">
                 <input
                     type="text"
                     value={input}

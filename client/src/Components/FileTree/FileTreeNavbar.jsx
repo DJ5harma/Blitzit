@@ -38,7 +38,7 @@ export const FileTreeNavbar = ({ setHidden }) => {
     };
 
     return (
-        <div className="button h-screen w-full bg-black flex flex-col py-5 gap-5 items-center [&>*]:cursor-pointer [&>*]:p-1 [&>*]:size-8">
+        <div className="button h-screen w-full bg-black flex flex-col py-4 gap-5 items-center [&>*]:cursor-pointer [&>*]:p-1 [&>*]:size-8">
             <MdFileCopy
                 title="Toggle file tree"
                 size={25}
@@ -49,13 +49,13 @@ export const FileTreeNavbar = ({ setHidden }) => {
             />
             <MdPlayArrow
                 title="Run project"
-                className="button"
+                className="button bg-gray-800"
                 onClick={() => EMITTER.runProject(commandToRun)}
                 size={30}
             />
             <MdEdit
                 title="Edit command to run"
-                className="button"
+                className="button bg-gray-800"
                 onClick={editCommand}
                 size={30}
             />
