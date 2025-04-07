@@ -3,17 +3,23 @@ import { UseFiles } from '../../Providers/FilesProvider';
 import { getFileNameFromPath } from '../../Utils/getFileNameFromPath';
 import { useState } from 'react';
 import { IconFromFileName } from '../../Utils/IconFromFileName';
+import { UseDrag } from '../../Providers/DragProvider';
 
 export const EditorTabs = () => {
-    const { openPaths, closeFile, focusedPath, setFocusedPath } =
+    const { openPaths, closeFile, focusedPath, setFocusedPath} =
         UseFiles();
 
     const [closeButtonPath, setCloseButtonPath] = useState('');
+
+    const { finalizeDrag } = UseDrag();
 
     return (
         <div
             className="flex font-mono button"
             style={{ backgroundColor: 'rgb(31, 31, 31)', fontSize: 18 }}
+            onMouseEnter={() => {
+                finalizeDrag();
+            }}
         >
             {openPaths.map((path) => {
                 const fileName = getFileNameFromPath(path);
@@ -33,10 +39,9 @@ export const EditorTabs = () => {
                             focusedPath === path
                                 ? {
                                       backgroundColor: 'black',
-                                      borderRadius: 0
+                                      borderRadius: 0,
                                   }
-                                : {
-                                }
+                                : {}
                         }
                         title={path}
                         onMouseEnter={() => setCloseButtonPath(path)}

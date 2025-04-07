@@ -8,6 +8,7 @@ import { RoomProvider } from '../Providers/RoomProvider';
 import { useEffect, useState } from 'react';
 import { ResizableWrapper } from '../Wrappers/ResizableWrapper';
 import { TerminalProvider } from '../Providers/TerminalProvider';
+import { DragProvider } from '../Providers/DragProvider';
 
 export const Room = () => {
     const [hidden, setHidden] = useState({ fileTree: false, terminal: false });
@@ -38,25 +39,29 @@ export const Room = () => {
                         style={{ width: 'calc(100% - 70px)' }}
                         className="h-full"
                     >
-                        <TerminalProvider>
+                        <DragProvider>
                             <ResizableWrapper
                                 child1={!hidden.fileTree && <FileTree />}
                                 initial={300}
                                 child2={
                                     <div className="flex flex-col w-full h-full">
-                                        <EditorTabs />
-                                        <ResizableWrapper
-                                            child1={<Editor />}
-                                            axis="y"
-                                            child2={
-                                                !hidden.terminal && <Terminal />
-                                            }
-                                            initial={600}
-                                        />
+                                        <TerminalProvider>
+                                            <EditorTabs />
+                                            <ResizableWrapper
+                                                child1={<Editor />}
+                                                axis="y"
+                                                child2={
+                                                    !hidden.terminal && (
+                                                        <Terminal />
+                                                    )
+                                                }
+                                                initial={600}
+                                            />
+                                        </TerminalProvider>
                                     </div>
                                 }
                             />
-                        </TerminalProvider>
+                        </DragProvider>
                     </div>
                 </div>
             </FilesProvider>

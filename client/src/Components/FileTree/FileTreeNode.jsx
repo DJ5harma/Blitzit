@@ -4,15 +4,18 @@ import { useState } from 'react';
 import { UseFiles } from '../../Providers/FilesProvider';
 import { IconFromFileName } from '../../Utils/IconFromFileName';
 import { EMITTER } from '../../Utils/EMITTER';
+import { UseDrag } from '../../Providers/DragProvider';
 
 export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
-    const { openFile, closeFile, focusedPath, setFocusedPath } = UseFiles();
+    const { openFile, closeFile, focusedPath } = UseFiles();
 
     const [isExpanded, setIsExpanded] = useState(true);
 
     const isFolder = value !== null;
 
     const directChildren = isFolder ? Object.keys(value) : [];
+
+    const { initializeDrag } = UseDrag();
 
     return (
         <>
@@ -29,11 +32,18 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                 onClick={() => {
                     if (isFolder) return setIsExpanded((p) => !p);
                     openFile(path);
-                    setFocusedPath(path);
+                }}
+                onMouseDown={() => {
+                    if (isFolder) return;
+                    initializeDrag(path);
                 }}
             >
                 <span className="flex gap-1.5 items-center p-1">
-                    {isFolder ? <FaFolder /> : <IconFromFileName name={name} />}
+                    {isFolder ? (
+                        <FaFolder color="rgb(220, 220, 120)" />
+                    ) : (
+                        <IconFromFileName name={name} />
+                    )}
                     {name}
                     {directChildren.length > 0 && (
                         <MdKeyboardArrowRight

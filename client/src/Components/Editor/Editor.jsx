@@ -3,6 +3,7 @@ import { UseFiles } from '../../Providers/FilesProvider';
 import { UseRoom } from '../../Providers/RoomProvider';
 import { getYText, useYjsBinding } from './YjsBinding.js';
 import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
+import { UseDrag } from '../../Providers/DragProvider.jsx';
 
 export const Editor = () => {
     const { focusedPath, pathToContent, setPathToContent } = UseFiles();
@@ -12,8 +13,15 @@ export const Editor = () => {
     const initialContent = pathToContent[focusedPath];
     useYjsBinding(focusedPath, roomId, setPathToContent, initialContent);
 
+    const { finalizeDrag } = UseDrag();
+
     return (
-        <div className="button h-full">
+        <div
+            className="button h-full"
+            onMouseEnter={() => {
+                finalizeDrag();
+            }}
+        >
             {focusedPath ? (
                 <MonacoEditor
                     theme="vs-dark"
