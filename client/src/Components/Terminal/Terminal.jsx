@@ -3,23 +3,21 @@ import { EMITTER } from '../../Utils/EMITTER';
 import { TerminalInputHistory } from './TerminalInputHistory';
 import { TerminalHistory } from './TerminalHistory';
 import { UseTerminal } from '../../Providers/TerminalProvider';
-import { ResizableWrapper } from '../../Wrappers/ResizableWrapper';
 
 export const Terminal = () => {
     const { setInputHistory, setHistory } = UseTerminal();
 
     const [input, setInput] = useState('');
+
     return (
         <div
             className="button w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2"
             style={{ fontSize: 16 }}
         >
-            <ResizableWrapper
-                child1={<TerminalHistory />}
-                child2={<TerminalInputHistory />}
-                initial={800}
-                axis="x"
-            />
+            <div className="w-full flex overflow-auto h-full">
+                <TerminalHistory />
+                <TerminalInputHistory />
+            </div>
             <div className="flex items-center gap-2 [&>*]:p-2 select-none">
                 <input
                     type="text"

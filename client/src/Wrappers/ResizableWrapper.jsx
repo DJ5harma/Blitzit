@@ -25,7 +25,7 @@ export const ResizableWrapper = ({ child1, child2, axis, initial }) => {
                 />
                 <div
                     style={{
-                        height: `calc(100% - ${position}px)`,
+                        height: `calc(100% - ${position + 4}px)`,
                     }}
                 >
                     {child2}
@@ -48,7 +48,7 @@ export const ResizableWrapper = ({ child1, child2, axis, initial }) => {
             />
             <div
                 style={{
-                    width: `calc(100% - ${position}px)`,
+                    width: `calc(100% - ${position + 4}px)`,
                 }}
             >
                 {child2}

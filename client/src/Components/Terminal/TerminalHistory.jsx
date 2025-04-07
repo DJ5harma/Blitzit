@@ -4,7 +4,7 @@ export const TerminalHistory = () => {
     const { history } = UseTerminal();
 
     return (
-        <div className="flex flex-col overflow-auto gap-2">
+        <div className="flex flex-col overflow-auto gap-2 w-3/4  border-r-2 border-gray-500">
             <span className="select-none border-b-2 border-gray-500 pb-1">Terminal</span>
             {history.map((text, i) => {
                 return (
