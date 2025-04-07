@@ -42,40 +42,35 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                         />
                     )}
                 </span>
-                <div>
+                <div className='flex gap-1'>
                     {isFolder && (
                         <>
-                            <button
+                            <FaFileUpload
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     EMITTER.createEntity(true, path);
                                 }}
-                                className="p-1 bg-transparent m-0.5"
-                            >
-                                <FaFileUpload size={20} />
-                            </button>
-                            <button
+                                className="button"
+                                size={20}
+                            />
+                            <FaFolderPlus
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     EMITTER.createEntity(false, path);
                                 }}
-                                className="p-1 bg-transparent m-0.5"
-                            >
-                                <FaFolderPlus />
-                            </button>
+                                className="button"
+                            />
                         </>
                     )}
                     {deletable && (
-                        <button
+                        <MdDelete
                             onClick={(e) => {
                                 e.stopPropagation();
                                 EMITTER.deleteEntity(isFolder, path);
                                 closeFile(path);
                             }}
-                            className="p-1"
-                        >
-                            <MdDelete />
-                        </button>
+                            className="button"
+                        />
                     )}
                 </div>
             </div>

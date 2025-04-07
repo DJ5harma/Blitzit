@@ -7,6 +7,7 @@ import {
     MdSave,
     MdShare,
 } from 'react-icons/md';
+import { SiZendesk } from 'react-icons/si';
 import { BsTerminal } from 'react-icons/bs';
 import { UseFiles } from '../../Providers/FilesProvider';
 import { EMITTER } from '../../Utils/EMITTER';
@@ -37,41 +38,48 @@ export const FileTreeNavbar = ({ setHidden }) => {
     };
 
     return (
-        <div className="h-screen w-full bg-black flex flex-col pt-5 gap-5 items-center [&>*]:w-full [&>*]:cursor-pointer">
+        <div className="button h-screen w-full bg-black flex flex-col py-5 gap-5 items-center [&>*]:cursor-pointer [&>*]:p-1 [&>*]:size-8">
             <MdFileCopy
                 title="Toggle file tree"
                 size={25}
+                className="button"
                 onClick={() => {
                     setHidden((p) => ({ ...p, fileTree: !p.fileTree }));
                 }}
             />
-            <div className="flex flex-col items-center justify-center gap-4 py-2 bg-neutral-700">
-                <MdPlayArrow
-                    title="Run project"
-                    onClick={() => EMITTER.runProject(commandToRun)}
-                    size={30}
-                />
-                <MdEdit
-                    title="Edit command to run"
-                    onClick={editCommand}
-                    size={30}
-                />
-            </div>
-            <MdShare onClick={copyToClipboard} size={30} />
+            <MdPlayArrow
+                title="Run project"
+                className="button"
+                onClick={() => EMITTER.runProject(commandToRun)}
+                size={30}
+            />
+            <MdEdit
+                title="Edit command to run"
+                className="button"
+                onClick={editCommand}
+                size={30}
+            />
+            <MdShare
+                title="Share link and collaborate"
+                onClick={copyToClipboard}
+                size={30}
+                className="button"
+            />
             <MdSave
                 title="Save currently opened file"
+                className="button"
                 onClick={saveFile}
                 size={30}
             />
-            <button
+            <SiZendesk
                 title="Toggle Fullscreen"
                 onClick={toggleF11}
-                className="font-extrabold p-2 select-none"
-            >
-                Zen
-            </button>
+                className="button"
+                size={30}
+            />
             <BsTerminal
                 title="Toggle terminal"
+                className="button"
                 onClick={() => {
                     setHidden((p) => ({ ...p, terminal: !p.terminal }));
                 }}
