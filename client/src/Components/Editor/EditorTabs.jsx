@@ -6,8 +6,7 @@ import { IconFromFileName } from '../../Utils/IconFromFileName';
 import { UseDrag } from '../../Providers/DragProvider';
 
 export const EditorTabs = () => {
-    const { openPaths, closeFile, focusedPath, setFocusedPath} =
-        UseFiles();
+    const { openPaths, closeFile, focusedPath, setFocusedPath } = UseFiles();
 
     const [closeButtonPath, setCloseButtonPath] = useState('');
 
@@ -34,14 +33,17 @@ export const EditorTabs = () => {
                             }
                             setFocusedPath(path);
                         }}
-                        className="button flex items-center gap-1 p-3 pr-2 border border-gray-500 text-white hover:bg-gray-900 cursor-pointer select-none"
+                        className="button flex items-center gap-1.5 py-1.5 pl-2.5 pr-1.5 border border-gray-500 text-white hover:bg-gray-900 cursor-pointer select-none"
                         style={
                             focusedPath === path
                                 ? {
                                       backgroundColor: 'black',
                                       borderRadius: 0,
                                   }
-                                : {}
+                                : {
+                                      borderRight: '1px solid',
+                                      borderRadius: 0,
+                                  }
                         }
                         title={path}
                         onMouseEnter={() => setCloseButtonPath(path)}
@@ -54,9 +56,9 @@ export const EditorTabs = () => {
                                 closeFile(path);
                                 e.stopPropagation();
                             }}
-                            size={22}
+                            size={20}
                             opacity={closeButtonPath === path ? '100%' : '0%'}
-                            className="relative mx-1 flex items-center cursor-pointer rounded-sm hover:bg-neutral-200 hover:text-black"
+                            className="relative top-0.5 flex items-center cursor-pointer rounded-sm hover:bg-neutral-200 hover:text-black"
                         />
                     </div>
                 );
