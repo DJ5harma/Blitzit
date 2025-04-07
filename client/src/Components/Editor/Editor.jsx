@@ -13,7 +13,7 @@ export const Editor = () => {
     useYjsBinding(focusedPath, roomId, setPathToContent, initialContent);
 
     return (
-        <div className="h-full">
+        <div className="button h-full">
             {focusedPath ? (
                 <MonacoEditor
                     theme="vs-dark"

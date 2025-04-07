@@ -9,7 +9,7 @@ export const FileTree = () => {
 
     return (
         <div
-            className="overflow-y-auto h-full w-full flex flex-col overflow-x-hidden"
+            className="button overflow-y-auto h-full w-full flex flex-col overflow-x-hidden"
             style={{ backgroundColor: 'rgb(24, 24, 24)' }}
         >
             <span className="w-full text-center font-bold font-mono bg-black p-2 select-none">

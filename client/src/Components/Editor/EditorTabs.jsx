@@ -12,7 +12,7 @@ export const EditorTabs = () => {
 
     return (
         <div
-            className="flex font-mono"
+            className="flex font-mono button"
             style={{ backgroundColor: 'rgb(31, 31, 31)', fontSize: 18 }}
         >
             {openPaths.map((path) => {
@@ -28,13 +28,15 @@ export const EditorTabs = () => {
                             }
                             setFocusedPath(path);
                         }}
-                        className="flex items-center gap-1 p-3 pr-2 border border-gray-500 text-white hover:bg-gray-900 cursor-pointer select-none"
+                        className="button flex items-center gap-1 p-3 pr-2 border border-gray-500 text-white hover:bg-gray-900 cursor-pointer select-none"
                         style={
                             focusedPath === path
                                 ? {
                                       backgroundColor: 'black',
+                                      borderRadius: 0
                                   }
-                                : {}
+                                : {
+                                }
                         }
                         title={path}
                         onMouseEnter={() => setCloseButtonPath(path)}
