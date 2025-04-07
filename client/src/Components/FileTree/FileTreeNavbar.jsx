@@ -13,6 +13,7 @@ import { UseFiles } from '../../Providers/FilesProvider';
 import { EMITTER } from '../../Utils/EMITTER';
 import { toast } from 'react-toastify';
 import { toggleF11 } from '../../Utils/toggleF11';
+import { FaSearch } from 'react-icons/fa';
 
 export const FileTreeNavbar = ({ setHidden }) => {
     const { roomId } = UseRoom();
@@ -74,6 +75,14 @@ export const FileTreeNavbar = ({ setHidden }) => {
             <SiZendesk
                 title="Toggle Fullscreen"
                 onClick={toggleF11}
+                className="button"
+                size={30}
+            />
+            <FaSearch
+                title="Search in project"
+                onClick={() => {
+                    setHidden((p) => ({ ...p, search: !p.search }));
+                }}
                 className="button"
                 size={30}
             />
