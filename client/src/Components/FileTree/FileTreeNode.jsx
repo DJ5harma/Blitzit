@@ -16,10 +16,10 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
         <>
             <div
                 className={
-                    'flex justify-between items-center pr-2.5 cursor-pointer select-none ' +
+                    'flex justify-between items-center pr-2.5 cursor-pointer select-none font-sans ' +
                     (focusedPath === path
                         ? 'bg-black'
-                        : 'bg-neutral-800 hover:bg-neutral-900')
+                        : 'hover:bg-neutral-800 bg-neutral-900')
                 }
                 style={{
                     paddingLeft: marginLeft,
@@ -31,8 +31,6 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                 }}
             >
                 <span className="flex gap-1.5 items-center p-1">
-                    {isFolder ? <FaFolder /> : <IconFromFileName name={name} />}
-                    {name}
                     {isFolder && (
                         <MdKeyboardArrowRight
                             size={20}
@@ -41,6 +39,8 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                             }}
                         />
                     )}
+                    {isFolder ? <FaFolder /> : <IconFromFileName name={name} />}
+                    {name}
                 </span>
                 <div className='flex gap-1'>
                     {isFolder && (
