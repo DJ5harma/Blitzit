@@ -7,7 +7,7 @@ export const EMITTER = {
     },
     callForTree() {
         skt.emit('connectFileTreeTerminal -i1', {
-            input: `find /app -type d -printf "%p/\n" -o -type f -printf "%p\n"`,
+            input: `find /app -type d -printf "%T@ %p/\n" -o -type f -printf "%T@ %p\n" | sort -n | cut -d' ' -f2-`,
         });
     },
     createEntity(isFile, path) {
@@ -50,4 +50,18 @@ export const EMITTER = {
             filePath: path,
         });
     },
+    renameEntity(path, editedName) {
+        const lastSlashIndex = path.lastIndexOf('/');
+        const directory = lastSlashIndex !== -1 ? path.substring(0, lastSlashIndex) : '';
+        const newPath = directory + '/' + editedName;
+    
+        const command = `mv ${path} ${newPath}`;
+        console.log(command,"Hello" ,newPath);
+        
+    
+        skt.emit('connectFileTreeTerminal -i1', { input: command });
+    
+        EMITTER.callForTree();
+    }
+    
 };
