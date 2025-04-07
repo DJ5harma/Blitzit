@@ -12,6 +12,8 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
 
     const isFolder = value !== null;
 
+    const directChildren = isFolder ? Object.keys(value) : [];
+
     return (
         <>
             <div
@@ -31,7 +33,9 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                 }}
             >
                 <span className="flex gap-1.5 items-center p-1">
-                    {isFolder && (
+                    {isFolder ? <FaFolder /> : <IconFromFileName name={name} />}
+                    {name}
+                    {directChildren.length > 0 && (
                         <MdKeyboardArrowRight
                             size={20}
                             style={{
@@ -39,10 +43,8 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                             }}
                         />
                     )}
-                    {isFolder ? <FaFolder /> : <IconFromFileName name={name} />}
-                    {name}
                 </span>
-                <div className='flex gap-1'>
+                <div className="flex gap-1">
                     {isFolder && (
                         <>
                             <FaFileUpload
@@ -50,15 +52,16 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                                     e.stopPropagation();
                                     EMITTER.createEntity(true, path);
                                 }}
-                                className="button"
-                                size={20}
+                                className="button p-0.5"
+                                size={26}
                             />
                             <FaFolderPlus
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     EMITTER.createEntity(false, path);
                                 }}
-                                className="button"
+                                className="button p-0.5"
+                                size={26}
                             />
                         </>
                     )}
@@ -69,14 +72,14 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                                 EMITTER.deleteEntity(isFolder, path);
                                 closeFile(path);
                             }}
-                            className="button"
+                            className="button p-0.5"
+                            size={26}
                         />
                     )}
                 </div>
             </div>
             {isExpanded &&
-                value &&
-                Object.keys(value).map((key, i) => {
+                directChildren.map((key, i) => {
                     return (
                         <FileTreeNode
                             key={i}
