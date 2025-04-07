@@ -1,12 +1,12 @@
 import { IoClose } from 'react-icons/io5';
-import { UseOpenFiles } from '../../Providers/OpenFilesProvider';
+import { UseFiles } from '../../Providers/FilesProvider';
 import { getFileNameFromPath } from '../../Utils/getFileNameFromPath';
 import { useState } from 'react';
 import { IconFromFileName } from '../../Utils/IconFromFileName';
 
 export const EditorTabs = () => {
     const { openPaths, closeFile, focusedPath, setFocusedPath } =
-        UseOpenFiles();
+        UseFiles();
 
     const [closeButtonPath, setCloseButtonPath] = useState('');
 

@@ -1,31 +1,14 @@
-import { useEffect, useState } from 'react';
-import { UseSocket } from '../../Providers/SocketProvider';
+import { useState } from 'react';
 import { EMITTER } from '../../Utils/EMITTER';
 import { TerminalInputHistory } from './TerminalInputHistory';
 import { TerminalHistory } from './TerminalHistory';
+import { UseTerminal } from '../../Providers/TerminalProvider';
 
 export const Terminal = () => {
-    const { skt } = UseSocket();
+    const { inputHistory, setInputHistory, history, setHistory } =
+        UseTerminal();
 
-    const [history, setHistory] = useState([]);
-    const [inputHistory, setInputHistory] = useState([]);
     const [input, setInput] = useState('');
-
-    useEffect(() => {
-        skt.on('connectMainTerminal -o1', ({ data }) => {
-            data = data.replace(
-                new RegExp(`[\\x00-\\x09\\x0B-\\x1F\\x7F]`, 'g'),
-                ''
-            );
-            setHistory((p) => [...p, data]);
-        });
-
-        EMITTER.runMainTerminalCommand('pwd');
-
-        return () => {
-            skt.removeListener('connectMainTerminal -o1');
-        };
-    }, [skt]);
 
     return (
         <div className="w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2">

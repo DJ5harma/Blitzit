@@ -2,13 +2,16 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { UseSocket } from './SocketProvider';
 import { EMITTER } from '../Utils/EMITTER';
 import { toast } from 'react-toastify';
+import { getFileTree } from '../Utils/getFileTree';
 
 const context = createContext();
 
-export const OpenFilesProvider = ({ children }) => {
+export const FilesProvider = ({ children }) => {
     const [openPaths, setOpenPaths] = useState([]);
     const [focusedPath, setFocusedPath] = useState(null);
     const [pathToContent, setPathToContent] = useState({}); // path -> content
+
+    const [fileTreeData, setFileTreeData] = useState(null);
 
     const { skt } = UseSocket();
 
@@ -59,8 +62,16 @@ export const OpenFilesProvider = ({ children }) => {
                 return { ...p, [filePath]: data };
             });
         });
+
+        skt.on('connectFileTreeTerminal -o1', ({ data }) => {
+            console.log({ data });
+            setFileTreeData(() => getFileTree(data));
+        });
+
+        EMITTER.callForTree();
         return () => {
             skt.removeListener('connectEditorTerminal -o1');
+            skt.removeListener('connectFileTreeTerminal -o1');
         };
     }, [skt]);
 
@@ -75,6 +86,8 @@ export const OpenFilesProvider = ({ children }) => {
                 closeFile,
                 focusedPath,
                 setFocusedPath,
+                fileTreeData,
+                setFileTreeData,
             }}
         >
             {children}
@@ -82,4 +95,4 @@ export const OpenFilesProvider = ({ children }) => {
     );
 };
 
-export const UseOpenFiles = () => useContext(context);
+export const UseFiles = () => useContext(context);

@@ -1,11 +1,11 @@
 import MonacoEditor from '@monaco-editor/react';
-import { UseOpenFiles } from '../../Providers/OpenFilesProvider';
+import { UseFiles } from '../../Providers/FilesProvider';
 import { UseRoom } from '../../Providers/RoomProvider';
 import { getYText, useYjsBinding } from './YjsBinding.js';
 import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
 
 export const Editor = () => {
-    const { focusedPath, pathToContent, setPathToContent } = UseOpenFiles();
+    const { focusedPath, pathToContent, setPathToContent } = UseFiles();
     const { roomId } = UseRoom();
 
     // Sync to Yjs

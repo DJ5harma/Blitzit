@@ -1,28 +1,9 @@
-import { useEffect, useState } from 'react';
-import { UseSocket } from '../../Providers/SocketProvider';
 import { FileTreeNode } from './FileTreeNode';
-import { getFileTree } from '../../Utils/getFileTree';
-import { EMITTER } from '../../Utils/EMITTER';
+import { UseFiles } from '../../Providers/FilesProvider';
 
 export const FileTree = () => {
-    const { skt } = UseSocket();
-
-    const [treeData, setTreeData] = useState(null);
-
-    useEffect(() => {
-        skt.on('connectFileTreeTerminal -o1', ({ data }) => {
-            console.log({ data });
-            setTreeData(() => getFileTree(data));
-        });
-
-        EMITTER.callForTree();
-
-        return () => {
-            skt.removeListener('connectFileTreeTerminal -o1');
-        };
-    }, [skt]);
-
-    if (!treeData) return null;
+    const { fileTreeData } = UseFiles();
+    if (!fileTreeData) return null;
 
     return (
         <div
@@ -31,7 +12,7 @@ export const FileTree = () => {
         >
             <FileTreeNode
                 name={'app'}
-                value={treeData['app']}
+                value={fileTreeData['app']}
                 marginLeft={8}
                 path={'/app'}
                 deletable={false}
