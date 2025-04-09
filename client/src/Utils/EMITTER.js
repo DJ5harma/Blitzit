@@ -1,67 +1,68 @@
+import { toast } from 'react-toastify';
+
 let skt = null;
 
 export const EMITTER = {
     init(socket) {
         // socketProvider will call
         skt = socket;
+
+        skt.on('ENTITY_DELETION_COMPLETE', (op) => {
+            toast.success('Entity deletion complete, ' + op);
+            // EMITTER.callForTree();
+        });
+        skt.on('ENTITY_CREATION_COMPLETE', (op) => {
+            toast.success('Entity creation complete, ' + op);
+        });
+        skt.on('FILE_SAVE_COMPLETE', (op) => {
+            toast.success('File save complete, ' + op);
+        });
+        skt.on('FILE_READ_COMPLETE', (op) => {
+            toast.success('File read complete, ' + op);
+        });
+        skt.on('MAIN_TERMINAL_OUTPUT', (op) => {
+            toast.success('Main terminal output: , ' + op);
+        });
     },
     callForTree() {
-        skt.emit('connectFileTreeTerminal -i1', {
-            input: `find /app -type d -printf "%T@ %p/\n" -o -type f -printf "%T@ %p\n" | sort -n | cut -d' ' -f2-`,
-        });
+        console.log('Tree called');
+
+        skt.emit('GET_FILE_TREE');
     },
     createEntity(isFile, path) {
         const entityName = prompt(`Enter ${isFile ? 'file' : 'folder'} name:`);
         if (!entityName) return;
 
-        const fullPath = path + '/' + entityName;
+        path = path + '/' + entityName;
 
-        const command = (isFile ? `echo "Empty file" > ` : 'mkdir ') + fullPath;
-        skt.emit('connectFileTreeTerminal -i1', { input: command });
+        // const command = (isFile ? `echo "Empty file" > ` : 'mkdir ') + fullPath;
+        skt.emit('CREATE_ENTITY', JSON.stringify({ isFile, path }));
         EMITTER.callForTree();
-    },
-
-    saveFileEmitter(content, path) {
-        skt.emit('connectEditorTerminal -i2', {
-            input: `echo '${content}' > ` + path,
-        });
     },
     runProject(commandToRun) {
-        skt.emit('connectMainTerminal -i1', {
-            input: commandToRun + '\n',
-            isDirectlyCalled: true,
-        });
+        EMITTER.runMainTerminalCommand(commandToRun);
     },
     runMainTerminalCommand(commandToRun) {
-        skt.emit('connectMainTerminal -i1', {
-            input: commandToRun + '\n',
-            isDirectlyCalled: false,
-        });
+        skt.emit('RUN_MAIN_TERMINAL_COMMAND', commandToRun);
     },
     deleteEntity(isFolder, path) {
-        skt.emit('connectFileTreeTerminal -i1', {
-            input: (isFolder ? 'rm -r ' : 'rm ') + path,
-        });
-        EMITTER.callForTree();
+        skt.emit('DELETE_ENTITY', JSON.stringify({ isFolder, path }));
+        setTimeout(() => EMITTER.callForTree(), 500);
+    },
+    saveFile(content, path) {
+        skt.emit('SAVE_FILE', JSON.stringify({ content, path }));
     },
     readFile(path) {
-        skt.emit('connectEditorTerminal -i1', {
-            input: 'cat ' + path,
-            filePath: path,
-        });
+        skt.emit('READ_FILE', path);
     },
-    renameEntity(path, editedName) {
-        const lastSlashIndex = path.lastIndexOf('/');
-        const directory = lastSlashIndex !== -1 ? path.substring(0, lastSlashIndex) : '';
-        const newPath = directory + '/' + editedName;
-    
-        const command = `mv ${path} ${newPath}`;
-        console.log(command,"Hello" ,newPath);
-        
-    
-        skt.emit('connectFileTreeTerminal -i1', { input: command });
-    
-        EMITTER.callForTree();
-    }
-    
+    renameEntity(oldPath, newPath) {
+        // TODO
+        // skt.emit(
+        //     'connectFileTreeTerminal -i1',
+        //     JSON.stringify({ oldPath, newPath })
+        // );
+        // setTimeout(() => {
+        //     EMITTER.callForTree();
+        // }, 500);
+    },
 };

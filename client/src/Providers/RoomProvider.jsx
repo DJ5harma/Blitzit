@@ -14,54 +14,19 @@ export const RoomProvider = ({ children }) => {
 
     const [terminalsConnected, setTerminalsConnected] = useState(false);
     const [project, setProject] = useState({
-        title: 'Loading title...',
+        title: '',
+        createdAt: '',
     });
 
     useEffect(() => {
         if (terminalsConnected) return;
 
-        skt.emit(
-            'getRoomDetails',
-            { roomId },
-            ({
-                editorTerminalId,
-                mainTerminalId,
-                fileTreeTerminalId,
-                title,
-                createdAt
-            }) => {
-                addProject(title, roomId, createdAt);
-                setProject((p) => ({ ...p, title }));
-
-                skt.emit(
-                    'connectEditorTerminal',
-                    {
-                        editorTerminalId,
-                    },
-                    () => {
-                        skt.emit(
-                            'connectMainTerminal',
-                            {
-                                mainTerminalId,
-                            },
-                            () => {
-                                skt.emit(
-                                    'connectFileTreeTerminal',
-                                    {
-                                        fileTreeTerminalId,
-                                    },
-                                    () => {
-                                        console.log('File terminal connected');
-                                        setTerminalsConnected(true);
-                                        toast.success('Terminals connected!');
-                                    }
-                                );
-                            }
-                        );
-                    }
-                );
-            }
-        );
+        skt.emit('ConnectTerminals', { roomId }, ({ title, createdAt }) => {
+            addProject(title, roomId, createdAt);
+            setProject((p) => ({ ...p, title, createdAt }));
+            setTerminalsConnected(true);
+            toast.success('Terminals connected!');
+        });
     }, [addProject, roomId, skt, terminalsConnected]);
 
     if (!terminalsConnected) return <>Connecting all the terminals....</>;

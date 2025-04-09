@@ -10,18 +10,20 @@ export const TerminalProvider = ({ children }) => {
     const [inputHistory, setInputHistory] = useState([]);
 
     useEffect(() => {
-        skt.on('connectMainTerminal -o1', ({ data }) => {
-            data = data.replace(
+        skt.on('MAIN_TERMINAL_OUTPUT', (output) => {
+            console.log("temrinal output: ", output);
+            
+            output = output.replace(
                 new RegExp(`[\\x00-\\x09\\x0B-\\x1F\\x7F]`, 'g'),
                 ''
             );
-            setHistory((p) => [...p, data]);
+            setHistory((p) => [...p, output]);
         });
 
         EMITTER.runMainTerminalCommand('pwd');
 
         return () => {
-            skt.removeListener('connectMainTerminal -o1');
+            skt.removeListener('MAIN_TERMINAL_OUTPUT');
         };
     }, [skt]);
 

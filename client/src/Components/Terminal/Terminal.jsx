@@ -35,10 +35,8 @@ export const Terminal = () => {
                                 EMITTER.runMainTerminalCommand(input);
                                 EMITTER.callForTree();
                             }
-                            setInput((p) => {
-                                setInputHistory((pv) => [...pv, p]);
-                                return '';
-                            });
+                            setInputHistory((pv) => [...pv, input]);
+                            setInput('');
                         }}
                     >
                         Run

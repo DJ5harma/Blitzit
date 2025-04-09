@@ -12,11 +12,11 @@ export const RightSection = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        skt.on('createContainer -o1', ({ roomId }) => {
+        skt.on('CONTAINER_CREATED', ({ roomId }) => {
             navigate(`room/${roomId}`);
         });
         return () => {
-            skt.removeListener('createContainer -o1');
+            skt.removeListener('CONTAINER_CREATED');
         };
     }, [navigate, skt]);
 
@@ -76,7 +76,7 @@ export const RightSection = () => {
                                             const title = prompt(
                                                 "Enter project's title..."
                                             );
-                                            skt.emit('createContainer', {
+                                            skt.emit('CreateContainer', {
                                                 Image: name,
                                                 title,
                                             });

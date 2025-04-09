@@ -1,14 +1,13 @@
-import { FaEdit, FaFileUpload, FaFolder, FaFolderPlus } from 'react-icons/fa';
+import { FaFileUpload, FaFolder, FaFolderPlus } from 'react-icons/fa';
 import { MdDelete, MdKeyboardArrowRight } from 'react-icons/md';
 import { useState } from 'react';
 import { UseFiles } from '../../Providers/FilesProvider';
 import { IconFromFileName } from '../../Utils/IconFromFileName';
 import { EMITTER } from '../../Utils/EMITTER';
-import { UseDrag } from '../../Providers/DragProvider';
 import { FaPencil } from 'react-icons/fa6';
 
 export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
-    const { openFile, closeFile, focusedPath } = UseFiles();
+    const { openFile, deleteEntity, focusedPath, renameEntity } = UseFiles();
 
     const [isExpanded, setIsExpanded] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
@@ -19,9 +18,10 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
 
     const directChildren = isFolder ? Object.keys(value) : [];
 
-    const { initializeDrag } = UseDrag();
     const saveNameChange = () => {
-        EMITTER.renameEntity(path, editedName);
+        const newPath =
+            path.substring(0, path.lastIndexOf('/') + 1) + editedName;
+        renameEntity(path, newPath, isFolder);
         setIsEditing(false);
     };
 
@@ -40,10 +40,6 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                 onClick={() => {
                     if (isFolder) return setIsExpanded((p) => !p);
                     openFile(path);
-                }}
-                onMouseDown={() => {
-                    if (isFolder) return;
-                    initializeDrag(path);
                 }}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -113,8 +109,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                         <MdDelete
                             onClick={(e) => {
                                 e.stopPropagation();
-                                EMITTER.deleteEntity(isFolder, path);
-                                closeFile(path);
+                                deleteEntity(isFolder, path);
                             }}
                             className="button p-0.5"
                             size={26}

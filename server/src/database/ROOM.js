@@ -6,22 +6,13 @@ export const ROOM =
         "ROOM",
         new Schema(
             {
-                containerId: {
-                    type: String,
-                    required: true,
-                },
-                mainTerminalId: {
-                    type: String,
-                    required: true,
-                },
-                fileTreeTerminalId: {
-                    type: String,
-                    required: true,
-                },
-                editorTerminalId: {
-                    type: String,
-                    required: true,
-                },
+                containerId: { type: String, required: true },
+                MainTerminalId: { type: String, required: true },
+                GetFileTreeTerminalId: { type: String, required: true },
+                DeleteEntityTerminalId: { type: String, required: true },
+                SaveFileTerminalId: { type: String, required: true },
+                ReadFileTerminalId: { type: String, required: true },
+                CreateEntityTerminalId: { type: String, required: true },
                 title: {
                     type: String,
                     required: true,

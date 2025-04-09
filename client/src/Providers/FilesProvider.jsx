@@ -22,10 +22,14 @@ export const FilesProvider = ({ children }) => {
         content.replaceAll(`"`, `\\"`);
         content.replaceAll('`', '\\`');
 
-        EMITTER.saveFileEmitter(content, focusedPath);
+        EMITTER.saveFile(content, focusedPath);
 
-        toast.success(`"${focusedPath}" saved!`);
+        toast(`"${focusedPath}" is being saved!`);
     };
+
+    useEffect(() => {
+        if (!openPaths.includes(focusedPath)) setFocusedPath(null);
+    }, [focusedPath, openPaths]);
 
     const openFile = (filePath) => {
         setFocusedPath(filePath);
@@ -36,42 +40,44 @@ export const FilesProvider = ({ children }) => {
     };
 
     const closeFile = (path) => {
-        setOpenPaths((p) => {
-            const newPaths = p.filter((pth) => pth !== path);
-            if (path === focusedPath) {
-                const indexOfRemoved = p.indexOf(path);
-                if (indexOfRemoved === newPaths.length)
-                    setFocusedPath(newPaths[newPaths.length - 1]);
-                else
-                    setFocusedPath(
-                        newPaths.length
-                            ? newPaths[indexOfRemoved % newPaths.length]
-                            : null
-                    );
-            }
-            return newPaths;
-        });
+        if (openPaths.includes(path)) {
+            const newOpenPaths = openPaths.filter((pth) => pth !== path);
+            setOpenPaths(newOpenPaths);
+        }
+    };
+
+    const deleteEntity = (isFolder, path) => {
+        if (!isFolder) closeFile(path);
+        EMITTER.deleteEntity(isFolder, path);
+    };
+
+    const renameEntity = (oldPath, newPath, isFolder) => {
+        // TODO
     };
 
     useEffect(() => {
-        skt.on('connectEditorTerminal -o1', ({ data, filePath }) => {
-            console.log({ data, filePath });
-
-            setPathToContent((p) => {
-                if (p[filePath]) return p;
-                return { ...p, [filePath]: data };
-            });
+        skt.on('FILE_READ_COMPLETE', (output) => {
+            try {
+                const { data, filePath } = JSON.parse(output);
+                setPathToContent((p) => {
+                    if (p[filePath]) return p;
+                    return { ...p, [filePath]: data };
+                });
+            } catch ({ message }) {
+                console.error(message);
+            }
         });
 
-        skt.on('connectFileTreeTerminal -o1', ({ data }) => {
-            console.log({ data });
-            setFileTreeData(() => getFileTree(data));
+        skt.on('FILE_TREE_DATA', (output) => {
+            output = output.substring(output.indexOf('/'));
+            console.log({ output });
+            setFileTreeData(() => getFileTree(output));
         });
 
         EMITTER.callForTree();
         return () => {
-            skt.removeListener('connectEditorTerminal -o1');
-            skt.removeListener('connectFileTreeTerminal -o1');
+            skt.removeListener('FILE_READ_COMPLETE');
+            skt.removeListener('FILE_TREE_DATA');
         };
     }, [skt]);
 
@@ -84,6 +90,7 @@ export const FilesProvider = ({ children }) => {
                 saveFile,
                 openFile,
                 closeFile,
+                deleteEntity,
                 focusedPath,
                 setFocusedPath,
                 fileTreeData,

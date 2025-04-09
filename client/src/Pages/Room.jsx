@@ -62,19 +62,19 @@ export const Room = () => {
                                 initial={300}
                                 child2={
                                     <div className="flex flex-col w-full h-full">
-                                        <TerminalProvider>
-                                            <EditorTabs />
-                                            <ResizableWrapper
-                                                child1={<Editor />}
-                                                axis="y"
-                                                child2={
-                                                    !hidden.terminal && (
+                                        <EditorTabs />
+                                        <ResizableWrapper
+                                            child1={<Editor />}
+                                            axis="y"
+                                            child2={
+                                                !hidden.terminal && (
+                                                    <TerminalProvider>
                                                         <Terminal />
-                                                    )
-                                                }
-                                                initial={600}
-                                            />
-                                        </TerminalProvider>
+                                                    </TerminalProvider>
+                                                )
+                                            }
+                                            initial={600}
+                                        />
                                     </div>
                                 }
                             />
