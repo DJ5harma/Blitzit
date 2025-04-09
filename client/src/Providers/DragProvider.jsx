@@ -13,10 +13,9 @@ export const DragProvider = ({ children }) => {
     };
     const finalizeDrag = () => {
         if (!draggingFilePath) return;
-        setDraggingFilePath((p) => {
-            openFile(p);
-            return null;
-        });
+        const currentPath = draggingFilePath;
+        setDraggingFilePath(null); 
+        openFile(currentPath); 
     };
 
     useEffect(() => {
