@@ -47,6 +47,7 @@ export const createContainer = (skt) => {
             const SaveFileTerminalExec = await container.exec(execConfig);
             const ReadFileTerminalExec = await container.exec(execConfig);
             const CreateEntityTerminalExec = await container.exec(execConfig);
+            const RenameEntityTerminalExec = await container.exec(execConfig);
 
             const MainTerminalId = MainTerminalExec.id;
             const GetFileTreeTerminalId = GetFileTreeTerminalExec.id;
@@ -54,6 +55,7 @@ export const createContainer = (skt) => {
             const SaveFileTerminalId = SaveFileTerminalExec.id;
             const ReadFileTerminalId = SaveFileTerminalExec.id;
             const CreateEntityTerminalId = CreateEntityTerminalExec.id;
+            const RenameEntityTerminalId = RenameEntityTerminalExec.id;
 
             const MainTerminalStream = await MainTerminalExec.start(
                 streamConfig
@@ -70,6 +72,9 @@ export const createContainer = (skt) => {
             );
             const CreateEntityTerminalStream =
                 await CreateEntityTerminalExec.start(streamConfig);
+
+            const RenameEntityTerminalStream =
+                await RenameEntityTerminalExec.start(streamConfig);
 
             const arr = [
                 {
@@ -140,14 +145,10 @@ export const createContainer = (skt) => {
                     chunkManipulator: async (data) => {
                         if (data.length > 8) data = data.slice(8).toString(); // Skip first 8 bytes
                         const filePath = await redis.LPOP(ReadFileTerminalId);
-                        const dataAndFilePathObj = JSON.stringify({
+                        return JSON.stringify({
                             data,
                             filePath,
                         });
-
-                        // console.log({ dataAndFilePathObj });
-
-                        return dataAndFilePathObj;
                     },
                 },
                 {
@@ -159,19 +160,29 @@ export const createContainer = (skt) => {
                         if (!ip) return;
                         try {
                             const { isFile, path } = JSON.parse(ip);
-                            console.log(
-                                "create entity signnal: ",
-                                {
-                                    isFile,
-                                    path,
-                                },
-                                { ip }
-                            );
                             if (!path || isFile === undefined) return;
                             CreateEntityTerminalStream.write(
                                 (isFile ? `echo "Empty file" > ` : "mkdir ") +
                                     path +
                                     "\n"
+                            );
+                        } catch ({ message }) {
+                            console.error(message);
+                        }
+                    },
+                },
+                {
+                    TERMINAL_ID: RenameEntityTerminalId,
+                    INPUT_ENDPOINT: `RENAME_ENTITY`,
+                    OUTPUT_ENDPOINT: `ENTITY_RENAME_COMPLETE`,
+                    Stream: RenameEntityTerminalStream,
+                    onSignal: (ip) => {
+                        if (!ip) return;
+                        try {
+                            const { oldPath, newPath } = JSON.parse(ip);
+                            if (!oldPath || !newPath) return;
+                            RenameEntityTerminalStream.write(
+                                `mv ${oldPath} ${newPath}\n`
                             );
                         } catch ({ message }) {
                             console.error(message);
@@ -216,6 +227,7 @@ export const createContainer = (skt) => {
                 SaveFileTerminalId,
                 ReadFileTerminalId,
                 CreateEntityTerminalId,
+                RenameEntityTerminalId,
                 title: title || `Untitled-${Date.now()}`,
             });
 

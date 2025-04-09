@@ -13,6 +13,7 @@ export const ROOM =
                 SaveFileTerminalId: { type: String, required: true },
                 ReadFileTerminalId: { type: String, required: true },
                 CreateEntityTerminalId: { type: String, required: true },
+                RenameEntityTerminalId: { type: String, required: true },
                 title: {
                     type: String,
                     required: true,

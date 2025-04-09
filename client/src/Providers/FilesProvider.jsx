@@ -52,7 +52,11 @@ export const FilesProvider = ({ children }) => {
     };
 
     const renameEntity = (oldPath, newPath, isFolder) => {
-        // TODO
+        // if(!isFolder)
+        // {
+        //     setOpenPaths(p => )
+        // }
+        EMITTER.renameEntity(oldPath, newPath);
     };
 
     useEffect(() => {
@@ -91,6 +95,7 @@ export const FilesProvider = ({ children }) => {
                 openFile,
                 closeFile,
                 deleteEntity,
+                renameEntity,
                 focusedPath,
                 setFocusedPath,
                 fileTreeData,

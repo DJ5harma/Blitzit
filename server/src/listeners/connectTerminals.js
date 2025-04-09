@@ -23,6 +23,7 @@ export const connectTerminals = (skt) => {
                 SaveFileTerminalId,
                 ReadFileTerminalId,
                 CreateEntityTerminalId,
+                RenameEntityTerminalId,
                 title,
                 createdAt,
             } = room;
@@ -57,6 +58,11 @@ export const connectTerminals = (skt) => {
                     TERMINAL_ID: CreateEntityTerminalId,
                     INPUT_ENDPOINT: "CREATE_ENTITY",
                     OUTPUT_ENDPOINT: "ENTITY_CREATION_COMPLETE",
+                },
+                {
+                    TERMINAL_ID: RenameEntityTerminalId,
+                    INPUT_ENDPOINT: "RENAME_ENTITY",
+                    OUTPUT_ENDPOINT: "ENTITY_RENAME_COMPLETE",
                 },
             ];
 
