@@ -57,15 +57,13 @@ export const FilesProvider = ({ children }) => {
                 prev.map((p) => (p === oldPath ? newPath : p))
             );
             setPathToContent((p) => {
-                const cpy = { ...p };
-                cpy[newPath] = cpy[oldPath];
-                return cpy;
+                p[newPath] = p[oldPath];
+                return p;
             });
             setTimeout(() => {
                 setPathToContent((p) => {
-                    const cpy = { ...p };
-                    delete cpy[oldPath];
-                    return cpy;
+                    delete p[oldPath];
+                    return p;
                 });
                 setFocusedPath(newPath);
             }, 500);

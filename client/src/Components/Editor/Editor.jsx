@@ -25,6 +25,9 @@ export const Editor = () => {
                         minimap: true,
                         wordWrap: 'on',
                         fontSize: 20,
+                        codeLens: true,
+                        wordBasedSuggestions: true,
+                        autoClosingQuotes: true,
                     }}
                     language={getLanguageFromFilePath(focusedPath)}
                     onChange={(content) => {
