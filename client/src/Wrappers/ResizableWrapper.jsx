@@ -26,6 +26,7 @@ export const ResizableWrapper = ({ child1, child2, axis, initial }) => {
                 <div
                     style={{
                         height: `calc(100% - ${position + 4}px)`,
+                        minHeight: 15
                     }}
                 >
                     {child2}

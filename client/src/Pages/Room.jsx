@@ -47,37 +47,36 @@ export const Room = () => {
                         }
                     />
                 }
-                <div className="w-screen h-screen flex overflow-hidden">
-                    <div style={{ width: 70 }}>
-                        <FileTreeNavbar setHidden={setHidden} />
+                <TerminalProvider>
+                    <div className="w-screen h-screen flex overflow-hidden">
+                        <div style={{ width: 70 }}>
+                            <FileTreeNavbar setHidden={setHidden} />
+                        </div>
+                        <div
+                            style={{ width: 'calc(100% - 70px)' }}
+                            className="h-full"
+                        >
+                            <ResizableWrapper
+                                child1={!hidden.fileTree && <FileTree />}
+                                initial={300}
+                                child2={
+                                    <div className="flex flex-col w-full h-full">
+                                        <EditorTabs />
+                                        <ResizableWrapper
+                                            child1={<Editor />}
+                                            axis="y"
+                                            child2={
+                                                !hidden.terminal && <Terminal />
+                                            }
+                                            initial={600}
+
+                                        />
+                                    </div>
+                                }
+                            />
+                        </div>
                     </div>
-                    <div
-                        style={{ width: 'calc(100% - 70px)' }}
-                        className="h-full"
-                    >
-                        <ResizableWrapper
-                            child1={!hidden.fileTree && <FileTree />}
-                            initial={300}
-                            child2={
-                                <div className="flex flex-col w-full h-full">
-                                    <EditorTabs />
-                                    <ResizableWrapper
-                                        child1={<Editor />}
-                                        axis="y"
-                                        child2={
-                                            !hidden.terminal && (
-                                                <TerminalProvider>
-                                                    <Terminal />
-                                                </TerminalProvider>
-                                            )
-                                        }
-                                        initial={600}
-                                    />
-                                </div>
-                            }
-                        />
-                    </div>
-                </div>
+                </TerminalProvider>
             </FilesProvider>
         </RoomProvider>
     );
