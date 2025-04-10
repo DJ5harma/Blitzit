@@ -5,7 +5,11 @@ import { execConfig } from "../utils/execConfig.js";
 import { streamConfig } from "../utils/streamConfig.js";
 import { redis, subscriber } from "../redis/redis.js";
 
-const images = ["python-template", "javascript-template"];
+const images = [
+  "python-template",
+  "javascript-template",
+  "cpp-template",
+];
 
 export const terminalId_to_stream = {};
 
@@ -38,7 +42,7 @@ export const createContainer = (skt) => {
           AutoRemove: true,
           NetworkMode: "blitzit_blitzit-net", // Match your compose project name
         },
-      });
+      });``
 
       await container.start();
       console.log("Container created");

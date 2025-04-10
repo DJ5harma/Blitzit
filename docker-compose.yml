@@ -83,9 +83,25 @@ services:
         limits:
           cpus: '0.5'
           memory: 256M
+  
+  cpp-template:
+    build: 
+      context: ./templates/cpp/app
+      dockerfile: Dockerfile
+    image: cpp-template:latest
+    volumes:
+      - cpp-build:/build  # Isolate build artifacts
+    networks:
+      - blitzit-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
 
 volumes:
   mongo-data:
+  cpp-build:
 
 networks:
   blitzit-net:
