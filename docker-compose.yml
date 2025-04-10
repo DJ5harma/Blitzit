@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    environment:
+      - REACT_APP_API_URL=http://server:4000
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    networks:
+      blitzit-net:
+        aliases:
+          - client.local
+
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+      - "4444:4444" # Expose WebRTC port
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/BLITZIT
+      - REDIS_URL=redis://redis:6379
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    networks:
+      blitzit-net:
+        aliases:
+          - server.local # Accessible via both server and server.local
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - blitzit-net
+
+  redis:
+    image: redis
+    ports:
+      - "6380:6379"
+    networks:
+      - blitzit-net
+
+  python-template:
+    build:
+      context: ./templates/python/app
+      dockerfile: Dockerfile
+    image: python-template:latest  # Add explicit image tag
+    networks:
+      - blitzit-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  javascript-template:
+    build:
+      context: ./templates/javascript/app
+      dockerfile: Dockerfile
+    image: javascript-template:latest  # Add explicit image tag
+    networks:
+      - blitzit-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+volumes:
+  mongo-data:
+
+networks:
+  blitzit-net:
+    driver: bridge

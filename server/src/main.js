@@ -7,8 +7,13 @@ import { webRtcServer } from "./webrtc/webRtcServer.js";
 import { connectTerminals } from "./listeners/connectTerminals.js";
 
 const docker = new Docker();
-const io = new Server({ cors: { origin: "*" } });
-
+const io = new Server({
+    cors: {
+      origin: "http://localhost:3000", // Explicit client origin
+      methods: ["GET", "POST"]
+    },
+    transports: ['websocket', 'polling'] // Explicit transport order
+  });
 let cnt = 0;
 
 io.on("connection", async (socket) => {
@@ -21,7 +26,7 @@ io.on("connection", async (socket) => {
     connectTerminals(socket);
 });
 
-dbConnect("mongodb://localhost:27017/Blitzit").then(() => {
+dbConnect("mongodb://mongo:27017/BLITZIT").then(() => {
     redisConnect().then(() => {
         io.listen(4000);
         console.log("Socket at 4000");

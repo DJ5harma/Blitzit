@@ -1,6 +1,6 @@
 import { createClient } from "redis";
 
-export const redis = createClient({ url: process.env.REDIS_URL });
+export const redis = createClient({ url: "redis://redis:6379" });
 export const subscriber = redis.duplicate();
 
 export const redisConnect = async () => {
