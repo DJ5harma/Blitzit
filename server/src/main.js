@@ -2,7 +2,6 @@ import { Server } from "socket.io";
 import Docker from "dockerode";
 import { createContainer } from "./listeners/createContainer.js";
 import { dbConnect } from "./database/dbConnect.js";
-import { redisConnect } from "./redis/redis.js";
 import { webRtcServer } from "./webrtc/webRtcServer.js";
 import { connectTerminals } from "./listeners/connectTerminals.js";
 import { config as configEnv } from "dotenv";
@@ -37,7 +36,12 @@ const subscriber = redis.duplicate();
 
 dbConnect().then(() => {
 	redis.connect().then(() => {
+		console.log("Redis connected!");
+
 		subscriber.connect().then(() => {
+
+			console.log("Redis subscriber connected!");
+			
 			io.listen(4000);
 			console.log("Socket at 4000");
 			webRtcServer();
