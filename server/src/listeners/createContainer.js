@@ -5,7 +5,7 @@ import { execConfig } from "../utils/execConfig.js";
 import { streamConfig } from "../utils/streamConfig.js";
 import { redis, subscriber } from "../main.js";
 
-const images = ["python-template", "javascript-template", "cpp-template"];
+const images = ["python-template", "javascript-template", "cpp-template", "java-template"];
 
 export const terminalId_to_stream = {};
 

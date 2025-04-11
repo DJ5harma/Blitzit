@@ -98,10 +98,27 @@ services:
         limits:
           cpus: '1.0'
           memory: 512M
+  
+  java-template:
+    build: 
+      context: ./templates/java/app
+      dockerfile: Dockerfile
+    image: java-template:latest
+    volumes:
+      - java-build:/build  # Isolate build artifacts
+    networks:
+      - blitzit-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+  
 
 volumes:
   mongo-data:
   cpp-build:
+  java-build:
 
 networks:
   blitzit-net:
