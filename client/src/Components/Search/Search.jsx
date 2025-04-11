@@ -42,7 +42,7 @@ export const Search = ({ hidden, hide }) => {
     if (hidden) return null;
     return (
         <div
-            className="w-screen h-screen absolute left-0 top-0 flex flex-col justify-center items-center"
+            className="w-screen h-screen absolute left-0 top-0 flex flex-col justify-center items-center z-20"
             onClick={hide}
             style={{
                 backgroundColor: 'rgb(0,0,0,0.5)',

@@ -5,7 +5,12 @@ import { execConfig } from "../utils/execConfig.js";
 import { streamConfig } from "../utils/streamConfig.js";
 import { redis, subscriber } from "../main.js";
 
-const images = ["python-template", "javascript-template", "cpp-template", "java-template"];
+const images = [
+	"python-template",
+	"javascript-template",
+	"cpp-template",
+	"java-template",
+];
 
 export const terminalId_to_stream = {};
 
@@ -130,7 +135,7 @@ export const createContainer = (skt) => {
 							const { content, path } = JSON.parse(ip);
 							if (!path) return;
 							SaveFileTerminalStream.write(
-								`echo '${content || ""}' > ` + path + "\n"
+								`cat << 'EOF' > ${path}\n${content}\nEOF\n`
 							);
 						} catch ({ message }) {
 							console.error({ message });

@@ -11,14 +11,14 @@ export const Terminal = () => {
 
     return (
         <div
-            className="button w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2"
+            className="button w-full h-full text-left flex flex-col justify-between gap-4 bg-black p-2 overflow-auto"
             style={{ fontSize: 16 }}
         >
             <div className="w-full flex overflow-auto h-full">
                 <TerminalHistory />
                 <TerminalInputHistory />
             </div>
-            <div className="flex items-center gap-2 [&>*]:p-2 select-none">
+            <div className="flex items-center gap-2 [&>*]:p-2 select-none overflow-auto">
                 <input
                     type="text"
                     value={input}

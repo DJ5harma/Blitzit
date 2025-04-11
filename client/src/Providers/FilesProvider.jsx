@@ -19,12 +19,9 @@ export const FilesProvider = ({ children }) => {
         if (!focusedPath || !pathToContent[focusedPath]) return;
 
         const content = pathToContent[focusedPath];
-        content.replaceAll(`"`, `\\"`);
-        content.replaceAll('`', '\\`');
 
         EMITTER.saveFile(content, focusedPath);
-
-        toast(`"${focusedPath}" is being saved!`);
+        toast(`"${focusedPath}" is being saved!`, { autoClose: 800 });
     };
 
     useEffect(() => {
