@@ -16,10 +16,12 @@ import { toggleF11 } from '../../Utils/toggleF11';
 import { FaSearch } from 'react-icons/fa';
 
 export const FileTreeNavbar = ({ setHidden }) => {
-    const { roomId } = UseRoom();
+    const { roomId, project } = UseRoom();
     const { saveFile } = UseFiles();
 
-    const [commandToRun, setCommandToRun] = useState('python /app/script.py');
+    const [commandToRun, setCommandToRun] = useState(project.runCommand);
+
+
 
     const copyToClipboard = () => {
         const url = `${window.location.origin}/room/${roomId}`;

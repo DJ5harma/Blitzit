@@ -12,7 +12,7 @@ export const HomeProvider = ({ children }) => {
         })()
     ); // {title, roomId, createdAt}[]
 
-    function addProject(title, roomId, createdAt) {
+    function addProject({ title, roomId, createdAt, runCommand }) {
         let alreadyExists = false;
         projects.forEach(({ roomId: rid }) => {
             if (roomId === rid) {
@@ -22,7 +22,10 @@ export const HomeProvider = ({ children }) => {
         });
         if (alreadyExists) return;
         setProjects((p) => {
-            const newProjects = [...p, { title, roomId, createdAt }];
+            const newProjects = [
+                ...p,
+                { title, roomId, createdAt, runCommand },
+            ];
             localStorage.setItem('projects', JSON.stringify(newProjects));
             return newProjects;
         });

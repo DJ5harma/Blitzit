@@ -10,7 +10,7 @@
 import { WebSocketServer } from "ws";
 import http from "http";
 import * as map from "lib0/map";
-import { subscriber, redis } from "../redis/redis.js";
+import { subscriber, redis } from "../main.js";
 
 export const webRtcServer = () => {
     const port = process.env.PORT || 4444;

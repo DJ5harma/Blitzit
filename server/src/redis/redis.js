@@ -1,12 +1,7 @@
-import { createClient } from "redis";
+export const redisConnect = async (redis, subscriber) => {
+	redis.on("error", (err) => console.log("Redis 1 Client error", err));
+	subscriber.on("error", (err) => console.log("Redis 2 Client error", err));
 
-export const redis = createClient({ url: "redis://redis:6379" });
-export const subscriber = redis.duplicate();
-
-export const redisConnect = async () => {
-    redis.on("error", (err) => console.log("Redis 1 Client error", err));
-    subscriber.on("error", (err) => console.log("Redis 2 Client error", err));
-
-    await Promise.all([redis.connect(), subscriber.connect()]);
-    console.log("Redis 1 & 2 connected on PORT :", 6379);
+	await Promise.all([redis.connect(), subscriber.connect()]);
+	console.log("Redis 1 & 2 connected on PORT :", 6379);
 };

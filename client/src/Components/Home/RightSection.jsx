@@ -27,6 +27,16 @@ export const RightSection = () => {
             </div>
         );
 
+    function createProject({ name, runCommand }) {
+        const title = prompt("Enter project's title...");
+        skt.emit('CreateContainer', {
+            Image: name,
+            title,
+            runCommand,
+        });
+        setMakingTemplate(true);
+    }
+
     return (
         <div className="flex-1 flex flex-col h-full">
             <div className="flex-1 bg-gray-900 p-8 overflow-y-auto">
@@ -66,22 +76,15 @@ export const RightSection = () => {
                                 Templates to choose from
                             </h2>
                             {CONSTANTS.TEMPLATES.map(
-                                ({ name, description }, i) => (
+                                ({ name, description, runCommand }, i) => (
                                     <div
                                         key={i}
                                         className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer 
                            aspect-square flex flex-col items-center justify-center text-center
                            w-full max-w-[200px] mx-auto"
-                                        onClick={() => {
-                                            const title = prompt(
-                                                "Enter project's title..."
-                                            );
-                                            skt.emit('CreateContainer', {
-                                                Image: name,
-                                                title,
-                                            });
-                                            setMakingTemplate(true);
-                                        }}
+                                        onClick={() =>
+                                            createProject({ name, runCommand })
+                                        }
                                     >
                                         <h3 className="text-lg font-semibold mb-2">
                                             {name}

@@ -16,17 +16,23 @@ export const RoomProvider = ({ children }) => {
     const [project, setProject] = useState({
         title: '',
         createdAt: '',
+        Image: '',
+        runCommand: '',
     });
 
     useEffect(() => {
         if (terminalsConnected) return;
 
-        skt.emit('ConnectTerminals', { roomId }, ({ title, createdAt }) => {
-            addProject(title, roomId, createdAt);
-            setProject((p) => ({ ...p, title, createdAt }));
-            setTerminalsConnected(true);
-            toast.success('Terminals connected!');
-        });
+        skt.emit(
+            'ConnectTerminals',
+            { roomId },
+            ({ title, createdAt, Image, runCommand }) => {
+                addProject({ title, roomId, createdAt, runCommand });
+                setProject({ title, createdAt, Image, runCommand });
+                setTerminalsConnected(true);
+                toast.success('Terminals connected!');
+            }
+        );
     }, [addProject, roomId, skt, terminalsConnected]);
 
     if (!terminalsConnected) return <>Connecting all the terminals....</>;
