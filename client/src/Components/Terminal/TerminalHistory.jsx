@@ -5,10 +5,14 @@ export const TerminalHistory = () => {
 
     return (
         <div className="flex flex-col overflow-auto gap-2 w-3/4  border-r-2 border-gray-500">
-            <span className="select-none border-b-2 border-gray-500 pb-1">Terminal</span>
+            <span className="select-none border-b-2 border-gray-500 pb-1">
+                Terminal
+            </span>
             {history.map((text, i) => {
+                // console.log({ text });
+
                 return (
-                    <span
+                    <pre
                         key={i}
                         style={
                             text[0] == '/'
@@ -22,7 +26,7 @@ export const TerminalHistory = () => {
                         }
                     >
                         {text}
-                    </span>
+                    </pre>
                 );
             })}
         </div>

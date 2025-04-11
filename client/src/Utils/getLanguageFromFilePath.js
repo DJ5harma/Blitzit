@@ -14,9 +14,9 @@ export const getLanguageFromFilePath = (path) => {
         case 'css':
             return 'css';
         case 'c++':
-            return 'c++';
+            return 'cpp';
         case 'cpp':
-            return 'c++';
+            return 'cpp';
         case 'java':
             return 'java';
         case 'rs':
