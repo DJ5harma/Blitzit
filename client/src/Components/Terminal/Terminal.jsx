@@ -14,6 +14,8 @@ export const Terminal = () => {
 
     useEffect(() => {
         if (prevCmdPointer === inputHistory.length) setInput('');
+        else if (prevCmdPointer > inputHistory.length)
+            setPrevCmdPointer(inputHistory.length);
         else setInput(inputHistory[prevCmdPointer]);
     }, [prevCmdPointer, inputHistory]);
 
@@ -32,7 +34,6 @@ export const Terminal = () => {
     useEffect(() => {
         const handleKeyPress = (e) => {
             if (!inFocus) return;
-            console.log({ key: e.key });
 
             switch (e.key) {
                 case 'Enter':
@@ -61,7 +62,7 @@ export const Terminal = () => {
                 <TerminalHistory />
                 <TerminalInputHistory />
             </div>
-            <div className="flex items-center gap-2 [&>*]:p-2 select-none overflow-auto">
+            <div className="flex items-center gap-2 [&>*]:p-2 select-none">
                 <input
                     type="text"
                     value={input}
@@ -69,19 +70,20 @@ export const Terminal = () => {
                     placeholder="Enter your command"
                     className="border-1 border-white w-1/2 min-w-2xs rounded"
                 />
-                {input && <button onClick={runCmd}>Run</button>}
-                <button onClick={() => EMITTER.runMainTerminalCommand('pwd')}>
+                {input && <button title='Press Enter' onClick={runCmd}>Run</button>}
+                <button title='Runs "pwd"' onClick={() => EMITTER.runMainTerminalCommand('pwd')}>
                     Location
                 </button>
                 {history.length > 0 && (
                     <button
+                    title='Visually clears terminal'
                         onClick={() => {
                             setHistory([]);
                             setInputHistory([]);
                         }}
                         className="p-2"
                     >
-                        Clear
+                        Clear Cache
                     </button>
                 )}
             </div>
