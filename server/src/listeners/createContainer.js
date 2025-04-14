@@ -4,6 +4,7 @@ import { ROOM } from "../database/ROOM.js";
 import { execConfig } from "../utils/execConfig.js";
 import { streamConfig } from "../utils/streamConfig.js";
 import { redis, subscriber } from "../main.js";
+import { tryPausingContainer } from "../services/tryPausingContainer.js";
 
 const images = [
 	"python-template",
@@ -49,7 +50,6 @@ export const createContainer = (skt) => {
 			console.log("Container created");
 			const containerId = container.id;
 
-			// MainTerminal
 			const MainTerminalExec = await container.exec(execConfig);
 			const GetFileTreeTerminalExec = await container.exec(execConfig);
 			const DeleteEntityTerminalExec = await container.exec(execConfig);
@@ -239,6 +239,8 @@ export const createContainer = (skt) => {
 			skt.emit("CONTAINER_CREATED", {
 				roomId: newRoom._id,
 			});
+
+			tryPausingContainer(containerId);
 		} catch ({ message }) {
 			console.error({ message });
 		}

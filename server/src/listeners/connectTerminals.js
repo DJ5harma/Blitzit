@@ -1,6 +1,8 @@
 import { Socket } from "socket.io";
-import { redis, subscriber } from "../main.js";
+import { docker, redis, subscriber } from "../main.js";
 import { ROOM } from "../database/ROOM.js";
+import { ensureContainerIsRunning } from "../services/ensureContainerIsRunning.js";
+import { tryPausingContainer } from "../services/tryPausingContainer.js";
 /**
  * Description
  *
@@ -28,7 +30,10 @@ export const connectTerminals = (skt) => {
 				title,
 				runCommand,
 				createdAt,
+				containerId,
 			} = room;
+
+			await ensureContainerIsRunning(containerId);
 
 			const arr = [
 				{
@@ -85,7 +90,13 @@ export const connectTerminals = (skt) => {
 				);
 			});
 
+			await redis.INCR(`${containerId}:CONTAINER_USERS_ONLINE`);
 			callback({ title, Image, runCommand, createdAt });
+
+			skt.on("disconnect", async () => {
+				await redis.DECR(`${containerId}:CONTAINER_USERS_ONLINE`);
+				tryPausingContainer(containerId);
+			});
 		} catch ({ message }) {
 			console.error({ message });
 		}

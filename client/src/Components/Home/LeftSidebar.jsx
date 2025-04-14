@@ -1,4 +1,3 @@
-import React from 'react';
 import { UseHome } from '../../Providers/HomeProvider';
 
 export const LeftSidebar = () => {
