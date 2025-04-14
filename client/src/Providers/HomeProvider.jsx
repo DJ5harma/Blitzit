@@ -1,6 +1,15 @@
 import { createContext, useContext, useState } from 'react';
+import { NewProject } from '../Components/Home/RightSection/NewProject';
+import { UserProfile } from '../Components/Home/RightSection/UserProfile';
+import { YourProjects } from '../Components/Home/RightSection/YourProjects';
 
 const context = createContext();
+
+const tabMap = {
+    new: <NewProject />,
+    projects: <YourProjects />,
+    profile: <UserProfile />,
+};
 
 export const HomeProvider = ({ children }) => {
     const [activeTab, setActiveTab] = useState('new');
@@ -33,7 +42,15 @@ export const HomeProvider = ({ children }) => {
 
     return (
         <context.Provider
-            value={{ activeTab, setActiveTab, projects, addProject }}
+            value={{
+                activeTab,
+                currTabComponent: tabMap[activeTab],
+                tabNames: Object.keys(tabMap),
+                setActiveTab,
+                projects,
+                addProject,
+                setProjects,
+            }}
         >
             {children}
         </context.Provider>

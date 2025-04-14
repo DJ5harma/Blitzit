@@ -39,14 +39,10 @@ export const Room = () => {
     return (
         <RoomProvider>
             <FilesProvider>
-                {
-                    <Search
-                        hidden={hidden.search}
-                        hide={() =>
-                            setHidden((p) => ({ ...p, search: !p.search }))
-                        }
-                    />
-                }
+                <Search
+                    hidden={hidden.search}
+                    hide={() => setHidden((p) => ({ ...p, search: !p.search }))}
+                />
                 <TerminalProvider>
                     <div className="w-screen h-screen flex overflow-hidden">
                         <div style={{ width: 70 }}>
@@ -69,7 +65,6 @@ export const Room = () => {
                                                 !hidden.terminal && <Terminal />
                                             }
                                             initial={600}
-
                                         />
                                     </div>
                                 }
