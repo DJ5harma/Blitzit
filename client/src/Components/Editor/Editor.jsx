@@ -43,6 +43,7 @@ export const Editor = () => {
                             yText.insert(0, content);
                         }
                     }}
+                    loading = {<>Loading {focusedPath}...</>}
                 />
             ) : (
                 <div className="h-full flex items-center justify-center text-neutral-300 text-xl select-none">

@@ -4,17 +4,11 @@ import { EMITTER } from '../../../Utils/EMITTER';
 import { FaPencil } from 'react-icons/fa6';
 import { MdDelete } from 'react-icons/md';
 
-export const NodeDoables = ({
-    path,
-    isFolder,
-    isHovered,
-    setIsEditing,
-    deletable,
-}) => {
+export const NodeDoables = ({ path, isFolder, setIsEditing, deletable }) => {
     const { deleteEntity } = UseFiles();
 
     return (
-        <div className={`${isHovered ? 'flex' : 'hidden'} gap-1 items-center`}>
+        <div className="flex gap-1 items-center">
             {isFolder && (
                 <>
                     <FaFileUpload

@@ -17,17 +17,17 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     return (
         <>
             <div
-                className={
-                    'flex justify-between items-center pr-2.5 cursor-pointer select-none font-sans ' +
-                    (focusedPath === path
-                        ? 'bg-black'
-                        : 'hover:bg-neutral-800 bg-neutral-900')
-                }
+                className={`flex justify-between items-center pr-2.5 cursor-pointer select-none font-sans 
+                    ${
+                        focusedPath === path
+                            ? 'bg-black'
+                            : 'hover:bg-neutral-800 bg-neutral-900'
+                    }`}
                 style={{
                     paddingLeft: marginLeft,
                 }}
                 onClick={() => {
-                    if (isFolder) return setIsExpanded((p) => !p);
+                    if (isFolder) setIsExpanded((p) => !p);
                     else openFile(path);
                 }}
                 onMouseEnter={() => setIsHovered(true)}
@@ -42,13 +42,14 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                     setIsEditing={setIsEditing}
                     name={name}
                 />
-                <NodeDoables
-                    isFolder={isFolder}
-                    path={path}
-                    isHovered={isHovered}
-                    deletable={deletable}
-                    setIsEditing={setIsEditing}
-                />
+                {isHovered && (
+                    <NodeDoables
+                        isFolder={isFolder}
+                        path={path}
+                        deletable={deletable}
+                        setIsEditing={setIsEditing}
+                    />
+                )}
             </div>
             {isExpanded &&
                 directChildren.map((key, i) => {

@@ -44,22 +44,22 @@ export const FilesProvider = ({ children }) => {
     };
 
     const renameEntity = (oldPath, newPath, isFolder) => {
-        if (!isFolder) {
+        if (!isFolder)
             setOpenPaths((prev) =>
                 prev.map((p) => (p === oldPath ? newPath : p))
             );
+
+        setPathToContent((p) => {
+            p[newPath] = p[oldPath];
+            return p;
+        });
+        setTimeout(() => {
             setPathToContent((p) => {
-                p[newPath] = p[oldPath];
+                delete p[oldPath];
                 return p;
             });
-            setTimeout(() => {
-                setPathToContent((p) => {
-                    delete p[oldPath];
-                    return p;
-                });
-                setFocusedPath(newPath);
-            }, 500);
-        }
+            setFocusedPath(newPath);
+        }, 500);
         EMITTER.renameEntity(oldPath, newPath);
     };
 
