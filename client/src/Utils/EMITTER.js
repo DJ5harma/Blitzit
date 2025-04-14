@@ -7,24 +7,18 @@ export const EMITTER = {
         // socketProvider will call
         skt = socket;
 
-        skt.on('ENTITY_DELETION_COMPLETE', (op) => {
-            toast.success('Entity deletion complete, ' + op);
-            // EMITTER.callForTree();
-        });
-        skt.on('ENTITY_CREATION_COMPLETE', (op) => {
-            toast.success('Entity creation complete, ' + op);
-        });
-        skt.on('FILE_SAVE_COMPLETE', (op) => {
-            toast.success('File save complete, ' + op);
-        });
-        skt.on('FILE_READ_COMPLETE', (op) => {
-            toast.success('File read complete, ' + op);
-        });
-        skt.on('MAIN_TERMINAL_OUTPUT', (op) => {
-            toast.success('Main terminal output: , ' + op);
-        });
-        skt.on('ENTITY_RENAME_COMPLETE', (op) => {
-            toast.success('ENTITY_RENAME_COMPLETE , ' + op);
+        const msgs = [
+            'ENTITY_DELETION_COMPLETE',
+            'ENTITY_CREATION_COMPLETE',
+            'FILE_SAVE_COMPLETE',
+            'FILE_READ_COMPLETE',
+            'MAIN_TERMINAL_OUTPUT',
+            'ENTITY_RENAME_COMPLETE',
+        ];
+        msgs.forEach((msg) => {
+            skt.on(msg, (op) => {
+                toast(`${msg}: ${op.slice(0, 30)}...`);
+            });
         });
     },
 

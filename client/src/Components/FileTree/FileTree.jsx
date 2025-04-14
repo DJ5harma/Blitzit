@@ -1,4 +1,4 @@
-import { FileTreeNode } from './FileTreeNode';
+import { FileTreeNode } from './FileTreeNode/FileTreeNode';
 import { UseFiles } from '../../Providers/FilesProvider';
 import { UseRoom } from '../../Providers/RoomProvider';
 

@@ -10,7 +10,6 @@ export const FilesProvider = ({ children }) => {
     const [openPaths, setOpenPaths] = useState([]);
     const [focusedPath, setFocusedPath] = useState(null);
     const [pathToContent, setPathToContent] = useState({}); // path -> content
-
     const [fileTreeData, setFileTreeData] = useState(null);
 
     const { skt } = UseSocket();
@@ -23,10 +22,6 @@ export const FilesProvider = ({ children }) => {
         EMITTER.saveFile(content, focusedPath);
         toast(`"${focusedPath}" is being saved!`, { autoClose: 800 });
     };
-
-    useEffect(() => {
-        if (!openPaths.includes(focusedPath)) setFocusedPath(null);
-    }, [focusedPath, openPaths]);
 
     const openFile = (filePath) => {
         setFocusedPath(filePath);
@@ -69,16 +64,16 @@ export const FilesProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        if (!openPaths.includes(focusedPath)) setFocusedPath(null);
+    }, [focusedPath, openPaths]);
+
+    useEffect(() => {
         skt.on('FILE_READ_COMPLETE', (output) => {
-            try {
-                const { data, filePath } = JSON.parse(output);
-                setPathToContent((p) => {
-                    if (p[filePath]) return p;
-                    return { ...p, [filePath]: data };
-                });
-            } catch ({ message }) {
-                console.error(message);
-            }
+            const { data, filePath } = JSON.parse(output);
+            setPathToContent((p) => {
+                if (p[filePath]) return p;
+                return { ...p, [filePath]: data };
+            });
         });
 
         skt.on('FILE_TREE_DATA', (output) => {
@@ -97,17 +92,17 @@ export const FilesProvider = ({ children }) => {
     return (
         <context.Provider
             value={{
+                focusedPath,
                 openPaths,
                 pathToContent,
+                fileTreeData,
                 setPathToContent,
                 saveFile,
                 openFile,
                 closeFile,
                 deleteEntity,
                 renameEntity,
-                focusedPath,
                 setFocusedPath,
-                fileTreeData,
                 setFileTreeData,
             }}
         >
