@@ -14,6 +14,11 @@ export const EditorPacker = () => {
                 direction="horizontal"
                 className="h-full w-full"
             >
+                {editors.length === 0 && (
+                    <div className="h-full w-full flex items-center justify-center bg-blue-950 text-neutral-300 text-xl select-none">
+                        No file selected... choose one from the file tree.
+                    </div>
+                )}
                 {editors.map((_, i) => {
                     return (
                         <Fragment key={i}>
