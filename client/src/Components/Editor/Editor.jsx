@@ -15,7 +15,7 @@ export const Editor = ({ editorIndex }) => {
     useYjsBinding(focusedPath, roomId, setPathToContent, content);
 
     return (
-        <div className="button h-full">
+        <div className="button" style={{height : `calc(100% - 45px)`}}>
             {focusedPath ? (
                 <MonacoEditor
                     theme="vs-dark"
@@ -40,7 +40,6 @@ export const Editor = ({ editorIndex }) => {
 
                         const yText = getYText(focusedPath, roomId);
                         if (yText && content !== yText.toString()) {
-                            // Prevent echo loop
                             yText.delete(0, yText.length);
                             yText.insert(0, content);
                         }

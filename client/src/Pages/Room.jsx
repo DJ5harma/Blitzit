@@ -1,7 +1,5 @@
 import { FileTree } from '../Components/FileTree/FileTree';
 import { FileTreeNavbar } from '../Components/FileTree/FileTreeNavbar';
-import { Editor } from '../Components/Editor/Editor';
-import { EditorTabs } from '../Components/Editor/EditorTabs';
 import { Terminal } from '../Components/Terminal/Terminal';
 import { FilesProvider } from '../Providers/FilesProvider';
 import { RoomProvider } from '../Providers/RoomProvider';
@@ -51,7 +49,7 @@ export const Room = () => {
                         </div>
                         <div
                             style={{ width: 'calc(100% - 70px)' }}
-                            className="h-full"
+                            className="h-full flex-1"
                         >
                             <ResizableWrapper
                                 child1={!hidden.fileTree && <FileTree />}

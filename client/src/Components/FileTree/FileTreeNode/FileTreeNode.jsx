@@ -13,6 +13,19 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     const isFolder = value !== null;
 
     const directChildren = isFolder ? Object.keys(value) : [];
+    const currentEditor = editorStates[activeEditorIndex] || { focusedPath: null };
+
+    const handleFileOpen = (e, path) => {
+        e.stopPropagation();
+        if (e.metaKey || e.ctrlKey) {
+            createNewEditor({
+                openPaths: [path],
+                focusedPath: path
+            });
+        } else {            
+            openFile(path, activeEditorIndex);
+        }
+    };
 
     return (
         <>
@@ -21,9 +34,9 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                 style={{
                     paddingLeft: marginLeft,
                 }}
-                onClick={() => {
+                onClick={(e) => {
                     if (isFolder) setIsExpanded((p) => !p);
-                    else openFile(path);
+                    else handleFileOpen(e, path);
                 }}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -43,6 +56,10 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                         path={path}
                         deletable={deletable}
                         setIsEditing={setIsEditing}
+                        onCreateEditor={() => createNewEditor({
+                            openPaths: [path],
+                            focusedPath: path
+                        })}
                     />
                 )}
             </div>
@@ -56,6 +73,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
                             name={key}
                             value={value[key]}
                             deletable={true}
+                            allOpenPaths={allOpenPaths}
                         />
                     );
                 })}

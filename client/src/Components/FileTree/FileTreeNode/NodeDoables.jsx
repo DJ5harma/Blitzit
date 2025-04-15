@@ -2,6 +2,7 @@ import { UseFiles } from '../../../Providers/FilesProvider';
 import { FaFileUpload, FaFolderPlus } from 'react-icons/fa';
 import { EMITTER } from '../../../Utils/EMITTER';
 import { FaPencil } from 'react-icons/fa6';
+
 import { MdDelete, MdOpenInNew } from 'react-icons/md';
 
 export const NodeDoables = ({ path, isFolder, setIsEditing, deletable }) => {

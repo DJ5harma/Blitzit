@@ -1,3 +1,4 @@
+
 export const CONSTANTS = {
     TEMPLATES: [
         { name: 'python-template', runCommand: "python /app/script.py" },
@@ -6,5 +7,6 @@ export const CONSTANTS = {
         { name: 'java-template', runCommand: "java /app/App.java" },
     ],
     BACKEND_URL: 'http://localhost:4000', // Changed from server to localhost
-    WEBRTC_SERVER_URL: 'ws://localhost:4444', // Changed from server to localhost
+    WEBRTC_SERVER_URL: 'ws://localhost:4444', // Changed from server to localhost,
+    EDITOR_TAB_HEIGHT : '45'
 };

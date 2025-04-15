@@ -100,10 +100,13 @@ export const FilesProvider = ({ children }) => {
                 return [...p];
             });
 
-        setPathToContent((p) => {
-            p[newPath] = p[oldPath];
-            return p;
+        setPathToContent((prev) => {
+            const newContent = { ...prev };
+            newContent[newPath] = newContent[oldPath];
+            delete newContent[oldPath];
+            return newContent;
         });
+      
         setTimeout(() => {
             setPathToContent((p) => {
                 delete p[oldPath];
@@ -145,6 +148,8 @@ export const FilesProvider = ({ children }) => {
                 saveFile,
                 openFile,
                 closeFile,
+                createNewEditor,
+                closeEditor,
                 deleteEntity,
                 renameEntity,
                 setFileTreeData,
