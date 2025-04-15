@@ -4,16 +4,18 @@ import { UseRoom } from '../../Providers/RoomProvider';
 import { getYText, useYjsBinding } from './YjsBinding.js';
 import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
 
-export const Editor = () => {
-    const { focusedPath, pathToContent, setPathToContent } = UseFiles();
+export const Editor = ({ editorIndex = 0 }) => {
+    const { editorStates, pathToContent, setPathToContent } = UseFiles();
     const { roomId } = UseRoom();
-
-    // Sync to Yjs
-    const initialContent = pathToContent[focusedPath];
+    
+    const editorState = editorStates[editorIndex];
+    const focusedPath = editorState?.focusedPath;
+    const initialContent = focusedPath ? pathToContent[focusedPath] : '';
+    
     useYjsBinding(focusedPath, roomId, setPathToContent, initialContent);
 
     return (
-        <div className="button h-full">
+        <div className="button" style={{height : `calc(100% - 45px)`}}>
             {focusedPath ? (
                 <MonacoEditor
                     theme="vs-dark"
@@ -38,12 +40,11 @@ export const Editor = () => {
 
                         const yText = getYText(focusedPath, roomId);
                         if (yText && content !== yText.toString()) {
-                            // Prevent echo loop
                             yText.delete(0, yText.length);
                             yText.insert(0, content);
                         }
                     }}
-                    loading = {<>Loading {focusedPath}...</>}
+                    loading={<>Loading {focusedPath}...</>}
                 />
             ) : (
                 <div className="h-full flex items-center justify-center text-neutral-300 text-xl select-none">

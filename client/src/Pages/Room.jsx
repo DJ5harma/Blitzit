@@ -1,7 +1,5 @@
 import { FileTree } from '../Components/FileTree/FileTree';
 import { FileTreeNavbar } from '../Components/FileTree/FileTreeNavbar';
-import { Editor } from '../Components/Editor/Editor';
-import { EditorTabs } from '../Components/Editor/EditorTabs';
 import { Terminal } from '../Components/Terminal/Terminal';
 import { FilesProvider } from '../Providers/FilesProvider';
 import { RoomProvider } from '../Providers/RoomProvider';
@@ -9,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { ResizableWrapper } from '../Wrappers/ResizableWrapper';
 import { TerminalProvider } from '../Providers/TerminalProvider';
 import { Search } from '../Components/Search/Search';
+import EditorTabsPane from '../Components/Editor/EditorTabsPane';
 
 export const Room = () => {
     const [hidden, setHidden] = useState({
@@ -50,16 +49,15 @@ export const Room = () => {
                         </div>
                         <div
                             style={{ width: 'calc(100% - 70px)' }}
-                            className="h-full"
+                            className="h-full flex-1"
                         >
                             <ResizableWrapper
                                 child1={!hidden.fileTree && <FileTree />}
                                 initial={300}
                                 child2={
-                                    <div className="flex flex-col w-full h-full">
-                                        <EditorTabs />
+                                    <div className="flex flex-col h-full">
                                         <ResizableWrapper
-                                            child1={<Editor />}
+                                            child1={<EditorTabsPane />}
                                             axis="y"
                                             child2={
                                                 !hidden.terminal && <Terminal />

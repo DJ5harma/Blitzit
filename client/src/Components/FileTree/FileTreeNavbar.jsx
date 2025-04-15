@@ -4,6 +4,7 @@ import { MdEdit, MdFileCopy, MdPlayArrow } from 'react-icons/md';
 import { MdSave, MdShare } from 'react-icons/md';
 import { SiZendesk } from 'react-icons/si';
 import { BsTerminal } from 'react-icons/bs';
+import { LuSquareSplitHorizontal } from "react-icons/lu";
 import { UseFiles } from '../../Providers/FilesProvider';
 import { EMITTER } from '../../Utils/EMITTER';
 import { toast } from 'react-toastify';
@@ -13,7 +14,7 @@ import { Link } from 'react-router-dom';
 
 export const FileTreeNavbar = ({ setHidden }) => {
     const { roomId, project } = UseRoom();
-    const { saveFile } = UseFiles();
+    const { saveFile ,createNewEditor , editorStates , activeEditorIndex } = UseFiles();
 
     const [commandToRun, setCommandToRun] = useState(project.runCommand);
 
@@ -33,6 +34,17 @@ export const FileTreeNavbar = ({ setHidden }) => {
             setCommandToRun(newCommand);
         }
     };
+
+    const handleSplitTerminal = () => {
+        const currentState = editorStates[activeEditorIndex];
+        console.log(currentState);
+        
+        createNewEditor({
+            openPaths: [...currentState.openPaths],
+            focusedPath: currentState.focusedPath
+        });
+
+    }
 
     const buttons = [
         {
@@ -76,6 +88,12 @@ export const FileTreeNavbar = ({ setHidden }) => {
             comp: <BsTerminal size={30} />,
             title: 'Toggle terminal',
             onClick: () => setHidden((p) => ({ ...p, terminal: !p.terminal })),
+        },
+        {
+            comp: <LuSquareSplitHorizontal size={30} />,
+            title : 'Split Editor',
+            onClick : handleSplitTerminal,
+            className: editorStates.length > 1 ? 'text-blue-500' : '',
         },
     ];
 
