@@ -4,7 +4,7 @@ import { NodeDoables } from './NodeDoables';
 import { NodeVisuals } from './NodeVisuals';
 
 export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
-    const { openFile, focusedPath } = UseFiles();
+    const { openFile } = UseFiles();
 
     const [isExpanded, setIsExpanded] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
@@ -17,12 +17,7 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
     return (
         <>
             <div
-                className={`flex justify-between items-center pr-2.5 cursor-pointer select-none font-sans 
-                    ${
-                        focusedPath === path
-                            ? 'bg-black'
-                            : 'hover:bg-neutral-800 bg-neutral-900'
-                    }`}
+                className="flex justify-between items-center pr-2.5 cursor-pointer select-none font-sans "
                 style={{
                     paddingLeft: marginLeft,
                 }}

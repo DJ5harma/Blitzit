@@ -4,14 +4,16 @@ import { getFileNameFromPath } from '../../Utils/getFileNameFromPath';
 import { useState } from 'react';
 import { IconFromFileName } from '../../Utils/IconFromFileName';
 
-export const EditorTabs = () => {
-    const { openPaths, closeFile, focusedPath, setFocusedPath } = UseFiles();
+export const EditorTabs = ({ editorIndex }) => {
+    const { closeFile, focusPath, editors } = UseFiles();
+
+    const { openPaths, focusedPath } = editors[editorIndex];
 
     const [closeButtonPath, setCloseButtonPath] = useState('');
 
     return (
         <div
-            className="flex font-mono button"
+            className="flex font-mono button h-[45px]"
             style={{ backgroundColor: 'rgb(31, 31, 31)', fontSize: 18 }}
         >
             {openPaths.map((path) => {
@@ -22,10 +24,10 @@ export const EditorTabs = () => {
                         onMouseDown={(e) => {
                             e.stopPropagation();
                             if (e.button === 1) {
-                                closeFile(path);
+                                closeFile(editorIndex, path);
                                 return;
                             }
-                            setFocusedPath(path);
+                            focusPath(editorIndex, path);
                         }}
                         className="button flex items-center gap-1.5 py-1.5 pl-2.5 pr-1.5 border border-gray-500 text-white hover:bg-gray-900 cursor-pointer select-none"
                         style={
@@ -47,7 +49,7 @@ export const EditorTabs = () => {
                         {fileName}
                         <IoClose
                             onClick={(e) => {
-                                closeFile(path);
+                                closeFile(editorIndex, path);
                                 e.stopPropagation();
                             }}
                             size={20}

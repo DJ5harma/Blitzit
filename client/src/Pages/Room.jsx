@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { ResizableWrapper } from '../Wrappers/ResizableWrapper';
 import { TerminalProvider } from '../Providers/TerminalProvider';
 import { Search } from '../Components/Search/Search';
+import { EditorPacker } from '../Components/Editor/EditorPacker';
 
 export const Room = () => {
     const [hidden, setHidden] = useState({
@@ -57,9 +58,8 @@ export const Room = () => {
                                 initial={300}
                                 child2={
                                     <div className="flex flex-col w-full h-full">
-                                        <EditorTabs />
                                         <ResizableWrapper
-                                            child1={<Editor />}
+                                            child1={<EditorPacker />}
                                             axis="y"
                                             child2={
                                                 !hidden.terminal && <Terminal />

@@ -4,13 +4,15 @@ import { UseRoom } from '../../Providers/RoomProvider';
 import { getYText, useYjsBinding } from './YjsBinding.js';
 import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
 
-export const Editor = () => {
-    const { focusedPath, pathToContent, setPathToContent } = UseFiles();
+export const Editor = ({ editorIndex }) => {
+    const { pathToContent, setPathToContent, editors } = UseFiles();
     const { roomId } = UseRoom();
 
+    const { focusedPath } = editors[editorIndex];
+
     // Sync to Yjs
-    const initialContent = pathToContent[focusedPath];
-    useYjsBinding(focusedPath, roomId, setPathToContent, initialContent);
+    const content = pathToContent[focusedPath];
+    useYjsBinding(focusedPath, roomId, setPathToContent, content);
 
     return (
         <div className="button h-full">
@@ -18,7 +20,7 @@ export const Editor = () => {
                 <MonacoEditor
                     theme="vs-dark"
                     path={focusedPath}
-                    value={initialContent}
+                    value={content}
                     options={{
                         semanticHighlighting: true,
                         dragAndDrop: true,
@@ -43,7 +45,7 @@ export const Editor = () => {
                             yText.insert(0, content);
                         }
                     }}
-                    loading = {<>Loading {focusedPath}...</>}
+                    loading={<>Loading {focusedPath}...</>}
                 />
             ) : (
                 <div className="h-full flex items-center justify-center text-neutral-300 text-xl select-none">
