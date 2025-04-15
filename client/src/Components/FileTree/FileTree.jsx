@@ -3,9 +3,14 @@ import { UseFiles } from '../../Providers/FilesProvider';
 import { UseRoom } from '../../Providers/RoomProvider';
 
 export const FileTree = () => {
-    const { fileTreeData } = UseFiles();
+    const { fileTreeData , editorStates } = UseFiles();
     const { project } = UseRoom();
     if (!fileTreeData) return null;
+
+    const allOpenPaths = Array.from(new Set(
+        editorStates.flatMap(state => state.openPaths)
+    ));
+
 
     return (
         <div
@@ -21,6 +26,7 @@ export const FileTree = () => {
                 marginLeft={8}
                 path={'/app'}
                 deletable={false}
+                allOpenPaths={allOpenPaths}
             />
         </div>
     );

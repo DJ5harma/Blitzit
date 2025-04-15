@@ -2,13 +2,30 @@ import { UseFiles } from '../../../Providers/FilesProvider';
 import { FaFileUpload, FaFolderPlus } from 'react-icons/fa';
 import { EMITTER } from '../../../Utils/EMITTER';
 import { FaPencil } from 'react-icons/fa6';
-import { MdDelete } from 'react-icons/md';
+import { MdDelete , MdOpenInNew } from 'react-icons/md';
 
-export const NodeDoables = ({ path, isFolder, setIsEditing, deletable }) => {
+export const NodeDoables = ({
+    path,
+    isFolder,
+    setIsEditing,
+    deletable,
+    onCreateEditor,
+}) => {
     const { deleteEntity } = UseFiles();
 
     return (
         <div className="flex gap-1 items-center">
+            {!isFolder && (
+                <MdOpenInNew
+                    title="Open in new editor"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onCreateEditor();
+                    }}
+                    className="button p-0.5"
+                    size={26}
+                />
+            )}
             {isFolder && (
                 <>
                     <FaFileUpload
