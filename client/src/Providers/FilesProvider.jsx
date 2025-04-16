@@ -7,118 +7,112 @@ import { getFileTree } from '../Utils/getFileTree';
 const context = createContext();
 
 export const FilesProvider = ({ children }) => {
-    const [editorStates, setEditorStates] = useState([{
-        openPaths: [],
-        focusedPath: null,
-    }]);
-    const [activeEditorIndex, setActiveEditorIndex] = useState(0);
+    const { skt } = UseSocket();
     const [pathToContent, setPathToContent] = useState({}); // path -> content
+
     const [fileTreeData, setFileTreeData] = useState(null);
 
-    const { skt } = UseSocket();
-    const activeEditor = editorStates[activeEditorIndex];
+    const [editors, setEditors] = useState([
+        // { openPaths: [], focusedPath: null },
+    ]);
+    const [focusedEditorIndex, setFocusedEditorIndex] = useState(0);
 
-    const saveFile = () => {
-        if (
-            !activeEditor.focusedPath ||
-            !pathToContent[activeEditor.focusedPath]
-        )
-            return;
-
-        const content = pathToContent[activeEditor.focusedPath];
-
-        EMITTER.saveFile(content, activeEditor.focusedPath);
-        toast(`"${activeEditor.focusedPath}" is being saved!`, {
-            autoClose: 800,
+    function focusPath(editorIndex, path) {
+        setEditors((p) => {
+            p[editorIndex].focusedPath = path;
+            return [...p];
         });
-    };
+    }
 
-    const openFile = (filePath, editorIndex = activeEditorIndex) => {
-        setEditorStates((prev) =>
-            prev.map((state, idx) => {
-                if (idx !== editorIndex) return state;
+    function addNewEditor(filePath) {
+        setEditors((p) => [
+            ...p,
+            { openPaths: [filePath], focusedPath: filePath },
+        ]);
+        if (!pathToContent[filePath]) EMITTER.readFile(filePath);
+    }
 
-                const newOpenPaths = state.openPaths.includes(filePath)
-                    ? state.openPaths
-                    : [...state.openPaths, filePath];
+    function closeFile(editorIndex, filePath) {
+        setEditors((p) => {
+            const { openPaths } = p[editorIndex];
+            const newPaths = openPaths.filter((pth) => pth !== filePath);
 
-                return {
-                    ...state,
-                    openPaths: newOpenPaths,
-                    focusedPath: filePath,
-                };
-            })
-        );
+            p[editorIndex].openPaths = newPaths;
+
+            if (newPaths.length === 0)
+                return p.filter((_, eidx) => eidx !== editorIndex);
+
+            return [...p];
+        });
+    }
+    const openFile = (filePath) => {
+        if (editors.length === 0) return addNewEditor(filePath);
+        setEditors((p) => {
+            if (!p[focusedEditorIndex].openPaths.includes(filePath))
+                p[focusedEditorIndex].openPaths.push(filePath);
+            return [...p];
+        });
+
+        focusPath(focusedEditorIndex, filePath);
+
         if (!pathToContent[filePath]) EMITTER.readFile(filePath);
     };
 
-    const closeFile = (path, editorIndex = activeEditorIndex) => {
-        setEditorStates((prev) => {
-            const updated = prev.map((state, idx) => {
-                if (idx !== editorIndex) return state;
+    const saveFile = () => {
+        const { focusedPath } = editors[focusedEditorIndex];
+        if (!focusedPath || !pathToContent[focusedPath]) return;
 
-                const newOpenPaths = state.openPaths.filter((p) => p !== path);
-                const newFocusedPath =
-                    state.focusedPath === path
-                        ? newOpenPaths[newOpenPaths.length - 1] || null
-                        : state.focusedPath;
+        const content = pathToContent[focusedPath];
 
-                return {
-                    ...state,
-                    openPaths: newOpenPaths,
-                    focusedPath: newFocusedPath,
-                };
-            });
-
-            const currentEditor = updated[editorIndex];
-            if (currentEditor.openPaths.length === 0) {
-                closeEditor(editorIndex);
-            }
-            return updated;
-        });
-    };
-
-    const createNewEditor = (newState) => {
-        setEditorStates((prev) => [...prev, newState]);
-        setActiveEditorIndex(editorStates.length);
-    };
-
-    const closeEditor = (index) => {
-        if (editorStates.length <= 0) return;
-        setEditorStates((prev) => prev.filter((state, idx) => idx !== index));
-        setActiveEditorIndex((prev) => Math.min(prev, editorStates.length - 2));
+        EMITTER.saveFile(content, focusedPath);
+        toast(`"${focusedPath}" is being saved!`, { autoClose: 800 });
     };
 
     const deleteEntity = (isFolder, path) => {
-        if (!isFolder) {
-            editorStates.forEach((state, idx) => closeFile(path, idx));
-        }
+        if (!isFolder)
+            setEditors((p) => {
+                return p.map(({ openPaths, focusedPath }) => {
+                    openPaths = openPaths.filter((pth) => pth !== path);
+                    if (focusedPath === path)
+                        if (openPaths.length === 0) focusedPath = null;
+                        else focusedPath = openPaths[0];
+                    return {
+                        openPaths,
+                        focusedPath,
+                    };
+                });
+            });
         EMITTER.deleteEntity(isFolder, path);
     };
 
     const renameEntity = (oldPath, newPath, isFolder) => {
         if (!isFolder)
-            setEditorStates((prev) =>
-                prev.map((state) => ({
-                    ...state,
-                    openPaths: state.openPaths.map((p) =>
-                        p === oldPath ? newPath : p
-                    ),
-                    focusedPath:
-                        state.focusedPath === oldPath
-                            ? newPath
-                            : state.focusedPath,
-                }))
-            );
+            setEditors((p) => {
+                p.forEach(({ focusedPath, openPaths }, i) => {
+                    if (focusedPath === oldPath) p[i].focusedPath = newPath;
+                    for (let j = 0; j < openPaths.length; ++j) {
+                        if (oldPath === openPaths[j]) {
+                            p[i].openPaths[j] = newPath;
+                            break;
+                        }
+                    }
+                });
+                return [...p];
+            });
 
-        setPathToContent((prev) => {
-            const newContent = { ...prev };
-            newContent[newPath] = newContent[oldPath];
-            delete newContent[oldPath];
-            return newContent;
+        setPathToContent((p) => {
+            p[newPath] = p[oldPath];
+            return p;
         });
+        setTimeout(() => {
+            setPathToContent((p) => {
+                delete p[oldPath];
+                return p;
+            });
+        }, 500);
         EMITTER.renameEntity(oldPath, newPath);
     };
+
     useEffect(() => {
         skt.on('FILE_READ_COMPLETE', (output) => {
             const { data, filePath } = JSON.parse(output);
@@ -144,21 +138,20 @@ export const FilesProvider = ({ children }) => {
     return (
         <context.Provider
             value={{
-                editorStates,
-                setEditorStates,
-                activeEditorIndex,
+                editors,
                 pathToContent,
                 fileTreeData,
                 setPathToContent,
                 saveFile,
                 openFile,
                 closeFile,
-                createNewEditor,
-                closeEditor,
                 deleteEntity,
                 renameEntity,
-                setActiveEditorIndex,
                 setFileTreeData,
+                setEditors,
+                setFocusedEditorIndex,
+                addNewEditor,
+                focusPath,
             }}
         >
             {children}

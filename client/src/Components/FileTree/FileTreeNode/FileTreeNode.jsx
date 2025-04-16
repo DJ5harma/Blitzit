@@ -3,9 +3,8 @@ import { UseFiles } from '../../../Providers/FilesProvider';
 import { NodeDoables } from './NodeDoables';
 import { NodeVisuals } from './NodeVisuals';
 
-export const FileTreeNode = ({ name, value, marginLeft, path, deletable,allOpenPaths }) => {
-    const { openFile, editorStates , activeEditorIndex , createNewEditor } = UseFiles();
-    
+export const FileTreeNode = ({ name, value, marginLeft, path, deletable }) => {
+    const { openFile } = UseFiles();
 
     const [isExpanded, setIsExpanded] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
@@ -14,35 +13,17 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable,allOpenP
     const isFolder = value !== null;
 
     const directChildren = isFolder ? Object.keys(value) : [];
-    const currentEditor = editorStates[activeEditorIndex] || { focusedPath: null };
-
-    const handleFileOpen = (e, path) => {
-        e.stopPropagation();
-        if (e.metaKey || e.ctrlKey) {
-            createNewEditor({
-                openPaths: [path],
-                focusedPath: path
-            });
-        } else {            
-            openFile(path, activeEditorIndex);
-        }
-    };
 
     return (
         <>
             <div
-                className={`flex justify-between items-center pr-2.5 cursor-pointer select-none font-sans 
-                    ${
-                        currentEditor.focusedPath === path
-                            ? 'bg-black'
-                            : 'hover:bg-neutral-800 bg-neutral-900'
-                    }`}
+                className="flex justify-between items-center pr-2.5 cursor-pointer select-none font-sans "
                 style={{
                     paddingLeft: marginLeft,
                 }}
-                onClick={(e) => {
+                onClick={() => {
                     if (isFolder) setIsExpanded((p) => !p);
-                    else handleFileOpen(e, path);
+                    else openFile(path);
                 }}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -62,10 +43,6 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable,allOpenP
                         path={path}
                         deletable={deletable}
                         setIsEditing={setIsEditing}
-                        onCreateEditor={() => createNewEditor({
-                            openPaths: [path],
-                            focusedPath: path
-                        })}
                     />
                 )}
             </div>
@@ -79,7 +56,6 @@ export const FileTreeNode = ({ name, value, marginLeft, path, deletable,allOpenP
                             name={key}
                             value={value[key]}
                             deletable={true}
-                            allOpenPaths={allOpenPaths}
                         />
                     );
                 })}
