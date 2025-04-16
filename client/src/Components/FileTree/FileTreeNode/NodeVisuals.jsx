@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { UseFiles } from '../../../Providers/FilesProvider';
-import { FaFolder } from 'react-icons/fa';
+import { FaCircle, FaFolder } from 'react-icons/fa';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import { IconFromFileName } from '../../../Utils/IconFromFileName';
 
@@ -13,7 +13,7 @@ export const NodeVisuals = ({
     isFolderEmpty,
     name,
 }) => {
-    const { renameEntity } = UseFiles();
+    const { renameEntity, filesPendingSave } = UseFiles();
     const [editedName, setEditedName] = useState(name);
 
     const saveNameChange = () => {
@@ -41,7 +41,10 @@ export const NodeVisuals = ({
                     autoFocus
                 />
             ) : (
-                name
+                <div className=' flex'>
+                    {name}
+                    {filesPendingSave.has(path) && <FaCircle size={10} className=' ml-2 mt-2 text-blue-600'/>}
+                </div>
             )}
             {!isFolderEmpty && (
                 <MdKeyboardArrowRight
