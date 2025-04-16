@@ -48,7 +48,7 @@ export const EditorTabs = ({ editorIndex }) => {
                     >
                         <IconFromFileName name={fileName} />
                         {fileName}
-                        {filesPendingSave.has(path) && <FaCircle size={10} />}
+                        {filesPendingSave.has(path) && <FaCircle size={10} className='text-blue-600' />}
                         <IoClose
                             onClick={(e) => {
                                 closeFile(editorIndex, path);
