@@ -17,6 +17,14 @@ export const FilesProvider = ({ children }) => {
     ]);
     const [focusedEditorIndex, setFocusedEditorIndex] = useState(0);
 
+    const [filesPendingSave, setFilesPendingSave] = useState(new Set());
+
+    function markFileUnsaved() {
+        const { focusedPath } = editors[focusedEditorIndex];
+        if (filesPendingSave.has(focusedPath)) return;
+        setFilesPendingSave((p) => new Set([...p, focusedPath]));
+    }
+
     function focusPath(editorIndex, path) {
         setEditors((p) => {
             p[editorIndex].focusedPath = path;
@@ -60,6 +68,12 @@ export const FilesProvider = ({ children }) => {
 
     const saveFile = () => {
         const { focusedPath } = editors[focusedEditorIndex];
+        if (filesPendingSave.has(focusedPath)) {
+            setFilesPendingSave((p) => {
+                p.delete(focusedPath);
+                return new Set([...p]);
+            });
+        }
         if (!focusedPath || !pathToContent[focusedPath]) return;
 
         const content = pathToContent[focusedPath];
@@ -141,6 +155,7 @@ export const FilesProvider = ({ children }) => {
                 editors,
                 pathToContent,
                 fileTreeData,
+                filesPendingSave,
                 setPathToContent,
                 saveFile,
                 openFile,
@@ -152,6 +167,7 @@ export const FilesProvider = ({ children }) => {
                 setFocusedEditorIndex,
                 addNewEditor,
                 focusPath,
+                markFileUnsaved,
             }}
         >
             {children}

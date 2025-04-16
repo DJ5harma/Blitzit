@@ -5,7 +5,8 @@ import { getYText, useYjsBinding } from './YjsBinding.js';
 import { getLanguageFromFilePath } from '../../Utils/getLanguageFromFilePath';
 
 export const Editor = ({ editorIndex }) => {
-    const { pathToContent, setPathToContent, editors } = UseFiles();
+    const { pathToContent, setPathToContent, editors, markFileUnsaved } =
+        UseFiles();
     const { roomId } = UseRoom();
 
     const { focusedPath } = editors[editorIndex];
@@ -36,6 +37,7 @@ export const Editor = ({ editorIndex }) => {
                         ...prev,
                         [focusedPath]: content,
                     }));
+                    markFileUnsaved();
 
                     const yText = getYText(focusedPath, roomId);
                     if (yText && content !== yText.toString()) {

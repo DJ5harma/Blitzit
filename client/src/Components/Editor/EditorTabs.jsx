@@ -3,9 +3,10 @@ import { UseFiles } from '../../Providers/FilesProvider';
 import { getFileNameFromPath } from '../../Utils/getFileNameFromPath';
 import { useState } from 'react';
 import { IconFromFileName } from '../../Utils/IconFromFileName';
+import { FaCircle } from 'react-icons/fa';
 
 export const EditorTabs = ({ editorIndex }) => {
-    const { closeFile, focusPath, editors } = UseFiles();
+    const { closeFile, focusPath, editors, filesPendingSave } = UseFiles();
 
     const { openPaths, focusedPath } = editors[editorIndex];
 
@@ -47,6 +48,7 @@ export const EditorTabs = ({ editorIndex }) => {
                     >
                         <IconFromFileName name={fileName} />
                         {fileName}
+                        {filesPendingSave.has(path) && <FaCircle size={10} />}
                         <IoClose
                             onClick={(e) => {
                                 closeFile(editorIndex, path);

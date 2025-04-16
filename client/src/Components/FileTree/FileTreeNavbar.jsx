@@ -10,30 +10,12 @@ import { toast } from 'react-toastify';
 import { toggleF11 } from '../../Utils/toggleF11';
 import { FaHome, FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { UseSocket } from '../../Providers/SocketProvider';
 
 export const FileTreeNavbar = ({ setHidden }) => {
     const { roomId, project } = UseRoom();
     const { saveFile } = UseFiles();
 
     const [commandToRun, setCommandToRun] = useState(project.runCommand);
-
-    const [isRunRequsted, setIsRunRequested] = useState(false);
-
-    const { skt } = UseSocket();
-
-    useEffect(() => {
-        skt.on('FILE_SAVE_COMPLETE', () => {
-            if(!isRunRequsted) return;
-            EMITTER.runProject(commandToRun);
-            setIsRunRequested(false);
-        });
-    }, [skt, commandToRun, isRunRequsted]);
-
-    const run = () => {
-        setIsRunRequested(true);
-        saveFile();
-    };
 
     const copyToClipboard = () => {
         const url = `${window.location.origin}/room/${roomId}`;
@@ -52,16 +34,36 @@ export const FileTreeNavbar = ({ setHidden }) => {
         }
     };
 
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            if (!e.ctrlKey) return;
+            const key = e.key.toLowerCase();
+            console.log({ key });
+
+            if (key === 's') {
+                e.preventDefault();
+                saveFile();
+            } else if (key === 'q') {
+                e.preventDefault();
+                EMITTER.runProject(commandToRun);
+            }
+        };
+        window.addEventListener('keydown', handleKeyPress);
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [commandToRun, saveFile]);
+
     const buttons = [
         {
             comp: <MdFileCopy size={25} />,
-            title: 'Toggle file tree',
+            title: 'Toggle file tree: Ctrl+B',
             onClick: () => setHidden((p) => ({ ...p, fileTree: !p.fileTree })),
         },
         {
             comp: <MdPlayArrow size={30} />,
-            title: 'Run project',
-            onClick: run,
+            title: 'Run project: Ctrl+Q',
+            onClick: () => EMITTER.runProject(commandToRun),
             className: 'bg-gray-800',
         },
         {
@@ -77,12 +79,12 @@ export const FileTreeNavbar = ({ setHidden }) => {
         },
         {
             comp: <MdSave size={30} />,
-            title: 'Save currently opened file',
+            title: 'Save focused file: Ctrl+S',
             onClick: saveFile,
         },
         {
             comp: <SiZendesk size={30} />,
-            title: 'Toggle Fullscreen',
+            title: 'Toggle Fullscreen: F11',
             onClick: toggleF11,
         },
         {
@@ -92,7 +94,7 @@ export const FileTreeNavbar = ({ setHidden }) => {
         },
         {
             comp: <BsTerminal size={30} />,
-            title: 'Toggle terminal',
+            title: 'Toggle terminal: Ctrl+`',
             onClick: () => setHidden((p) => ({ ...p, terminal: !p.terminal })),
         },
     ];
