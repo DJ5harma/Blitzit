@@ -10,6 +10,7 @@ import { ResizableWrapper } from '../Wrappers/ResizableWrapper';
 import { TerminalProvider } from '../Providers/TerminalProvider';
 import { Search } from '../Components/Search/Search';
 import { EditorPacker } from '../Components/Editor/EditorPacker';
+import { UseSocket } from '../Providers/SocketProvider';
 
 export const Room = () => {
     const [hidden, setHidden] = useState({
@@ -17,6 +18,8 @@ export const Room = () => {
         terminal: false,
         search: true,
     });
+
+    const { skt } = UseSocket();
 
     useEffect(() => {
         const handleKeyPress = (e) => {
@@ -34,8 +37,11 @@ export const Room = () => {
             }
         };
         window.addEventListener('keydown', handleKeyPress);
-        return () => window.removeEventListener('keydown', handleKeyPress);
-    }, []);
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+            skt.disconnect();
+        };
+    }, [skt]);
 
     return (
         <RoomProvider>

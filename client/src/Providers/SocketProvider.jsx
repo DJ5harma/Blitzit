@@ -24,6 +24,9 @@ export const SocketProvider = ({ children }) => {
             toast.success('Socket connected!');
         });
         skt.connect();
+        skt.on('disconnect', () => {
+            skt.connect();
+        });
         return () => {
             skt.disconnect();
         };
