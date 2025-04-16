@@ -137,6 +137,7 @@ export const createContainer = (skt) => {
 							SaveFileTerminalStream.write(
 								`cat << 'EOF' > ${path}\n${content}\nEOF\n`
 							);
+							SaveFileTerminalStream.write(`echo saved-${path}\n`);
 						} catch ({ message }) {
 							console.error({ message });
 						}

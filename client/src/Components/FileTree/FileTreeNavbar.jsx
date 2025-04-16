@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UseRoom } from '../../Providers/RoomProvider';
 import { MdEdit, MdFileCopy, MdPlayArrow } from 'react-icons/md';
 import { MdSave, MdShare } from 'react-icons/md';
@@ -10,12 +10,30 @@ import { toast } from 'react-toastify';
 import { toggleF11 } from '../../Utils/toggleF11';
 import { FaHome, FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { UseSocket } from '../../Providers/SocketProvider';
 
 export const FileTreeNavbar = ({ setHidden }) => {
     const { roomId, project } = UseRoom();
     const { saveFile } = UseFiles();
 
     const [commandToRun, setCommandToRun] = useState(project.runCommand);
+
+    const [isRunRequsted, setIsRunRequested] = useState(false);
+
+    const { skt } = UseSocket();
+
+    useEffect(() => {
+        skt.on('FILE_SAVE_COMPLETE', () => {
+            if(!isRunRequsted) return;
+            EMITTER.runProject(commandToRun);
+            setIsRunRequested(false);
+        });
+    }, [skt, commandToRun, isRunRequsted]);
+
+    const run = () => {
+        setIsRunRequested(true);
+        saveFile();
+    };
 
     const copyToClipboard = () => {
         const url = `${window.location.origin}/room/${roomId}`;
@@ -43,7 +61,7 @@ export const FileTreeNavbar = ({ setHidden }) => {
         {
             comp: <MdPlayArrow size={30} />,
             title: 'Run project',
-            onClick: () => EMITTER.runProject(commandToRun),
+            onClick: run,
             className: 'bg-gray-800',
         },
         {
