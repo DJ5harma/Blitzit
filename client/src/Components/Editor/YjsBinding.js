@@ -5,7 +5,13 @@ import { CONSTANTS } from '../../Utils/CONSTANTS';
 
 const yDocMap = new Map();
 
-export function useYjsBinding(path, roomId, setPathToContent, initialContent) {
+export function useYjsBinding(
+    path,
+    roomId,
+    setPathToContent,
+    initialContent,
+    markFileUnsaved
+) {
     useEffect(() => {
         if (!path || !roomId) return;
 
@@ -43,6 +49,7 @@ export function useYjsBinding(path, roomId, setPathToContent, initialContent) {
                 ...prev,
                 [path]: yText.toString(),
             }));
+            markFileUnsaved(path);
         });
 
         // Save to map
@@ -59,7 +66,7 @@ export function useYjsBinding(path, roomId, setPathToContent, initialContent) {
             // ydoc.destroy();
             // yDocMap.delete(key);
         };
-    }, [initialContent, path, roomId, setPathToContent]);
+    }, [initialContent, path, roomId, setPathToContent, markFileUnsaved]);
 }
 
 export function getYText(path, roomId) {

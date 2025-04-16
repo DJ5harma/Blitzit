@@ -137,10 +137,15 @@ export const createContainer = (skt) => {
 							SaveFileTerminalStream.write(
 								`cat << 'EOF' > ${path}\n${content}\nEOF\n`
 							);
-							SaveFileTerminalStream.write(`echo saved-${path}\n`);
+							SaveFileTerminalStream.write(`echo ${path}\n`);
 						} catch ({ message }) {
 							console.error({ message });
 						}
+					},
+					chunkManipulator: async (data) => {
+						if (data.length > 8) data = data.slice(8).toString();
+						data = data.substring(data.indexOf("/"), data.length - 1);
+						return data;
 					},
 				},
 				{

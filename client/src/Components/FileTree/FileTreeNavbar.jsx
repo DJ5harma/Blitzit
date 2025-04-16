@@ -38,8 +38,6 @@ export const FileTreeNavbar = ({ setHidden }) => {
         const handleKeyPress = (e) => {
             if (!e.ctrlKey) return;
             const key = e.key.toLowerCase();
-            console.log({ key });
-
             if (key === 's') {
                 e.preventDefault();
                 saveFile();

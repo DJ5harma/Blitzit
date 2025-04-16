@@ -13,7 +13,13 @@ export const Editor = ({ editorIndex }) => {
 
     // Sync to Yjs
     const content = pathToContent[focusedPath];
-    useYjsBinding(focusedPath, roomId, setPathToContent, content);
+    useYjsBinding(
+        focusedPath,
+        roomId,
+        setPathToContent,
+        content,
+        markFileUnsaved
+    );
 
     return (
         <div className="button h-full">

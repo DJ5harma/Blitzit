@@ -19,10 +19,10 @@ export const FilesProvider = ({ children }) => {
 
     const [filesPendingSave, setFilesPendingSave] = useState(new Set());
 
-    function markFileUnsaved() {
-        const { focusedPath } = editors[focusedEditorIndex];
-        if (filesPendingSave.has(focusedPath)) return;
-        setFilesPendingSave((p) => new Set([...p, focusedPath]));
+    function markFileUnsaved(filePath) {
+        if (!filePath) filePath = editors[focusedEditorIndex];
+        if (filesPendingSave.has(filePath)) return;
+        setFilesPendingSave((p) => new Set([...p, filePath]));
     }
 
     function focusPath(editorIndex, path) {
@@ -68,12 +68,6 @@ export const FilesProvider = ({ children }) => {
 
     const saveFile = () => {
         const { focusedPath } = editors[focusedEditorIndex];
-        if (filesPendingSave.has(focusedPath)) {
-            setFilesPendingSave((p) => {
-                p.delete(focusedPath);
-                return new Set([...p]);
-            });
-        }
         if (!focusedPath || !pathToContent[focusedPath]) return;
 
         const content = pathToContent[focusedPath];
@@ -81,6 +75,18 @@ export const FilesProvider = ({ children }) => {
         EMITTER.saveFile(content, focusedPath);
         toast(`"${focusedPath}" is being saved!`, { autoClose: 800 });
     };
+
+    useEffect(() => {
+        skt.on('FILE_SAVE_COMPLETE', (filePath) => {
+            setFilesPendingSave((p) => {
+                p.delete(filePath);
+                return new Set([...p]);
+            });
+        });
+        return () => {
+            skt.removeListener('FILE_SAVE_COMPLETE');
+        };
+    }, [skt, filesPendingSave]);
 
     const deleteEntity = (isFolder, path) => {
         if (!isFolder)
