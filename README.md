@@ -14,6 +14,7 @@ Try our ready-to-go online code environment...
 
 ensure docker and run `docker compose up`
 
+It'll automatically run these: 
 
 The Webrtc server runs on port : 4444
 The main server runs on port : 4000
