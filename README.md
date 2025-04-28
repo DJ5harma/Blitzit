@@ -16,8 +16,10 @@ ensure docker and run `docker compose up`
 
 Wait and it'll automatically run these: 
 
-- The Webrtc server runs on port : 4444
-- The main server runs on port : 4000
-- The client react runs on port: 3000
-- The redis server runs on port: 6379
-- The mongoDB server runs on port: 27017
+- The Webrtc server runs on port : `4444`
+- The main server runs on port : `4000`
+- The client react runs on port : `3000`
+- The redis server runs on port : `6379`
+- The mongoDB server runs on port : `27017`
+
+After auto setup, go to `localhost:3000` on any browser
