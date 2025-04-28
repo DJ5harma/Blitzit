@@ -14,7 +14,9 @@ Try our ready-to-go online code environment...
 
 ensure docker and run `docker compose up`
 
-### To develop this further on your on,
 
-change whatever you like and then run `docker compose up --build`.
-this will update the image
+The Webrtc server runs on port : 4444
+The main server runs on port : 4000
+The client react runs on port: 3000
+The redis server runs on port: 6379
+The mongoDB server runs on port: 27017
