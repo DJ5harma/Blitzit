@@ -12,6 +12,8 @@ Try our ready-to-go online code environment...
 
 
 ![Blitzit Flow](https://github.com/user-attachments/assets/d563bb83-68f4-46d7-ad4f-a1f53e0c809e)
+![Blitzit SS1](https://github.com/user-attachments/assets/3be28b2d-baf3-4a60-9b5e-d626d694ff3c)
+![Blitzit SS2](https://github.com/user-attachments/assets/e0e6d27e-e371-45e6-93a0-548484fbe9c2)
 
 
 ### To run locally,
