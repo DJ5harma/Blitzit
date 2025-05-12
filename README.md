@@ -10,6 +10,10 @@ Try our ready-to-go online code environment...
 - Collaboration in real-time with peers using WebRTC to enhance overall project workflows.
 - Tech Stack: Redis, Dockerode, Docker, Socket.io, WebRTC, React.js, Javascript, Node.js, Mongoose, MongoDB.
 
+
+![Blitzit Flow](https://github.com/user-attachments/assets/d563bb83-68f4-46d7-ad4f-a1f53e0c809e)
+
+
 ### To run locally,
 
 ensure docker and run `docker compose up`
