@@ -24,7 +24,8 @@ Try our ready-to-go online code environment...
 
 ### To run locally,
 
-ensure docker and run `docker compose up`
+clone this repo,
+ensure docker and run `docker compose up` at project's root
 
 Wait and it'll automatically run these: 
 
