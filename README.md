@@ -1,4 +1,9 @@
-## Blitzit: Scalable, Containerized & Collaborative IDE
+
+#
+
+https://github.com/user-attachments/assets/a55ffbbf-476f-4319-8a64-1214c97cc621
+
+# Blitzit: Scalable, Containerized & Collaborative IDE
 
 Too lazy to configure your local machine? 
 Try our ready-to-go online code environment...
