@@ -1,3 +1,5 @@
+# [HANDCODED - Pre vibe era]
+
 <img width="1919" height="1140" alt="image" src="https://github.com/user-attachments/assets/4a572047-a076-41d7-83e4-469f8959605f" />
 
 https://github.com/user-attachments/assets/a55ffbbf-476f-4319-8a64-1214c97cc621
